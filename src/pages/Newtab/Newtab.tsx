@@ -26,23 +26,13 @@ const Newtab = () => {
       <main className="placenoter">
         <Sidebar sidebarActive={sidebarActive} />
 
-        <main className={`note-content ${!sidebarActive ? 'full' : ''}`}>
+        <section className={`note-content ${!sidebarActive ? 'full' : ''}`}>
           <Maintop setSidebarActive={setSidebarActive} sidebarActive={sidebarActive} />
 
-          <Tiptap onUpdate={(c: string) => setContent(c?.trim())} />
-
-          <Row>
-            <Button size="sm" onClick={(e) => setNotes()}>
-              Save
-            </Button>
-
-            <Spacer x={1} />
-
-            <Button size="sm" onClick={(e) => getFirstNote()}>
-              Console the saved thing
-            </Button>
-          </Row>
-        </main>
+          <main className='h-full editor-area'>
+            <Tiptap content={''} onUpdate={(c: string) => setContent(c?.trim())} />
+          </main>
+        </section>
       </main>
     </NextUIProvider>
   );

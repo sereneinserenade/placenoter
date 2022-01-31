@@ -1,22 +1,23 @@
 // src/Tiptap.jsx
 import React from 'react';
-import { useEditor, EditorContent } from '@tiptap/react'
+import { useEditor, EditorContent, Content } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import './Tiptap.scss'
 import Placeholder from '@tiptap/extension-placeholder';
 
 interface TiptapProps {
   onUpdate: Function
+  content: Content
 }
 
-const Tiptap = ({ onUpdate }: TiptapProps) => {
+const Tiptap = ({ onUpdate, content }: TiptapProps) => {
   const editor = useEditor({
     extensions: [
       StarterKit, Placeholder.configure({
         placeholder: 'Type here...'
       })
     ],
-    content: '<p>Hello World!</p>',
+    content: content,
     onUpdate: ({ editor }) => onUpdate(editor.getHTML())
   })
 
