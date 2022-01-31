@@ -1,27 +1,49 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { NextUIProvider } from '@nextui-org/react';
+import { Container, Row, Col, Button, Spacer } from '@nextui-org/react';
+
 import logo from '../../assets/img/logo.svg';
+import Tiptap from './components/Tiptap'
 import './Newtab.css';
 import './Newtab.scss';
 
+
 const Newtab = () => {
+  const [content, setContent] = useState("")
+
+  const setNotes = () => {
+    console.log('start')
+    chrome.storage.sync.set({ firstNote: { content } }, (): void => console.log('saved ' + content))
+    console.log('end')
+  }
+
+  const getFirstNote = () => {
+    chrome.storage.sync.get(['firstNote'], (r) => {
+      console.log('Value currently is ' + typeof r));
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/pages/Newtab/Newtab.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React!
-        </a>
-        <h6>The color of this paragraph is defined using SASS.</h6>
-      </header>
-    </div>
+    <NextUIProvider>
+      <main className="placenoter">
+        <Container >
+          <Tiptap onUpdate={setContent} />
+
+          <Row>
+            <Button size="sm" onClick={(e) => setNotes()}>
+              Save
+            </Button>
+
+            <Spacer x={1} />
+
+            <Button size="sm" onClick={(e) => getFirstNote()}>
+              Console the saved thing
+            </Button>
+          </Row>
+
+        </Container>
+
+      </main>
+    </NextUIProvider>
   );
 };
 
