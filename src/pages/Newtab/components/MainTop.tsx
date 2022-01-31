@@ -15,7 +15,7 @@ const MainTop = ({ setSidebarActive, sidebarActive }: MainTopProps) => {
   return (
     <section className='main-top flex'>
       <section className='left-controls flex' aria-label='left-controls'>
-        <Tooltip content={sidebarActive ? 'Close Sidebar' : 'Open Sidebar'}>
+        <Tooltip placement='bottomStart' content={sidebarActive ? 'Close Sidebar' : 'Open Sidebar'}>
           <Button auto color="primary" size='sm' onClick={onSidebarControlButtonClicked} className={`sidebar-control-button ${sidebarActive ? '' : 'flip'}`} icon={<MdChevronLeft />} />
         </Tooltip>
       </section>

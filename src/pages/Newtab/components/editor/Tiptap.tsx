@@ -2,8 +2,10 @@
 import React from 'react';
 import { useEditor, EditorContent, Content } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
-import './Tiptap.scss'
 import Placeholder from '@tiptap/extension-placeholder';
+
+import './Tiptap.scss'
+import Menubar from './Menubar'
 
 interface TiptapProps {
   onUpdate: Function
@@ -22,7 +24,11 @@ const Tiptap = ({ onUpdate, content }: TiptapProps) => {
   })
 
   return (
-    <EditorContent editor={editor} />
+    <>
+      {editor && <Menubar editor={editor} />}
+
+      <EditorContent editor={editor} />
+    </>
   )
 }
 

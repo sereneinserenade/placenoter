@@ -5,14 +5,14 @@
 
   .note-content {
     width: 75%;
-    // transition: all 0.3s ease-in-out !important;
 
     &.full {
       width: 100%;
     }
 
     .editor-area {
-      padding: 8px;
+      max-height: 90vh;
+      overflow-y: auto;
     }
   }
 }

@@ -1,0 +1,28 @@
+.menubar {
+  gap: 8px;
+  margin: 8px 0;
+
+  .menubar-button {
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 0 4px rgba($color: #000000, $alpha: 0.25);
+    border-radius: 6px;
+    transition: all 0.2s ease-in-out;
+
+    &:active:focus {
+      box-shadow: none;
+    }
+
+    &.active {
+      background: black;
+
+      svg {
+        fill: white;
+      }
+    }
+  }
+}
