@@ -1,0 +1,16 @@
+.sidebar {
+  width: 0;
+  height: 100vh;
+  box-sizing: border-box;
+  border-right: 1px solid rgba($color: black, $alpha: 0.20);
+
+  &.active {
+    width: 25%;
+  }
+
+  &-top {
+    justify-content: center;
+    align-items: center;
+    padding: 8px;
+  }
+}
