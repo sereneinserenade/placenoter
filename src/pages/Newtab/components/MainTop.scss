@@ -1,0 +1,17 @@
+.main-top {
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px;
+  border-bottom: 1px solid grey;
+  width: 100%;
+
+  .left-controls {
+    align-items: center;
+
+    .sidebar-control-button {
+      &.flip {
+        transform: rotate(180deg);
+      }
+    }
+  }
+}

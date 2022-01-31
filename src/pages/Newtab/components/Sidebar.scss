@@ -1,11 +1,13 @@
 .sidebar {
-  width: 0;
   height: 100vh;
   box-sizing: border-box;
   border-right: 1px solid rgba($color: black, $alpha: 0.20);
+  margin-left: -25%;
+  width: 25%;
+  transition: all 0.3s;
 
   &.active {
-    width: 25%;
+    margin-left: 0;
   }
 
   &-top {

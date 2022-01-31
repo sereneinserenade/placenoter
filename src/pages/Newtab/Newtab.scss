@@ -2,4 +2,13 @@
   width: 100%;
   display: flex;
   flex-direction: row;
+
+  .note-content {
+    width: 75%;
+    // transition: all 0.3s ease-in-out !important;
+
+    &.full {
+      width: 100%;
+    }
+  }
 }

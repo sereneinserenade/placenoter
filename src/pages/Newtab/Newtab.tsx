@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import { NextUIProvider, Container, Row, Col, Button, Spacer } from '@nextui-org/react';
 
-import Tiptap from './components/Tiptap'
-import './Newtab.css';
+import { Tiptap, Sidebar, Maintop } from './components'
+
 import './Newtab.scss';
-import Sidebar from './components/Sidebar';
 
 const Newtab = () => {
   const [content, setContent] = useState("")
@@ -27,7 +26,8 @@ const Newtab = () => {
       <main className="placenoter">
         <Sidebar sidebarActive={sidebarActive} />
 
-        <main className='note-content'>
+        <main className={`note-content ${!sidebarActive ? 'full' : ''}`}>
+          <Maintop setSidebarActive={setSidebarActive} sidebarActive={sidebarActive} />
 
           <Tiptap onUpdate={(c: string) => setContent(c?.trim())} />
 
