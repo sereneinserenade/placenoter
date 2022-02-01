@@ -1,13 +1,16 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { NextUIProvider, Container, Row, Col, Button, Spacer } from '@nextui-org/react';
 
 import { Tiptap, Sidebar, Maintop } from './components'
+
+import { Context, ContextInterface, ContextProvider } from './Context'
 
 import './Newtab.scss';
 
 const Newtab = () => {
   const [content, setContent] = useState("")
-  const [sidebarActive, setSidebarActive] = useState(true);
+
+  const { sidebarActive, setSidebarActive } = useContext(Context) as ContextInterface
 
   const setNotes = () => {
     console.log('start')
@@ -22,21 +25,23 @@ const Newtab = () => {
   }
 
   return (
-    <NextUIProvider>
-      <main className="placenoter">
-        <Sidebar sidebarActive={sidebarActive} />
+    <ContextProvider>
+      <NextUIProvider>
+        <main className="placenoter">
+          <Sidebar />
 
-        <section className={`note-content h-full ${!sidebarActive ? 'full' : ''}`}>
-          <Maintop setSidebarActive={setSidebarActive} sidebarActive={sidebarActive} />
+          <section className={`note-content h-full ${!sidebarActive ? 'full' : ''}`}>
+            <Maintop />
 
-          <main className='editor-area'>
-            <Container sm>
-              <Tiptap content={''} onUpdate={(c: string) => setContent(c?.trim())} />
-            </Container>
-          </main>
-        </section>
-      </main>
-    </NextUIProvider>
+            <main className='editor-area'>
+              <Container sm>
+                <Tiptap content={''} onUpdate={(c: string) => setContent(c?.trim())} />
+              </Container>
+            </main>
+          </section>
+        </main>
+      </NextUIProvider>
+    </ContextProvider>
   );
 };
 

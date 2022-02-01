@@ -1,19 +1,20 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Input } from '@nextui-org/react';
+import { Context, ContextInterface } from '../Context'
 
 
 import './Sidebar.scss'
 
-type SidebarProps = {
-  sidebarActive: boolean,
-}
-
-const Sidebar = ({ sidebarActive }: SidebarProps) => {
+const Sidebar = () => {
+  const { sidebarActive } = useContext(Context) as ContextInterface
 
   return (
     <aside className={`sidebar ${sidebarActive ? 'active' : ''}`}>
       <section className='sidebar-top flex'>
         <Input underlined fullWidth={true} placeholder='Search notes...' type="search" />
+      </section>
+
+      <section>
       </section>
     </aside>
   )

@@ -13,6 +13,7 @@
     "prettier": "prettier --write '**/*.{js,jsx,ts,tsx,json,css,scss,md}'"
   },
   "dependencies": {
+    "@extend-chrome/storage": "^1.5.0",
     "@hot-loader/react-dom": "^17.0.1",
     "@nextui-org/react": "^1.0.2-beta.3",
     "@tiptap/extension-placeholder": "^2.0.0-beta.47",
@@ -22,7 +23,8 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-hot-loader": "^4.13.0",
-    "react-icons": "^4.3.1"
+    "react-icons": "^4.3.1",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@babel/core": "^7.15.8",
