@@ -1,20 +1,19 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Button, Tooltip, Input, FormElement } from '@nextui-org/react'
 import { RiArrowLeftLine } from 'react-icons/ri'
 import { v4 as uuidv4 } from 'uuid'
 
 import './MainTop.scss'
-import { Context, ContextInterface } from '../Context'
+import { activeNoteState, notesState, sidebarActiveState } from '../Store'
 import { Note } from '../types'
+import { useRecoilState } from 'recoil'
 
 const { storage } = chrome
 
-type MainTopProps = {
-  updateActiveNoteTitle: Function
-}
-
-const MainTop = ({ updateActiveNoteTitle }: MainTopProps) => {
-  const { sidebarActive, setSidebarActive, activeNote, setActiveNote, notes, setNotes } = useContext(Context) as ContextInterface
+const MainTop = () => {
+  const [activeNote, setActiveNote] = useRecoilState(activeNoteState)
+  const [sidebarActive, setSidebarActive] = useRecoilState(sidebarActiveState)
+  const [notes, setNotes] = useRecoilState(notesState)
 
   const createNewNoteAndSetItAsActiveNote = () => {
     const newNote: Note = {
@@ -27,26 +26,15 @@ const MainTop = ({ updateActiveNoteTitle }: MainTopProps) => {
 
     setActiveNote(JSON.parse(JSON.stringify(newNote)))
 
-    setNotes([...notes, newNote])
-
-    new Promise((r) => setTimeout(r, 500))
-
-    storage.sync.set({ dbnotes: notes }, () => {
-      storage.sync.get('dbnotes', (res) => console.log(res.dbnotes))
-    })
+    setNotes([newNote, ...notes])
   }
-
 
   const onSidebarControlButtonClicked = (): void => setSidebarActive(!sidebarActive)
 
-  const printDbNotesInConsole = () => {
-    storage.sync.get(['dbnotes'], (res) => {
-      console.log(res)
-    })
-  }
-
   const changeTitle = (e: React.FormEvent<FormElement>) => {
-    updateActiveNoteTitle((e.target as any).value)
+    const obj: Partial<Note> = { title: (e.target as any).value }
+
+    setActiveNote({ ...activeNote, ...obj } as Note)
   }
 
   return (
@@ -55,18 +43,6 @@ const MainTop = ({ updateActiveNoteTitle }: MainTopProps) => {
         <Tooltip placement='bottomStart' content={sidebarActive ? 'Close Sidebar' : 'Open Sidebar'}>
           <Button color="primary" auto ghost size='sm' onClick={onSidebarControlButtonClicked} className={`sidebar-control-button flex ${sidebarActive ? '' : 'flip'}`} icon={<RiArrowLeftLine />} />
         </Tooltip>
-      </section>
-
-      <section>
-        {
-          activeNote?.id && <Input
-            underlined
-            labelLeft="Title"
-            placeholder="New note..."
-            onInput={(e) => changeTitle(e)}
-            initialValue={activeNote.title}
-          />
-        }
       </section>
 
       <section className='right-controls'>

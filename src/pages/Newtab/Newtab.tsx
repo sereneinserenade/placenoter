@@ -1,19 +1,19 @@
 import React from 'react';
 import { NextUIProvider } from '@nextui-org/react';
 
-import { ContextProvider } from './Context'
 import Main from './Main'
 
 import './Newtab.scss';
+import { RecoilRoot } from 'recoil';
 
 const Newtab = () => {
 
   return (
-    <ContextProvider>
-      <NextUIProvider>
+    <NextUIProvider>
+      <RecoilRoot>
         <Main />
-      </NextUIProvider>
-    </ContextProvider>
+      </RecoilRoot>
+    </NextUIProvider>
   );
 };
 
