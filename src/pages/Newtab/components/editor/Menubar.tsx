@@ -171,6 +171,9 @@ const Menubar = ({ editor }: MenubarProps) => {
     }
 
     editor.on('update', ({ editor }) => debouncedCalculateIsActiveStates(editor))
+    editor.on('selectionUpdate', ({ editor }) => debouncedCalculateIsActiveStates(editor))
+    editor.on('focus', ({ editor }) => debouncedCalculateIsActiveStates(editor))
+    editor.on('blur', ({ editor }) => debouncedCalculateIsActiveStates(editor))
 
     calculateIsActiveStates(editor)
   }

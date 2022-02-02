@@ -1,17 +1,16 @@
 import { Container, FormElement, Input, Link } from '@nextui-org/react';
-import React, { EffectCallback, useContext, useEffect, useState } from 'react';
-import { Maintop, Sidebar, Tiptap } from './components';
+import React, { EffectCallback, useEffect, useState } from 'react';
+import { v4 as uuidv4 } from 'uuid'
+import { useRecoilState, useRecoilValue } from 'recoil';
+
+import { EditorAreaContainer, Maintop, Sidebar, Tiptap } from './components';
 import { notesState, activeNoteState, sidebarActiveState } from './Store';
 import { Note } from './types';
-import { v4 as uuidv4 } from 'uuid'
-import { useRecoilState } from 'recoil';
 
 const { storage } = chrome
 
 function Main() {
-  // const { sidebarActive, activeNoteId, notes, setNotes } = useContext(Context) as ContextInterface
-
-  const [sidebarActive, setSidebarActive] = useRecoilState(sidebarActiveState)
+  const sidebarActive = useRecoilValue(sidebarActiveState)
 
   const [notes, setNotes] = useRecoilState(notesState)
 
@@ -44,7 +43,6 @@ function Main() {
 
 
   const createNewNoteAndSetItAsActiveNote = () => {
-    // debugger
     const newNote: Note = {
       id: uuidv4(),
       content: '',
@@ -59,10 +57,9 @@ function Main() {
   }
 
   const fetchNotesFromSyncStorage = () => {
-    storage.sync.set({ dbnotes: [] })
+    // storage.sync.set({ dbnotes: [] })
 
     storage.sync.get('dbnotes', ({ dbnotes }) => {
-      // debugger
       if (dbnotes) setNotes(dbnotes)
       else storage.sync.set({ dbnotes: [] })
 
@@ -78,17 +75,6 @@ function Main() {
 
     createNewNoteAndSetItAsActiveNote()
   }
-
-  const setNoteContent = (content: string, textContent: string) => {
-    if (typeof content === 'string') content = content.trim()
-
-    setActiveNote({ ...activeNote, content, textContent } as Note)
-  }
-
-  const setTitle = (e: React.FormEvent<FormElement>) => {
-    setActiveNote({ ...activeNote, title: (e.target as any).value } as any)
-  }
-
   return (
     <main className="placenoter">
       <Sidebar />
@@ -100,18 +86,7 @@ function Main() {
           activeNote?.id ?
             (
               <main className='editor-area'>
-                <Container sm>
-                  <section>
-                    <Input
-                      underlined
-                      labelLeft="Title"
-                      placeholder="New note..."
-                      onInput={(e) => setTitle(e)}
-                      initialValue={`${activeNote.title}`}
-                    />
-                  </section>
-                  <Tiptap content={activeNote.content} onUpdate={setNoteContent} />
-                </Container>
+                <EditorAreaContainer />
               </main>
             ) : (
               <main className='no-note-selected flex h-full'>
