@@ -1,11 +1,68 @@
 import { Container, Link } from '@nextui-org/react';
-import React, { useContext } from 'react';
+import React, { EffectCallback, useContext, useEffect, useState } from 'react';
 import { Maintop, Sidebar, Tiptap } from './components';
 import { Context, ContextInterface } from './Context';
+import { Note } from './types';
+import { v4 as uuidv4 } from 'uuid'
+
+const { storage } = chrome
 
 const Main = () => {
+  const { sidebarActive, activeNote, setActiveNote, notes, setNotes } = useContext(Context) as ContextInterface
 
-  const { sidebarActive, activeNote, setActiveNote, createNewNoteAndSetItAsActiveNote } = useContext(Context) as ContextInterface
+  const [notesFetchedFromDb, setNotesFetchedFromDb] = useState(false)
+
+  const useMountEffect = (fun: EffectCallback) => useEffect(fun, [])
+
+  // finds activeNote and Updates it
+  useEffect(() => {
+    // debugger
+    if (!activeNote) return
+    const { id } = activeNote
+
+    const noteIndex = notes.findIndex((n) => n?.id === id)
+    const foundNote = notes[noteIndex]
+
+    if (activeNote.content === foundNote.content) return
+
+    const copyOfNotes = [...notes.slice()]
+
+    copyOfNotes[noteIndex] = activeNote
+
+    setNotes(copyOfNotes)
+
+  }, [activeNote])
+
+  useEffect(() => {
+    if (notesFetchedFromDb) storage.sync.set({ dbnotes: notes })
+  }, [notes])
+
+
+  const createNewNoteAndSetItAsActiveNote = () => {
+    // debugger
+    const newNote: Note = {
+      id: uuidv4(),
+      content: '',
+      timestamp: new Date(),
+      title: ''
+    }
+
+    setActiveNote(JSON.parse(JSON.stringify(newNote)))
+
+    setNotes([...notes, newNote])
+  }
+
+  const fetchNotesFromSyncStorage = () => {
+    storage.sync.get('dbnotes', ({ dbnotes }) => {
+      // debugger
+      if (dbnotes) setNotes(dbnotes)
+      else storage.sync.set({ dbnotes: [] })
+
+      setNotesFetchedFromDb(true)
+    })
+  }
+
+  useMountEffect(fetchNotesFromSyncStorage)
 
   const onCreateNewNoteClicked = (e: React.MouseEvent<unknown, MouseEvent>) => {
     e.preventDefault()

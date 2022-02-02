@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Chrome Extension with React & Webpack",
+  "name": "PageNoter",
   "options_page": "options.html",
   "background": {
     "service_worker": "background.bundle.js"

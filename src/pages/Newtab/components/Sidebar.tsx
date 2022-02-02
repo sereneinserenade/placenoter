@@ -16,13 +16,13 @@ const Sidebar = () => {
 
       <section>
         {
-          notes.map((note) => {
+          // JSON.stringify(notes)
+          notes && notes.map((note) => {
             return (
               <article key={note.id} className='sidebar-note'>
                 <h3>{note.id}</h3>
-                <div dangerouslySetInnerHTML={{ __html: note.content }}>
-
-                </div>
+                <div dangerouslySetInnerHTML={{ __html: note.content }} />
+                {/* {JSON.stringify(notes)} */}
               </article>
             )
           })
