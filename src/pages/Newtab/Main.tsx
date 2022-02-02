@@ -16,14 +16,13 @@ const Main = () => {
 
   // finds activeNote and Updates it
   useEffect(() => {
-    // debugger
     if (!activeNote) return
     const { id } = activeNote
 
     const noteIndex = notes.findIndex((n) => n?.id === id)
     const foundNote = notes[noteIndex]
 
-    if (activeNote.content === foundNote.content) return
+    if (activeNote.content === foundNote.content && activeNote.title === foundNote.title) return
 
     const copyOfNotes = [...notes.slice()]
 
@@ -44,7 +43,8 @@ const Main = () => {
       id: uuidv4(),
       content: '',
       timestamp: new Date(),
-      title: ''
+      title: '',
+      textContent: ''
     }
 
     setActiveNote(JSON.parse(JSON.stringify(newNote)))
@@ -71,10 +71,16 @@ const Main = () => {
     createNewNoteAndSetItAsActiveNote()
   }
 
-  const setNoteContent = (content: string) => {
+  const setNoteContent = (content: string, textContent: string) => {
     if (typeof content === 'string') content = content.trim()
 
-    setActiveNote({ ...activeNote, content })
+    debugger
+    setActiveNote({ ...activeNote, content, textContent })
+  }
+
+  const updateActiveNoteTitle = (title: string) => {
+    const updatedActiveNote = { ...activeNote, title }
+    setActiveNote(JSON.parse(JSON.stringify(updatedActiveNote)))
   }
 
   return (
@@ -82,28 +88,27 @@ const Main = () => {
       <Sidebar />
 
       <section className={`note-content h-full ${!sidebarActive ? 'full' : ''}`}>
-        <Maintop />
-
-        {/* Only showing Tiptap Section if a note is active */}
-        {
-          activeNote?.id && <main className='editor-area'>
-            <Container sm>
-              <Tiptap content={''} onUpdate={(c: string) => setNoteContent(c)} />
-            </Container>
-          </main>
-        }
+        <Maintop updateActiveNoteTitle={updateActiveNoteTitle} />
 
         {
-          !activeNote?.id && <main className='no-note-selected flex h-full'>
-            <h1>
-              No Note selected
-            </h1>
+          activeNote?.id ?
+            (
+              <main className='editor-area'>
+                <Container sm>
+                  <Tiptap content={activeNote.content} onUpdate={setNoteContent} />
+                </Container>
+              </main>
+            ) : (
+              <main className='no-note-selected flex h-full'>
+                <h1> No Note selected </h1>
 
-            <h3 className='flex'>
-              Select or <Link onClick={(e) => onCreateNewNoteClicked(e)} > &nbsp; create a new &nbsp; </Link>  note.
-            </h3>
-          </main>
+                <h3 className='flex'>
+                  Select or <Link onClick={(e) => onCreateNewNoteClicked(e)} > &nbsp; create a new &nbsp; </Link>  note.
+                </h3>
+              </main>
+            )
         }
+
 
       </section>
     </main>

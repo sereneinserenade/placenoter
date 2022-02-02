@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import { Button, Tooltip } from '@nextui-org/react'
+import { Button, Tooltip, Input, FormElement } from '@nextui-org/react'
 import { RiArrowLeftLine } from 'react-icons/ri'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -9,7 +9,11 @@ import { Note } from '../types'
 
 const { storage } = chrome
 
-const MainTop = () => {
+type MainTopProps = {
+  updateActiveNoteTitle: Function
+}
+
+const MainTop = ({ updateActiveNoteTitle }: MainTopProps) => {
   const { sidebarActive, setSidebarActive, activeNote, setActiveNote, notes, setNotes } = useContext(Context) as ContextInterface
 
   const createNewNoteAndSetItAsActiveNote = () => {
@@ -17,7 +21,8 @@ const MainTop = () => {
       id: uuidv4(),
       content: '',
       timestamp: new Date(),
-      title: ''
+      title: '',
+      textContent: ''
     }
 
     setActiveNote(JSON.parse(JSON.stringify(newNote)))
@@ -40,16 +45,32 @@ const MainTop = () => {
     })
   }
 
+  const changeTitle = (e: React.FormEvent<FormElement>) => {
+    updateActiveNoteTitle((e.target as any).value)
+  }
+
   return (
     <section className='main-top flex'>
       <section className='left-controls flex' aria-label='left-controls'>
         <Tooltip placement='bottomStart' content={sidebarActive ? 'Close Sidebar' : 'Open Sidebar'}>
           <Button color="primary" auto ghost size='sm' onClick={onSidebarControlButtonClicked} className={`sidebar-control-button flex ${sidebarActive ? '' : 'flip'}`} icon={<RiArrowLeftLine />} />
         </Tooltip>
+      </section>
 
-        <Button onClick={printDbNotesInConsole}>
-          Just print in console
-        </Button>
+      <section>
+        {
+          activeNote?.id && <Input
+            underlined
+            labelLeft="Title"
+            placeholder="New note..."
+            onInput={(e) => changeTitle(e)}
+            initialValue={activeNote.title}
+          />
+        }
+      </section>
+
+      <section className='right-controls'>
+        Some
       </section>
     </section>
   )

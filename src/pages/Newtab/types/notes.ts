@@ -3,4 +3,5 @@ export interface Note {
   title: string
   timestamp: Date
   content: string
+  textContent: string
 }

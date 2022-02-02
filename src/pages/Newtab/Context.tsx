@@ -29,20 +29,19 @@ const ContextProvider = ({ children }: ContextProviderProps) => {
   const [sidebarActive, setSidebarActive] = useState<boolean>(true);
   const [activeNote, setActiveNote] = useState<Note | undefined>(undefined);
 
+  const state = {
+    notes,
+    setNotes,
+
+    sidebarActive,
+    setSidebarActive,
+
+    activeNote,
+    setActiveNote,
+  }
 
   return (
-    <Context.Provider
-      value={{
-        notes,
-        setNotes,
-
-        sidebarActive,
-        setSidebarActive,
-
-        activeNote,
-        setActiveNote,
-      }}
-    >
+    <Context.Provider value={state} >
       {children}
     </Context.Provider>
   );

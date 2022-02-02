@@ -15,4 +15,14 @@
     align-items: center;
     padding: 8px;
   }
+
+  .sidebar-note {
+    padding: 8px;
+    cursor: pointer;
+    border-bottom: 2px solid rgba($color: #000000, $alpha: 0.15);
+
+    &:hover {
+      background: rgba($color: rgb(12, 122, 165), $alpha: 0.20);
+    }
+  }
 }

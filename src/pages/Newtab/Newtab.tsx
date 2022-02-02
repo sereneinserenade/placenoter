@@ -1,5 +1,5 @@
-import React, { useContext } from 'react';
-import { NextUIProvider, Container, Link } from '@nextui-org/react';
+import React from 'react';
+import { NextUIProvider } from '@nextui-org/react';
 
 import { ContextProvider } from './Context'
 import Main from './Main'

@@ -1,12 +1,13 @@
 import React, { useContext, useState } from 'react';
-import { Input } from '@nextui-org/react';
+import { Input, Text, Container, Divider, Spacer } from '@nextui-org/react';
 import { Context, ContextInterface } from '../Context'
 
 
 import './Sidebar.scss'
+import { Note } from '../types';
 
 const Sidebar = () => {
-  const { sidebarActive, notes } = useContext(Context) as ContextInterface
+  const { sidebarActive, notes, setActiveNote } = useContext(Context) as ContextInterface
 
   return (
     <aside className={`sidebar ${sidebarActive ? 'active' : ''}`}>
@@ -16,13 +17,12 @@ const Sidebar = () => {
 
       <section>
         {
-          // JSON.stringify(notes)
-          notes && notes.map((note) => {
+          notes && notes.map((note: Note) => {
             return (
-              <article key={note.id} className='sidebar-note'>
-                <h3>{note.id}</h3>
-                <div dangerouslySetInnerHTML={{ __html: note.content }} />
-                {/* {JSON.stringify(notes)} */}
+              <article onClick={() => setActiveNote(JSON.parse(JSON.stringify(note)))} key={note.id} className='sidebar-note'>
+                <Text size={'1.25em'} > {note.title || 'No Title'} </Text>
+                <Text> {note.textContent.length >= 40 ? note.textContent.substring(0, 40) + '...' : note.textContent} </Text>
+                <Text size={12}> {note.timestamp.toString()} </Text>
               </article>
             )
           })

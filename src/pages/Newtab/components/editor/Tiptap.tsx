@@ -20,7 +20,7 @@ const Tiptap = ({ onUpdate, content }: TiptapProps) => {
       })
     ],
     content: content,
-    onUpdate: ({ editor }) => onUpdate(editor.getHTML())
+    onUpdate: ({ editor }) => onUpdate(editor.getHTML(), editor.getText())
   })
 
   return (
