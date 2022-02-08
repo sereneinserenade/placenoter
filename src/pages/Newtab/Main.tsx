@@ -27,7 +27,7 @@ function Main() {
     const noteIndex = notes.findIndex((n) => n?.id === activeNote.id)
     const foundNote = notes[noteIndex]
 
-    if (activeNote?.content === foundNote.content && activeNote?.title === foundNote.title) return
+    if (activeNote?.content === foundNote?.content && activeNote?.title === foundNote?.title) return
 
     const copyOfNotes = [...notes.slice()]
 
@@ -46,14 +46,17 @@ function Main() {
     const newNote: Note = {
       id: uuidv4(),
       content: '',
-      timestamp: new Date(),
+      timestamp: `${new Date()}`,
       title: '',
       textContent: ''
     }
 
-    setActiveNote(JSON.parse(JSON.stringify(newNote)))
+    setActiveNote(undefined)
 
-    setNotes([newNote, ...notes])
+    setTimeout(() => {
+      setActiveNote(JSON.parse(JSON.stringify(newNote)))
+      setNotes([newNote, ...notes])
+    })
   }
 
   const fetchNotesFromSyncStorage = () => {

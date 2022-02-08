@@ -1,7 +1,7 @@
 export interface Note {
   id: string
   title: string
-  timestamp: Date
+  timestamp: string
   content: string
   textContent: string
 }

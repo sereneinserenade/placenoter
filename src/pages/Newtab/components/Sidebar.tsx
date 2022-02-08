@@ -19,6 +19,12 @@ const Sidebar = () => {
     return format(new Date(timestamp), 'PPpp')
   }
 
+  const changeActiveNoteTo = (note: Note) => {
+    setActiveNote(undefined)
+
+    setTimeout(() => setActiveNote(note))
+  }
+
   return (
     <aside className={`sidebar ${sidebarActive ? 'active' : ''}`}>
       <section className='sidebar-top flex'>
@@ -29,10 +35,14 @@ const Sidebar = () => {
         {
           !!notes.length && notes.map((note: Note) => {
             return (
-              <article onClick={() => setActiveNote(note)} key={note.id} className='sidebar-note'>
+              <article onClick={() => changeActiveNoteTo(note)} key={note.id} className='sidebar-note'>
                 <Text size={'1.25em'} > {note.title || 'No Title'} </Text>
-                <Text> {note.textContent.length >= 40 ? note.textContent.substring(0, 40) + '...' : note.textContent} </Text>
-                <Text size={12}> {returnFormattedDateString(note.timestamp)} </Text>
+                {
+                  note.textContent.trim().length
+                    ? <Text> {note.textContent.length >= 40 ? note.textContent.substring(0, 40).trim() + '...' : note.textContent} </Text>
+                    : <Text color="gray"> {'No content...'} </Text>
+                }
+                <Text size={12}> {returnFormattedDateString(new Date(note.timestamp))} </Text>
               </article>
             )
           })

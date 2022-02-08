@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { Button, Tooltip, Input, FormElement } from '@nextui-org/react'
-import { RiArrowLeftLine } from 'react-icons/ri'
+import { Button, Tooltip, Input, FormElement, Text } from '@nextui-org/react'
+import { RiArrowLeftLine, RiMenuFoldFill, RiMenuFoldLine, RiMenuUnfoldFill, RiMenuUnfoldLine } from 'react-icons/ri'
+import { FiFeather } from 'react-icons/fi'
 import { v4 as uuidv4 } from 'uuid'
 
 import './MainTop.scss'
@@ -19,14 +20,17 @@ const MainTop = () => {
     const newNote: Note = {
       id: uuidv4(),
       content: '',
-      timestamp: new Date(),
+      timestamp: `${new Date()}`,
       title: '',
       textContent: ''
     }
 
-    setActiveNote(JSON.parse(JSON.stringify(newNote)))
+    setActiveNote(undefined)
 
-    setNotes([newNote, ...notes])
+    setTimeout(() => {
+      setActiveNote(JSON.parse(JSON.stringify(newNote)))
+      setNotes([newNote, ...notes])
+    })
   }
 
   const onSidebarControlButtonClicked = (): void => setSidebarActive(!sidebarActive)
@@ -41,12 +45,27 @@ const MainTop = () => {
     <section className='main-top flex'>
       <section className='left-controls flex' aria-label='left-controls'>
         <Tooltip placement='bottomStart' content={sidebarActive ? 'Close Sidebar' : 'Open Sidebar'}>
-          <Button color="primary" auto ghost size='sm' onClick={onSidebarControlButtonClicked} className={`sidebar-control-button flex ${sidebarActive ? '' : 'flip'}`} icon={<RiArrowLeftLine />} />
+          <Button color="primary" auto ghost size='sm' onClick={onSidebarControlButtonClicked} className={`sidebar-control-button flex`} icon={sidebarActive ? <RiMenuFoldFill /> : <RiMenuUnfoldFill />} />
+        </Tooltip>
+        <Tooltip placement='bottomStart' content={'Create new note'}>
+          <Button color="primary" auto ghost size='sm' onClick={createNewNoteAndSetItAsActiveNote} className="sidebar-control-button flex" icon={< FiFeather />} />
         </Tooltip>
       </section>
 
-      <section className='right-controls'>
-        Some
+      <section className='middle-controls'>
+        <Text
+          size={20}
+          css={{ textGradient: '45deg, $purple500 -20%, $pink500 100%' }}
+          weight="bold"
+        >
+          PlaceNoter
+        </Text>
+      </section>
+
+      <section>
+        <Text >
+          Right
+        </Text>
       </section>
     </section>
   )
