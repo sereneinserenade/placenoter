@@ -6,6 +6,8 @@ import { activeNoteState } from '../../Store'
 import { Note } from '../../types'
 import Tiptap from './Tiptap'
 
+import './EditorAreaContainer.scss'
+
 const EditorAreaContainer = () => {
   const [activeNote, setActiveNote] = useRecoilState(activeNoteState)
 
@@ -18,20 +20,14 @@ const EditorAreaContainer = () => {
   const setNoteContent = (content: string, textContent: string) => {
     if (typeof content === 'string') content = content.trim()
 
-    setActiveNote({ ...activeNote, content, textContent, title } as Note)
+    setActiveNote({ ...activeNote, content, textContent } as Note)
   }
 
   const updateTitle = (e: React.FormEvent<FormElement>) => setTitle((e.target as any).value)
 
+
   return (
     <Container sm>
-      <Input
-        underlined
-        labelLeft="Title"
-        placeholder="New note..."
-        onInput={(e) => updateTitle(e)}
-        initialValue={`${activeNote?.title}`}
-      />
       <Tiptap content={activeNote?.content || ''} onUpdate={setNoteContent} />
     </Container>
   )

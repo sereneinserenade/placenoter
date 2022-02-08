@@ -1,7 +1,7 @@
-import React, { useContext, useEffect, useState } from 'react'
-import { Button, Tooltip, Input, FormElement, Text } from '@nextui-org/react'
-import { RiArrowLeftLine, RiMenuFoldFill, RiMenuFoldLine, RiMenuUnfoldFill, RiMenuUnfoldLine } from 'react-icons/ri'
-import { FiFeather } from 'react-icons/fi'
+import React, { useEffect, useState } from 'react'
+import { Button, Tooltip, FormElement, Text, Input } from '@nextui-org/react'
+import { RiMenuFoldFill, RiMenuUnfoldFill } from 'react-icons/ri'
+import { FiFeather, FiTrash2 } from 'react-icons/fi'
 import { v4 as uuidv4 } from 'uuid'
 
 import './MainTop.scss'
@@ -41,6 +41,24 @@ const MainTop = () => {
     setActiveNote({ ...activeNote, ...obj } as Note)
   }
 
+  const deleteActiveNote = () => {
+    const localNotes: Note[] = JSON.parse(JSON.stringify(notes))
+
+    if (!activeNote) return
+
+    const { id } = activeNote
+
+    const index = localNotes.findIndex((n) => n.id === id)
+
+    localNotes.splice(index, 1)
+
+    setNotes(JSON.parse(JSON.stringify(localNotes)))
+
+    setActiveNote(undefined)
+  }
+
+  const updateTitle = (e: React.FormEvent<FormElement>) => (activeNote) && setActiveNote({ ...activeNote, title: `${(e.target as any).value}` })
+
   return (
     <section className='main-top flex'>
       <section className='left-controls flex' aria-label='left-controls'>
@@ -53,19 +71,31 @@ const MainTop = () => {
       </section>
 
       <section className='middle-controls'>
-        <Text
-          size={20}
-          css={{ textGradient: '45deg, $purple500 -20%, $pink500 100%' }}
-          weight="bold"
-        >
-          PlaceNoter
-        </Text>
+        {
+          activeNote ?
+            <Input
+              underlined
+              placeholder="Title..."
+              onInput={(e) => updateTitle(e)}
+              value={`${activeNote?.title}`}
+              className="title-input"
+            />
+            : <Text
+              size={20}
+              css={{ textGradient: '45deg, $purple500 -20%, $pink500 100%' }}
+              weight="bold"
+            >
+              PlaceNoter
+            </Text>
+        }
       </section>
 
       <section>
-        <Text >
-          Right
-        </Text>
+        {
+          activeNote && <Tooltip placement='left' content={'Delete Note'}>
+            <Button color="primary" auto ghost size='sm' onClick={deleteActiveNote} className="sidebar-control-button flex" icon={< FiTrash2 />} />
+          </Tooltip>
+        }
       </section>
     </section>
   )
