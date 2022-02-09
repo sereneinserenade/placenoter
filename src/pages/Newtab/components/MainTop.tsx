@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Button, Tooltip, FormElement, Text, Input } from '@nextui-org/react'
 import { RiMenuFoldFill, RiMenuUnfoldFill } from 'react-icons/ri'
-import { FiFeather, FiTrash2 } from 'react-icons/fi'
+import { FiFeather, FiHome, FiTrash2 } from 'react-icons/fi'
 import { v4 as uuidv4 } from 'uuid'
 
 import './MainTop.scss'
@@ -16,7 +16,19 @@ const MainTop = () => {
   const [sidebarActive, setSidebarActive] = useRecoilState(sidebarActiveState)
   const [notes, setNotes] = useRecoilState(notesState)
 
+  const checkIfAnEmptyNoteExists = (): Note | undefined => {
+    return notes.find((n) => n.title.trim() === "" && n.textContent.trim() === "")
+  }
+
   const createNewNoteAndSetItAsActiveNote = () => {
+    const emptyNoteInNotesList = checkIfAnEmptyNoteExists()
+    if (emptyNoteInNotesList) {
+      setActiveNote(undefined)
+      setTimeout(() => setActiveNote(emptyNoteInNotesList))
+
+      return
+    }
+
     const newNote: Note = {
       id: uuidv4(),
       content: '',
@@ -68,31 +80,34 @@ const MainTop = () => {
         <Tooltip placement='bottomStart' content={'Create new note'}>
           <Button color="primary" auto ghost size='sm' onClick={createNewNoteAndSetItAsActiveNote} className="sidebar-control-button flex" icon={< FiFeather />} />
         </Tooltip>
+        <Tooltip placement='bottomStart' content={'Home'}>
+          <Button color="primary" auto ghost size='sm' onClick={() => setActiveNote(undefined)} className="sidebar-control-button flex" icon={< FiHome />} />
+        </Tooltip>
       </section>
 
       <section className='middle-controls'>
         {
-          activeNote ?
-            <Input
-              underlined
-              placeholder="Title..."
-              onInput={(e) => updateTitle(e)}
-              value={`${activeNote?.title}`}
-              className="title-input"
-            />
-            : <Text
-              size={20}
-              css={{ textGradient: '45deg, $purple500 -20%, $pink500 100%' }}
-              weight="bold"
-            >
-              PlaceNoter
-            </Text>
+          activeNote &&
+          <Input
+            underlined
+            placeholder="Title..."
+            onInput={(e) => updateTitle(e)}
+            value={`${activeNote?.title}`}
+            className="title-input"
+          />
+          // : <Text
+          //   size={24.8}
+          //   css={{ textGradient: '45deg, $purple500 -20%, $pink500 100%' }}
+          //   weight="bold"
+          // >
+          //   PlaceNoter
+          // </Text>
         }
       </section>
 
       <section>
         {
-          activeNote && <Tooltip placement='left' content={'Delete Note'}>
+          activeNote && <Tooltip placement='bottomEnd' content={'Delete Note'}>
             <Button color="primary" auto ghost size='sm' onClick={deleteActiveNote} className="sidebar-control-button flex" icon={< FiTrash2 />} />
           </Tooltip>
         }
