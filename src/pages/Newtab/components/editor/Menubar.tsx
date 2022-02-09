@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 
 import { Editor } from '@tiptap/core';
-import { RiBold, RiItalic, RiStrikethrough, RiCodeSSlashLine, RiH1, RiH2, RiH3, RiH4, RiH5, RiH6, RiListUnordered, RiListOrdered, RiCodeBoxLine, RiDoubleQuotesL, RiSeparator, RiTextWrap, RiArrowGoBackLine, RiArrowGoForwardLine, RiUnderline } from 'react-icons/ri'
+import { RiBold, RiItalic, RiStrikethrough, RiCodeSSlashLine, RiH1, RiH2, RiH3, RiListUnordered, RiListOrdered, RiCodeBoxLine, RiDoubleQuotesL, RiSeparator, RiTextWrap, RiArrowGoBackLine, RiArrowGoForwardLine, RiUnderline, RiListCheck2 } from 'react-icons/ri'
 import { IconType } from 'react-icons'
-import { Tooltip, Divider } from '@nextui-org/react';
+import { Tooltip } from '@nextui-org/react';
+import { useRecoilValue } from 'recoil'
+import { activeNoteState } from '../../Store';
 
 import './Menubar.scss'
 
@@ -24,6 +26,8 @@ const Menubar = ({ editor }: MenubarProps) => {
 
   const [isActiveStates, setIsActiveStates] = useState<Record<string, boolean>>({})
 
+  const activeNote = useRecoilValue(activeNoteState)
+
   const buttons: Button[] = [
     {
       name: 'bold',
@@ -43,7 +47,7 @@ const Menubar = ({ editor }: MenubarProps) => {
       name: 'underline',
       label: 'Underline',
       action: (editor: Editor) => editor.chain().focus().toggleUnderline().run(),
-      isActive: (editor: Editor) => editor.isActive('italic'),
+      isActive: (editor: Editor) => editor.isActive('underline'),
       icon: RiUnderline,
     },
     {
@@ -114,6 +118,13 @@ const Menubar = ({ editor }: MenubarProps) => {
       action: (editor: Editor) => editor.chain().focus().toggleOrderedList().run(),
       isActive: (editor: Editor) => editor.isActive('orderedList'),
       icon: RiListOrdered,
+    },
+    {
+      name: 'taskList',
+      label: 'Task List',
+      action: (editor: Editor) => editor.chain().focus().toggleTaskList().run(),
+      isActive: (editor: Editor) => editor.isActive('taskList'),
+      icon: RiListCheck2,
     },
     {
       name: 'divider',
@@ -198,20 +209,22 @@ const Menubar = ({ editor }: MenubarProps) => {
 
   return (
     <section className='menubar flex'>
-      {editor && buttons.map((btn) => {
+      {activeNote?.id && editor && buttons.map((btn, index) => {
         return (
           <>
             {
-              editor && btn.name === 'divider'
-                ? <div className='divider' />
-                : <Tooltip key={btn.name} content={btn.label}>
-                  <button
-                    className={`menubar-button flex ${isActiveStates[btn.name] ? 'active' : ''}`}
-                    onClick={() => btn.action && btn.action(editor) && calculateIsActiveStates(editor)}
-                  >
-                    {btn.icon && <btn.icon />}
-                  </button>
-                </Tooltip>
+              btn.name === 'divider'
+                ? (<div key={(index + 1) + 'th-divider'} className='divider' />)
+                : (
+                  <Tooltip key={btn.name} content={btn.label}>
+                    <button
+                      className={`menubar-button flex ${isActiveStates[btn.name] ? 'active' : ''}`}
+                      onClick={() => btn.action && btn.action(editor) && calculateIsActiveStates(editor)}
+                    >
+                      {btn.icon && <btn.icon />}
+                    </button>
+                  </Tooltip>
+                )
             }
           </>
         )
