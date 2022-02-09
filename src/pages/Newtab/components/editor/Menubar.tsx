@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
 
 import { Editor } from '@tiptap/core';
-import { RiBold, RiItalic, RiStrikethrough, RiCodeSSlashLine, RiH1, RiH2, RiH3, RiH4, RiH5, RiH6, RiListUnordered, RiListOrdered, RiCodeBoxLine, RiDoubleQuotesL, RiSeparator, RiTextWrap, RiArrowGoBackLine, RiArrowGoForwardLine } from 'react-icons/ri'
+import { RiBold, RiItalic, RiStrikethrough, RiCodeSSlashLine, RiH1, RiH2, RiH3, RiH4, RiH5, RiH6, RiListUnordered, RiListOrdered, RiCodeBoxLine, RiDoubleQuotesL, RiSeparator, RiTextWrap, RiArrowGoBackLine, RiArrowGoForwardLine, RiUnderline } from 'react-icons/ri'
 import { IconType } from 'react-icons'
-import { Tooltip } from '@nextui-org/react';
-import { debounce } from 'lodash';
+import { Tooltip, Divider } from '@nextui-org/react';
 
 import './Menubar.scss'
 
@@ -14,10 +13,10 @@ type MenubarProps = {
 
 interface Button {
   name: string
-  label: string
-  action: (editor: Editor) => boolean
+  label?: string
+  action?: (editor: Editor) => boolean
   isActive?: (editor: Editor) => boolean
-  icon: IconType
+  icon?: IconType
 }
 
 const Menubar = ({ editor }: MenubarProps) => {
@@ -41,6 +40,13 @@ const Menubar = ({ editor }: MenubarProps) => {
       icon: RiItalic,
     },
     {
+      name: 'underline',
+      label: 'Underline',
+      action: (editor: Editor) => editor.chain().focus().toggleUnderline().run(),
+      isActive: (editor: Editor) => editor.isActive('italic'),
+      icon: RiUnderline,
+    },
+    {
       name: 'strike',
       label: 'Strike',
       action: (editor: Editor) => editor.chain().focus().toggleStrike().run(),
@@ -48,11 +54,7 @@ const Menubar = ({ editor }: MenubarProps) => {
       icon: RiStrikethrough,
     },
     {
-      name: 'code',
-      label: 'Code',
-      action: (editor: Editor) => editor.chain().focus().toggleCode().run(),
-      isActive: (editor: Editor) => editor.isActive('code'),
-      icon: RiCodeSSlashLine,
+      name: 'divider',
     },
     {
       name: 'h1',
@@ -76,26 +78,29 @@ const Menubar = ({ editor }: MenubarProps) => {
       icon: RiH3,
     },
     {
-      name: 'h4',
-      label: 'H4',
-      action: (editor: Editor) => editor.chain().focus().toggleHeading({ level: 4 }).run(),
-      isActive: (editor: Editor) => editor.isActive('heading', { level: 4 }),
-      icon: RiH4
+      name: 'divider',
     },
-    {
-      name: 'h5',
-      label: 'H5',
-      action: (editor: Editor) => editor.chain().focus().toggleHeading({ level: 5 }).run(),
-      isActive: (editor: Editor) => editor.isActive('heading', { level: 5 }),
-      icon: RiH5,
-    },
-    {
-      name: 'h6',
-      label: 'H6',
-      action: (editor: Editor) => editor.chain().focus().toggleHeading({ level: 6 }).run(),
-      isActive: (editor: Editor) => editor.isActive('heading', { level: 6 }),
-      icon: RiH6,
-    },
+    // {
+    //   name: 'h4',
+    //   label: 'H4',
+    //   action: (editor: Editor) => editor.chain().focus().toggleHeading({ level: 4 }).run(),
+    //   isActive: (editor: Editor) => editor.isActive('heading', { level: 4 }),
+    //   icon: RiH4
+    // },
+    // {
+    //   name: 'h5',
+    //   label: 'H5',
+    //   action: (editor: Editor) => editor.chain().focus().toggleHeading({ level: 5 }).run(),
+    //   isActive: (editor: Editor) => editor.isActive('heading', { level: 5 }),
+    //   icon: RiH5,
+    // },
+    // {
+    //   name: 'h6',
+    //   label: 'H6',
+    //   action: (editor: Editor) => editor.chain().focus().toggleHeading({ level: 6 }).run(),
+    //   isActive: (editor: Editor) => editor.isActive('heading', { level: 6 }),
+    //   icon: RiH6,
+    // },
     {
       name: 'bulletList',
       label: 'Bullet List',
@@ -109,6 +114,16 @@ const Menubar = ({ editor }: MenubarProps) => {
       action: (editor: Editor) => editor.chain().focus().toggleOrderedList().run(),
       isActive: (editor: Editor) => editor.isActive('orderedList'),
       icon: RiListOrdered,
+    },
+    {
+      name: 'divider',
+    },
+    {
+      name: 'code',
+      label: 'Code',
+      action: (editor: Editor) => editor.chain().focus().toggleCode().run(),
+      isActive: (editor: Editor) => editor.isActive('code'),
+      icon: RiCodeSSlashLine,
     },
     {
       name: 'codeBlock',
@@ -125,6 +140,9 @@ const Menubar = ({ editor }: MenubarProps) => {
       icon: RiDoubleQuotesL,
     },
     {
+      name: 'divider',
+    },
+    {
       name: 'horizontalRule',
       label: 'Horizontal Rule',
       action: (editor: Editor) => editor.chain().focus().setHorizontalRule().run(),
@@ -135,6 +153,9 @@ const Menubar = ({ editor }: MenubarProps) => {
       label: 'Hard Break',
       action: (editor: Editor) => editor.chain().focus().setHardBreak().run(),
       icon: RiTextWrap,
+    },
+    {
+      name: 'divider',
     },
     {
       name: 'undo',
@@ -158,8 +179,6 @@ const Menubar = ({ editor }: MenubarProps) => {
     setIsActiveStates({ ...states })
   }
 
-  const debouncedCalculateIsActiveStates = debounce(calculateIsActiveStates, 500)
-
   let count = 0;
   const onMounted = () => {
     count += 1;
@@ -170,10 +189,7 @@ const Menubar = ({ editor }: MenubarProps) => {
       return
     }
 
-    editor.on('update', ({ editor }) => debouncedCalculateIsActiveStates(editor))
-    editor.on('selectionUpdate', ({ editor }) => debouncedCalculateIsActiveStates(editor))
-    editor.on('focus', ({ editor }) => debouncedCalculateIsActiveStates(editor))
-    editor.on('blur', ({ editor }) => debouncedCalculateIsActiveStates(editor))
+    editor.on('transaction', ({ editor }) => calculateIsActiveStates(editor))
 
     calculateIsActiveStates(editor)
   }
@@ -184,11 +200,20 @@ const Menubar = ({ editor }: MenubarProps) => {
     <section className='menubar flex'>
       {editor && buttons.map((btn) => {
         return (
-          <Tooltip key={btn.name} content={btn.label}>
-            <button className={`menubar-button flex ${isActiveStates[btn.name] ? 'active' : ''}`} onClick={() => btn.action(editor) && calculateIsActiveStates(editor)}>
-              <btn.icon />
-            </button>
-          </Tooltip>
+          <>
+            {
+              editor && btn.name === 'divider'
+                ? <div className='divider' />
+                : <Tooltip key={btn.name} content={btn.label}>
+                  <button
+                    className={`menubar-button flex ${isActiveStates[btn.name] ? 'active' : ''}`}
+                    onClick={() => btn.action && btn.action(editor) && calculateIsActiveStates(editor)}
+                  >
+                    {btn.icon && <btn.icon />}
+                  </button>
+                </Tooltip>
+            }
+          </>
         )
       })
       }

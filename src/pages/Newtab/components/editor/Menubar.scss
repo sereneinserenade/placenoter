@@ -1,6 +1,7 @@
 .menubar {
   gap: 4px;
   margin: 8px 0;
+  align-items: center;
 
   .menubar-button {
     align-items: center;
@@ -24,5 +25,12 @@
         fill: white;
       }
     }
+  }
+
+  .divider {
+    height: 1.5em;
+    width: 2px;
+    background: rgba($color: black, $alpha: 0.2);
+    margin: 0 4px;
   }
 }

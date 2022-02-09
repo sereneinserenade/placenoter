@@ -16,10 +16,6 @@ const Sidebar = () => {
 
   const [notes, setNotes] = useRecoilState(notesState)
 
-  const [editTitle, setEditTitle] = useState<boolean>(false)
-
-  const [noteIdUnderMouse, setNoteIdUnderMouse] = useState<string>('')
-
   const returnFormattedDateString = (timestamp: Date) => {
     return format(new Date(timestamp), 'PPpp')
   }
@@ -44,10 +40,12 @@ const Sidebar = () => {
     localNotes[index] = JSON.parse(JSON.stringify(newNote))
 
     setNotes(localNotes)
+
+    if (note.id === activeNote?.id) setActiveNote(JSON.parse(JSON.stringify(newNote)))
   }
 
   const getNoteTitle = (note: Note) => {
-    return <input placeholder='No Title...' className='title-editor-input' onClick={e => e.stopPropagation()} value={note.title} onInput={e => setNoteTitle(note, (e as any).target.value)} />
+    return <input placeholder='Add Title...' className='title-editor-input' onClick={e => e.stopPropagation()} value={note.title} onInput={e => setNoteTitle(note, (e as any).target.value)} />
   }
 
   const deleteNote = (e: any, id: string) => {
@@ -77,13 +75,9 @@ const Sidebar = () => {
         {
           !!notes.length && notes.map((note: Note) => {
             return (
-              <article onMouseEnter={() => setNoteIdUnderMouse(note.id)} onClick={() => changeActiveNoteTo(note)} key={note.id} className={`sidebar-note ${note.id === activeNote?.id ? 'active' : ''}`}>
+              <article onClick={() => changeActiveNoteTo(note)} key={note.id} className={`sidebar-note ${note.id === activeNote?.id ? 'active' : ''}`}>
                 <section className='title-and-action-center flex'>
-                  {
-                    note.id === noteIdUnderMouse && editTitle
-                      ? {}
-                      : getNoteTitle(note)
-                  }
+                  {getNoteTitle(note)}
                   <Tooltip placement='bottomStart' content={'Delete Note'}>
                     <Button color="primary" auto ghost size='sm' onClick={(e) => deleteNote(e, note.id)} icon={<FiTrash2 />} />
                   </Tooltip>

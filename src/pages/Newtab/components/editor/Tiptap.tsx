@@ -6,6 +6,7 @@ import Placeholder from '@tiptap/extension-placeholder';
 
 import './Tiptap.scss'
 import Menubar from './Menubar'
+import Underline from '@tiptap/extension-underline';
 
 interface TiptapProps {
   onUpdate: Function
@@ -13,11 +14,13 @@ interface TiptapProps {
 }
 
 const Tiptap = ({ onUpdate, content }: TiptapProps) => {
+
   const editor = useEditor({
     extensions: [
       StarterKit, Placeholder.configure({
         placeholder: 'Type here...'
-      })
+      }),
+      Underline
     ],
     content: content,
     onUpdate: ({ editor }) => onUpdate(editor.getHTML(), editor.getText()),
