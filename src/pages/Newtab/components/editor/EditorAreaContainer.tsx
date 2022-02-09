@@ -19,7 +19,7 @@ const EditorAreaContainer = () => {
   }
 
   return (
-    <Container xs>
+    <Container sm>
       <Tiptap content={`${activeNote?.content}` || ''} onUpdate={setNoteContent} />
     </Container>
   )

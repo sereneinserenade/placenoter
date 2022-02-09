@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 
 import { Editor } from '@tiptap/core';
-import { RiBold, RiItalic, RiStrikethrough, RiCodeSSlashLine, RiH1, RiH2, RiH3, RiListUnordered, RiListOrdered, RiCodeBoxLine, RiDoubleQuotesL, RiSeparator, RiTextWrap, RiArrowGoBackLine, RiArrowGoForwardLine, RiUnderline, RiListCheck2 } from 'react-icons/ri'
+import { RiBold, RiItalic, RiStrikethrough, RiCodeSSlashLine, RiH1, RiH2, RiH3, RiListUnordered, RiListOrdered, RiCodeBoxLine, RiDoubleQuotesL, RiSeparator, RiTextWrap, RiArrowGoBackLine, RiArrowGoForwardLine, RiUnderline, RiListCheck2, RiAlignLeft, RiAlignRight, RiAlignCenter, RiAlignJustify } from 'react-icons/ri'
 import { IconType } from 'react-icons'
 import { Tooltip } from '@nextui-org/react';
 import { useRecoilValue } from 'recoil'
 import { activeNoteState } from '../../Store';
 
 import './Menubar.scss'
+import { debounce } from 'lodash';
 
 type MenubarProps = {
   editor: Editor
@@ -56,6 +57,37 @@ const Menubar = ({ editor }: MenubarProps) => {
       action: (editor: Editor) => editor.chain().focus().toggleStrike().run(),
       isActive: (editor: Editor) => editor.isActive('strike'),
       icon: RiStrikethrough,
+    },
+    {
+      name: 'divider',
+    },
+    {
+      name: 'alignLeft',
+      label: 'Align Left',
+      action: (editor: Editor) => editor.chain().focus().setTextAlign('left').run(),
+      isActive: (editor: Editor) => editor.isActive({ textAlign: 'left' }),
+      icon: RiAlignLeft,
+    },
+    {
+      name: 'alignCenter',
+      label: 'Align Center',
+      action: (editor: Editor) => editor.chain().focus().setTextAlign('center').run(),
+      isActive: (editor: Editor) => editor.isActive({ textAlign: 'center' }),
+      icon: RiAlignCenter,
+    },
+    {
+      name: 'alignRight',
+      label: 'Align Right',
+      action: (editor: Editor) => editor.chain().focus().setTextAlign('right').run(),
+      isActive: (editor: Editor) => editor.isActive({ textAlign: 'right' }),
+      icon: RiAlignRight,
+    },
+    {
+      name: 'alignJustify',
+      label: 'Align Justify',
+      action: (editor: Editor) => editor.chain().focus().setTextAlign('justify').run(),
+      isActive: (editor: Editor) => editor.isActive({ textAlign: 'justify' }),
+      icon: RiAlignJustify,
     },
     {
       name: 'divider',
@@ -190,6 +222,8 @@ const Menubar = ({ editor }: MenubarProps) => {
     setIsActiveStates({ ...states })
   }
 
+  const debouncedCalculateIsActiveStates = debounce(calculateIsActiveStates, 200)
+
   let count = 0;
   const onMounted = () => {
     count += 1;
@@ -200,7 +234,7 @@ const Menubar = ({ editor }: MenubarProps) => {
       return
     }
 
-    editor.on('transaction', ({ editor }) => calculateIsActiveStates(editor))
+    editor.on('transaction', ({ editor }) => debouncedCalculateIsActiveStates(editor))
 
     calculateIsActiveStates(editor)
   }
@@ -219,7 +253,7 @@ const Menubar = ({ editor }: MenubarProps) => {
                   <Tooltip key={btn.name} content={btn.label}>
                     <button
                       className={`menubar-button flex ${isActiveStates[btn.name] ? 'active' : ''}`}
-                      onClick={() => btn.action && btn.action(editor) && calculateIsActiveStates(editor)}
+                      onClick={() => btn.action && btn.action(editor) && debouncedCalculateIsActiveStates(editor)}
                     >
                       {btn.icon && <btn.icon />}
                     </button>

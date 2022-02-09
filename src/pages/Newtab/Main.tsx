@@ -41,7 +41,6 @@ function Main() {
     if (notesFetchedFromDb) storage.sync.set({ dbnotes: notes })
   }, [notes])
 
-
   const createNewNoteAndSetItAsActiveNote = () => {
     const newNote: Note = {
       id: uuidv4(),
@@ -67,6 +66,11 @@ function Main() {
       else storage.sync.set({ dbnotes: [] })
 
       setNotesFetchedFromDb(true)
+
+      storage.sync.get('lastActiveNoteId', ({ lastActiveNoteId }) => {
+        const foundNote = dbnotes.find((n: Note) => n.id === lastActiveNoteId)
+        setActiveNote(foundNote)
+      })
     })
   }
 

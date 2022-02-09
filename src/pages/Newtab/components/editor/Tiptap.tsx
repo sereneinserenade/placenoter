@@ -9,6 +9,8 @@ import Menubar from './Menubar'
 import Underline from '@tiptap/extension-underline';
 import TaskItem from '@tiptap/extension-task-item';
 import TaskList from '@tiptap/extension-task-list';
+import CharacterCount from '@tiptap/extension-character-count';
+import TextAlign from '@tiptap/extension-text-align';
 
 interface TiptapProps {
   onUpdate: Function
@@ -24,9 +26,11 @@ const Tiptap = ({ onUpdate, content }: TiptapProps) => {
       }),
       Underline,
       TaskList,
-      TaskItem.configure({
-        nested: true,
-      }),
+      TaskItem.configure({ nested: true }),
+      CharacterCount,
+      TextAlign.configure({
+        types: ['heading', 'paragraph'],
+      })
     ],
     content: content,
     onUpdate: ({ editor }) => onUpdate(editor.getHTML(), editor.getText()),
@@ -38,6 +42,16 @@ const Tiptap = ({ onUpdate, content }: TiptapProps) => {
       {editor && <Menubar editor={editor} />}
 
       <EditorContent editor={editor} />
+
+      <section className='word-and-character-count-section flex'>
+        <span>
+          {editor?.storage.characterCount.characters()} Characters
+        </span>
+        {'&'}
+        <span>
+          {editor?.storage.characterCount.words()} Words
+        </span>
+      </section>
     </>
   )
 }

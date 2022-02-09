@@ -19,7 +19,7 @@
     }
 
     &.active {
-      background: black;
+      background: var(--nextui-colors-blue500);
 
       svg {
         fill: white;

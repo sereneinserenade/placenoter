@@ -71,6 +71,11 @@ const MainTop = () => {
 
   const updateTitle = (e: React.FormEvent<FormElement>) => (activeNote) && setActiveNote({ ...activeNote, title: `${(e.target as any).value}` })
 
+  const goHome = () => {
+    setActiveNote(undefined)
+    storage.sync.set({ lastActiveNoteId: undefined })
+  }
+
   return (
     <section className='main-top flex'>
       <section className='left-controls flex' aria-label='left-controls'>
@@ -81,7 +86,7 @@ const MainTop = () => {
           <Button color="primary" auto ghost size='sm' onClick={createNewNoteAndSetItAsActiveNote} className="sidebar-control-button flex" icon={< FiFeather />} />
         </Tooltip>
         <Tooltip placement='bottomStart' content={'Home'}>
-          <Button color="primary" auto ghost size='sm' onClick={() => setActiveNote(undefined)} className="sidebar-control-button flex" icon={< FiHome />} />
+          <Button color="primary" auto ghost size='sm' onClick={() => goHome()} className="sidebar-control-button flex" icon={< FiHome />} />
         </Tooltip>
       </section>
 
