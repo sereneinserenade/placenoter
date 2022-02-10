@@ -1,7 +1,7 @@
 .sidebar {
   height: 100vh;
   box-sizing: border-box;
-  border-right: 1px solid rgba($color: black, $alpha: 0.20);
+  border-right: 1px solid rgba($color: black, $alpha: 0.2);
   margin-left: -25%;
   width: 25%;
   transition: all 0.3s;
@@ -48,5 +48,19 @@
       }
     }
   }
+}
 
+.dark-theme {
+  .sidebar {
+    border-right: 1px solid rgba($color: white, $alpha: 0.2);
+
+    .sidebar-note {
+      border-bottom: 2px solid rgba($color: white, $alpha: 0.15);
+
+      &.active {
+        border-left: 6px solid white;
+        background: rgba($color: white, $alpha: 0.05);
+      }
+    }
+  }
 }

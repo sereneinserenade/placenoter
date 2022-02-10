@@ -83,7 +83,7 @@ const Sidebar = () => {
                 <section className='title-and-action-center flex'>
                   {getNoteTitle(note)}
                   <Tooltip placement='bottomStart' content={'Delete Note'}>
-                    <Button color="primary" auto ghost size='sm' onClick={(e) => deleteNote(e, note.id)} icon={<FiTrash2 />} />
+                    <Button color="error" auto ghost size='sm' onClick={(e) => deleteNote(e, note.id)} icon={<FiTrash2 />} />
                   </Tooltip>
                 </section>
                 {

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Button, Tooltip, FormElement, Text, Input } from '@nextui-org/react'
+import { Button, Tooltip, FormElement, Input, useTheme, changeTheme, Switch } from '@nextui-org/react'
 import { RiMenuFoldFill, RiMenuUnfoldFill } from 'react-icons/ri'
 import { FiFeather, FiHome, FiTrash2 } from 'react-icons/fi'
 import { v4 as uuidv4 } from 'uuid'
@@ -15,6 +15,8 @@ const MainTop = () => {
   const [activeNote, setActiveNote] = useRecoilState(activeNoteState)
   const [sidebarActive, setSidebarActive] = useRecoilState(sidebarActiveState)
   const [notes, setNotes] = useRecoilState(notesState)
+
+  const { type, isDark } = useTheme();
 
   const checkIfAnEmptyNoteExists = (): Note | undefined => {
     return notes.find((n) => n.title.trim() === "" && n.textContent.trim() === "")
@@ -76,6 +78,14 @@ const MainTop = () => {
     storage.sync.set({ lastActiveNoteId: undefined })
   }
 
+  const onThemeChange = () => {
+    const nextTheme = isDark ? 'light-theme' : 'dark-theme';
+
+    changeTheme(nextTheme);
+
+    window.localStorage.setItem('data-theme', nextTheme); // I think local storage is good enough for this
+  }
+
   return (
     <section className='main-top flex'>
       <section className='left-controls flex' aria-label='left-controls'>
@@ -110,10 +120,16 @@ const MainTop = () => {
         }
       </section>
 
-      <section>
+      <section className='right-controls flex'>
+        <Tooltip placement='bottomStart' content={isDark ? 'Light mode' : 'Dark mode'}>
+          <Switch
+            checked={isDark}
+            onChange={onThemeChange}
+          />
+        </Tooltip>
         {
           activeNote && <Tooltip placement='bottomEnd' content={'Delete Note'}>
-            <Button color="primary" auto ghost size='sm' onClick={deleteActiveNote} className="sidebar-control-button flex" icon={< FiTrash2 />} />
+            <Button color="error" auto ghost size='sm' onClick={deleteActiveNote} className="sidebar-control-button flex" icon={< FiTrash2 />} />
           </Tooltip>
         }
       </section>

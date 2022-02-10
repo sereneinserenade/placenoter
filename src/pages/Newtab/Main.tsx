@@ -100,7 +100,7 @@ function Main() {
                 <h1> No Note selected </h1>
 
                 <h3 className='flex'>
-                  Select or <Link onClick={(e) => onCreateNewNoteClicked(e)} > &nbsp; create a new &nbsp; </Link>  note.
+                  Select or <Link color='primary' onClick={(e) => onCreateNewNoteClicked(e)} > &nbsp; create a new &nbsp; </Link>  note.
                 </h3>
               </main>
             )

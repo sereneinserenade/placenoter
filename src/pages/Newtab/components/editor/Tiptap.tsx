@@ -11,6 +11,8 @@ import TaskItem from '@tiptap/extension-task-item';
 import TaskList from '@tiptap/extension-task-list';
 import CharacterCount from '@tiptap/extension-character-count';
 import TextAlign from '@tiptap/extension-text-align';
+import Link from '@tiptap/extension-link';
+import { Container } from '@nextui-org/react';
 
 interface TiptapProps {
   onUpdate: Function
@@ -30,7 +32,8 @@ const Tiptap = ({ onUpdate, content }: TiptapProps) => {
       CharacterCount,
       TextAlign.configure({
         types: ['heading', 'paragraph'],
-      })
+      }),
+      Link,
     ],
     content: content,
     onUpdate: ({ editor }) => onUpdate(editor.getHTML(), editor.getText()),

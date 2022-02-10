@@ -34,3 +34,13 @@
     margin: 0 4px;
   }
 }
+
+.dark-theme {
+  .menubar-button {
+    box-shadow: 0 0 4px 1px rgba($color: white, $alpha: 0.2);
+  }
+
+  .divider {
+    background: rgba($color: white, $alpha: 0.2);
+  }
+}
