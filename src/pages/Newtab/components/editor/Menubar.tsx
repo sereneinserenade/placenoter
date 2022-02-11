@@ -1,23 +1,26 @@
 import React, { useEffect, useState } from 'react';
 
 import { Editor } from '@tiptap/core';
-import { RiBold, RiItalic, RiStrikethrough, RiCodeSSlashLine, RiH1, RiH2, RiH3, RiListUnordered, RiListOrdered, RiCodeBoxLine, RiDoubleQuotesL, RiSeparator, RiTextWrap, RiArrowGoBackLine, RiArrowGoForwardLine, RiUnderline, RiListCheck2, RiAlignLeft, RiAlignRight, RiAlignCenter, RiAlignJustify } from 'react-icons/ri'
+import { RiBold, RiItalic, RiStrikethrough, RiCodeSSlashLine, RiH1, RiH2, RiH3, RiListUnordered, RiListOrdered, RiCodeBoxLine, RiDoubleQuotesL, RiSeparator, RiTextWrap, RiArrowGoBackLine, RiArrowGoForwardLine, RiUnderline, RiListCheck2, RiAlignLeft, RiAlignRight, RiAlignCenter, RiAlignJustify, RiLink } from 'react-icons/ri'
 import { IconType } from 'react-icons'
 import { Tooltip } from '@nextui-org/react';
 import { useRecoilValue } from 'recoil'
-import { activeNoteState } from '../../Store';
-
-import './Menubar.scss'
 import { debounce } from 'lodash';
+
+import { activeNoteState } from '../../Store';
+import LinkModal from './LinkModal'
+import './Menubar.scss'
 
 type MenubarProps = {
   editor: Editor
 }
 
+type ActionType = (editor: Editor) => boolean
+
 interface Button {
   name: string
   label?: string
-  action?: (editor: Editor) => boolean
+  action?: ActionType | Function
   isActive?: (editor: Editor) => boolean
   icon?: IconType
 }
@@ -26,6 +29,26 @@ const Menubar = ({ editor }: MenubarProps) => {
   if (!editor) return null
 
   const [isActiveStates, setIsActiveStates] = useState<Record<string, boolean>>({})
+
+  const [linkModalVisible, setLinkModalVisible] = useState<boolean>(false)
+
+  const [currentUrl, setCurrentUrl] = useState<string>("")
+
+  const openLinkModal = () => setLinkModalVisible(true)
+
+  const closeLinkModal = (url?: string) => {
+    setLinkModalVisible(false)
+
+    if (url === null || !editor) return
+
+    if (url === '') {
+      editor.chain().focus().extendMarkRange('link').unsetLink().run()
+
+      return
+    }
+
+    url && editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run()
+  }
 
   const activeNote = useRecoilValue(activeNoteState)
 
@@ -57,6 +80,16 @@ const Menubar = ({ editor }: MenubarProps) => {
       action: (editor: Editor) => editor.chain().focus().toggleStrike().run(),
       isActive: (editor: Editor) => editor.isActive('strike'),
       icon: RiStrikethrough,
+    },
+    {
+      name: 'divider',
+    },
+    {
+      name: 'link',
+      label: 'Link',
+      action: openLinkModal,
+      isActive: (editor: Editor) => editor.isActive('link'),
+      icon: RiLink,
     },
     {
       name: 'divider',
@@ -236,6 +269,8 @@ const Menubar = ({ editor }: MenubarProps) => {
 
     editor.on('transaction', ({ editor }) => debouncedCalculateIsActiveStates(editor))
 
+    editor.on('selectionUpdate', ({ editor }) => setCurrentUrl(editor.getAttributes('link').href))
+
     calculateIsActiveStates(editor)
   }
 
@@ -264,6 +299,8 @@ const Menubar = ({ editor }: MenubarProps) => {
         )
       })
       }
+
+      <LinkModal visible={linkModalVisible} onClose={closeLinkModal} url={currentUrl} />
     </section>
   )
 }

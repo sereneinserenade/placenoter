@@ -33,7 +33,11 @@ const Tiptap = ({ onUpdate, content }: TiptapProps) => {
       TextAlign.configure({
         types: ['heading', 'paragraph'],
       }),
-      Link,
+      Link.configure({
+        openOnClick: false,
+        linkOnPaste: true,
+        autolink: true,
+      }),
     ],
     content: content,
     onUpdate: ({ editor }) => onUpdate(editor.getHTML(), editor.getText()),
