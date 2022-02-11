@@ -302,13 +302,13 @@ const Menubar = ({ editor }: MenubarProps) => {
       <section className='search-and-replace-section flex'>
         <section className='inputs-section flex'>
           <Input
-            placeholder='Search...'
+            placeholder='Search for...'
             size="sm"
             value={localSearchTerm}
             onInput={e => stopPrevent(e) && setLocalSearchTerm((e.target as HTMLInputElement).value)}
           />
           <Input
-            placeholder='Replace...'
+            placeholder='Replace with...'
             size="sm"
             value={replaceTerm}
             onInput={e => stopPrevent(e) && setReplaceTerm((e.target as HTMLInputElement).value)}
@@ -317,11 +317,11 @@ const Menubar = ({ editor }: MenubarProps) => {
         </section>
 
         <section className='buttons-section flex'>
-          <Button flat size='sm' onClick={() => editor.commands.replace()}>
+          <Button bordered size='sm' onClick={() => editor.commands.replace()}>
             Replace
           </Button>
 
-          <Button flat size='sm' onClick={() => editor.commands.replaceAll()}>
+          <Button bordered ghost color='gradient' size='sm' onClick={() => editor.commands.replaceAll()}>
             Replace All
           </Button>
         </section>
@@ -350,7 +350,7 @@ const Menubar = ({ editor }: MenubarProps) => {
       }
       {
         activeNote?.id && editor && (
-          <Tooltip visible={!!globalSearchTerm.length} trigger='click' placement='bottomEnd' content={SearchSection()}>
+          <Tooltip visible={!!globalSearchTerm.length} trigger='hover' placement='bottomEnd' content={SearchSection()}>
             <button className={`menubar-button flex`} >
               <RiSearch2Line />
             </button>

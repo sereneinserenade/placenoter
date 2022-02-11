@@ -13,9 +13,18 @@ type LinkModalProps = {
 const LinkModal = ({ visible, onClose, url }: LinkModalProps) => {
   const [link, setLink] = useState<string>("")
 
+  const [isLinkValid, setIsLinkValid] = useState<boolean>(true)
+
   const onApply = () => onClose(link)
 
   useEffect(() => { url ? setLink(url) : setLink("") }, [visible, url])
+
+  useEffect(() => { link ? setIsLinkValid(urlPatternValidation(link)) : setIsLinkValid(true) }, [link])
+
+  const urlPatternValidation = (url: string): boolean => {
+    const regex = new RegExp('(https?://)?([\\da-z.-]+)\\.([a-z.]{2,6})[/\\w .-]*/?');
+    return regex.test(url);
+  };
 
   return (
     <Modal blur closeButton open={visible} onClose={onClose} >
@@ -36,7 +45,13 @@ const LinkModal = ({ visible, onClose, url }: LinkModalProps) => {
           value={link}
           onInput={(e) => setLink((e.target as HTMLInputElement).value.trim())}
           onKeyPress={(e) => e.key === 'Enter' && onApply()}
+          autoFocus
         />
+        {
+          !isLinkValid && <Text color="error">
+            Please enter a valid URL.
+          </Text>
+        }
       </Modal.Body>
 
       <Modal.Footer>
