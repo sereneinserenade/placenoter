@@ -16,9 +16,14 @@
   }
 }
 
+.editor-content {
+  margin-top: 1em;
+}
+
 /* Basic editor styles */
 .ProseMirror {
   outline: none !important;
+
   > * + * {
     margin-top: 0.75em;
   }
@@ -34,6 +39,7 @@
   ul,
   ol {
     padding: 0 1rem;
+    margin: auto;
   }
 
   ul {
@@ -63,18 +69,10 @@
     }
   }
 
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    line-height: 1.1;
-  }
-
   code {
     background-color: rgba(#616161, 0.1);
     color: #616161;
+    letter-spacing: normal;
   }
 
   pre {

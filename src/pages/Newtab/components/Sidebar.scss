@@ -5,6 +5,7 @@
   margin-left: -25%;
   width: 25%;
   transition: all 0.3s;
+  overflow: hidden;
 
   &.active {
     margin-left: 0;

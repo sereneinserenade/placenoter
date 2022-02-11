@@ -48,7 +48,7 @@ const Tiptap = ({ onUpdate, content }: TiptapProps) => {
     <>
       {editor && <Menubar editor={editor} />}
 
-      <EditorContent editor={editor} />
+      <EditorContent className='editor-content' editor={editor} />
 
       <section className='word-and-character-count-section flex'>
         <span>
