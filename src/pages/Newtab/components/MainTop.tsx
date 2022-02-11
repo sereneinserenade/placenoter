@@ -86,6 +86,13 @@ const MainTop = () => {
     window.localStorage.setItem('data-theme', nextTheme); // I think local storage is good enough for this
   }
 
+  const refreshNote = () => {
+    const note = JSON.parse(JSON.stringify(activeNote))
+
+    setActiveNote(undefined)
+
+    setTimeout(() => setActiveNote(note))
+  }
   return (
     <section className='main-top flex'>
       <section className='left-controls flex' aria-label='left-controls'>
@@ -109,6 +116,7 @@ const MainTop = () => {
             onInput={(e) => updateTitle(e)}
             value={`${activeNote?.title}`}
             className="title-input"
+            onBlur={refreshNote} // TODO: make this logic better
           />
           // : <Text
           //   size={24.8}
