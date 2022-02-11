@@ -3,7 +3,7 @@ import { Button, Input, Text, Tooltip } from '@nextui-org/react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { format } from 'date-fns'
 
-import { sidebarActiveState, activeNoteState, notesState } from '../Store'
+import { sidebarActiveState, activeNoteState, notesState, editorSearchState } from '../Store'
 import { Note } from '../types';
 
 import './Sidebar.scss'
@@ -16,9 +16,9 @@ const Sidebar = () => {
 
   const [activeNote, setActiveNote] = useRecoilState(activeNoteState)
 
-  const [notes, setNotes] = useRecoilState(notesState)
+  const [globalSearchTerm, setGlobalSearchTerm] = useRecoilState(editorSearchState)
 
-  const [searchTerm, setSearchTerm] = useState<string>("")
+  const [notes, setNotes] = useRecoilState(notesState)
 
   const returnFormattedDateString = (timestamp: Date) => {
     return format(new Date(timestamp), 'PPpp')
@@ -74,8 +74,8 @@ const Sidebar = () => {
   const gimmeNotesToShow = () => {
     let localNotes: Note[] = notes
 
-    if (searchTerm) {
-      const lowerCaseSearchTerm = searchTerm.toLowerCase().trim()
+    if (globalSearchTerm) {
+      const lowerCaseSearchTerm = globalSearchTerm.toLowerCase().trim()
 
       localNotes = localNotes
         .filter(({ textContent, title }) => {
@@ -126,8 +126,8 @@ const Sidebar = () => {
           fullWidth={true}
           placeholder='Search notes...'
           type="search"
-          value={searchTerm}
-          onInput={e => setSearchTerm((e.target as HTMLInputElement).value)}
+          value={globalSearchTerm}
+          onInput={e => setGlobalSearchTerm((e.target as HTMLInputElement).value)}
         />
       </section>
 

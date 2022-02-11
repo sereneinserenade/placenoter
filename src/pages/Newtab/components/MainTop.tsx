@@ -75,6 +75,7 @@ const MainTop = () => {
 
   const goHome = () => {
     setActiveNote(undefined)
+
     storage.sync.set({ lastActiveNoteId: undefined })
   }
 

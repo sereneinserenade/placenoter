@@ -34,7 +34,7 @@ const Menubar = ({ editor }: MenubarProps) => {
 
   const [currentUrl, setCurrentUrl] = useState<string>("")
 
-  const [isGlobalSearchActive, setGlobalSearchState] = useRecoilState(editorSearchState)
+  const [globalSearchTerm, setGlobalSearchTerm] = useRecoilState(editorSearchState)
 
   const [localSearchTerm, setLocalSearchTerm] = useState<string>("")
 
@@ -44,6 +44,8 @@ const Menubar = ({ editor }: MenubarProps) => {
     editor.commands.setSearchTerm(localSearchTerm);
     editor.commands.setReplaceTerm(replaceTerm);
   }, [localSearchTerm, replaceTerm])
+
+  useEffect(() => { setLocalSearchTerm(globalSearchTerm) }, [globalSearchTerm])
 
   const openLinkModal = () => setLinkModalVisible(true)
 
@@ -348,7 +350,7 @@ const Menubar = ({ editor }: MenubarProps) => {
       }
       {
         activeNote?.id && editor && (
-          <Tooltip visible={isGlobalSearchActive} trigger='click' placement='bottomEnd' content={SearchSection()}>
+          <Tooltip visible={!!globalSearchTerm.length} trigger='click' placement='bottomEnd' content={SearchSection()}>
             <button className={`menubar-button flex`} >
               <RiSearch2Line />
             </button>
