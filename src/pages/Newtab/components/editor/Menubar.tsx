@@ -300,17 +300,13 @@ const Menubar = ({ editor }: MenubarProps) => {
       <section className='search-and-replace-section flex'>
         <section className='inputs-section flex'>
           <Input
-            bordered
             placeholder='Search...'
-            contentLeft={<RiSearch2Line />}
             size="sm"
             value={localSearchTerm}
             onInput={e => stopPrevent(e) && setLocalSearchTerm((e.target as HTMLInputElement).value)}
           />
           <Input
-            bordered
             placeholder='Replace...'
-            contentLeft={<RiFindReplaceLine />}
             size="sm"
             value={replaceTerm}
             onInput={e => stopPrevent(e) && setReplaceTerm((e.target as HTMLInputElement).value)}
