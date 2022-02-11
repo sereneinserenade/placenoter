@@ -3,9 +3,6 @@ import React from 'react';
 import { useEditor, EditorContent, Content } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import Placeholder from '@tiptap/extension-placeholder';
-
-import './Tiptap.scss'
-import Menubar from './Menubar'
 import Underline from '@tiptap/extension-underline';
 import TaskItem from '@tiptap/extension-task-item';
 import TaskList from '@tiptap/extension-task-list';
@@ -13,6 +10,10 @@ import CharacterCount from '@tiptap/extension-character-count';
 import TextAlign from '@tiptap/extension-text-align';
 import Link from '@tiptap/extension-link';
 import { Container } from '@nextui-org/react';
+
+import './Tiptap.scss'
+import Menubar from './Menubar'
+import { SearchNReplace } from './extensions'
 
 interface TiptapProps {
   onUpdate: Function
@@ -38,6 +39,7 @@ const Tiptap = ({ onUpdate, content }: TiptapProps) => {
         linkOnPaste: true,
         autolink: true,
       }),
+      SearchNReplace
     ],
     content: content,
     onUpdate: ({ editor }) => onUpdate(editor.getHTML(), editor.getText()),

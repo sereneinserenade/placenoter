@@ -46,3 +46,20 @@
     background: rgba($color: white, $alpha: 0.2);
   }
 }
+
+.search-and-replace-section {
+  flex-direction: column;
+  justify-content: center;
+  width: fit-content;
+  gap: 8px;
+
+  .inputs-section {
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .buttons-section {
+    justify-content: center;
+    gap: 8px;
+  }
+}

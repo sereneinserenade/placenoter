@@ -17,3 +17,8 @@ export const activeNoteState = atom<Note | undefined>({
   key: 'activeNoteState',
   default: undefined
 })
+
+export const editorSearchState = atom<boolean>({
+  key: 'editorSearchState',
+  default: false
+})

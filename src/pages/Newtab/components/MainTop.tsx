@@ -135,11 +135,11 @@ const MainTop = () => {
             onChange={onThemeChange}
           />
         </Tooltip>
-        {
+        {/* {
           activeNote && <Tooltip placement='bottomEnd' content={'Delete Note'}>
             <Button color="error" auto ghost size='sm' onClick={deleteActiveNote} className="sidebar-control-button flex" icon={< FiTrash2 />} />
           </Tooltip>
-        }
+        } */}
       </section>
     </section>
   )

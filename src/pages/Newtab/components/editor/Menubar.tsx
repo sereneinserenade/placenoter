@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 
 import { Editor } from '@tiptap/core';
-import { RiBold, RiItalic, RiStrikethrough, RiCodeSSlashLine, RiH1, RiH2, RiH3, RiListUnordered, RiListOrdered, RiCodeBoxLine, RiDoubleQuotesL, RiSeparator, RiTextWrap, RiArrowGoBackLine, RiArrowGoForwardLine, RiUnderline, RiListCheck2, RiAlignLeft, RiAlignRight, RiAlignCenter, RiAlignJustify, RiLink } from 'react-icons/ri'
+import { RiBold, RiItalic, RiStrikethrough, RiCodeSSlashLine, RiH1, RiH2, RiH3, RiListUnordered, RiListOrdered, RiCodeBoxLine, RiDoubleQuotesL, RiSeparator, RiTextWrap, RiArrowGoBackLine, RiArrowGoForwardLine, RiUnderline, RiListCheck2, RiAlignLeft, RiAlignRight, RiAlignCenter, RiAlignJustify, RiLink, RiSearch2Line, RiFindReplaceLine } from 'react-icons/ri'
 import { IconType } from 'react-icons'
-import { Tooltip } from '@nextui-org/react';
-import { useRecoilValue } from 'recoil'
+import { Button, Col, Container, Input, Row, Spacer, Tooltip } from '@nextui-org/react';
+import { useRecoilState, useRecoilValue } from 'recoil'
 import { debounce } from 'lodash';
 
-import { activeNoteState } from '../../Store';
+import { activeNoteState, editorSearchState } from '../../Store';
 import LinkModal from './LinkModal'
 import './Menubar.scss'
 
@@ -33,6 +33,17 @@ const Menubar = ({ editor }: MenubarProps) => {
   const [linkModalVisible, setLinkModalVisible] = useState<boolean>(false)
 
   const [currentUrl, setCurrentUrl] = useState<string>("")
+
+  const [isGlobalSearchActive, setGlobalSearchState] = useRecoilState(editorSearchState)
+
+  const [localSearchTerm, setLocalSearchTerm] = useState<string>("")
+
+  const [replaceTerm, setReplaceTerm] = useState<string>("")
+
+  useEffect(() => {
+    editor.commands.setSearchTerm(localSearchTerm);
+    editor.commands.setReplaceTerm(replaceTerm);
+  }, [localSearchTerm, replaceTerm])
 
   const openLinkModal = () => setLinkModalVisible(true)
 
@@ -276,28 +287,77 @@ const Menubar = ({ editor }: MenubarProps) => {
 
   useEffect(() => { onMounted() }, [])
 
+  const stopPrevent = <T extends unknown>(e: T) => {
+    (e as Event).stopPropagation();
+    (e as Event).preventDefault()
+
+    return e
+  }
+
+  const SearchSection = () => {
+
+    return (
+      <section className='search-and-replace-section flex'>
+        <section className='inputs-section flex'>
+          <Input
+            bordered
+            placeholder='Search...'
+            contentLeft={<RiSearch2Line />}
+            size="sm"
+            value={localSearchTerm}
+            onInput={e => stopPrevent(e) && setLocalSearchTerm((e.target as HTMLInputElement).value)}
+          />
+          <Input
+            bordered
+            placeholder='Replace...'
+            contentLeft={<RiFindReplaceLine />}
+            size="sm"
+            value={replaceTerm}
+            onInput={e => stopPrevent(e) && setReplaceTerm((e.target as HTMLInputElement).value)}
+            onKeyPress={e => e.key === 'Enter' && editor.commands.replace()}
+          />
+        </section>
+
+        <section className='buttons-section flex'>
+          <Button flat size='sm' onClick={() => editor.commands.replace()}>
+            Replace
+          </Button>
+
+          <Button flat size='sm' onClick={() => editor.commands.replaceAll()}>
+            Replace All
+          </Button>
+        </section>
+      </section>
+    )
+  }
+
   return (
     <section className='menubar flex'>
       {activeNote?.id && editor && buttons.map((btn, index) => {
         return (
-          <>
-            {
-              btn.name === 'divider'
-                ? (<div key={(index + 1) + 'th-divider'} className='divider' />)
-                : (
-                  <Tooltip key={btn.name} content={btn.label}>
-                    <button
-                      className={`menubar-button flex ${isActiveStates[btn.name] ? 'active' : ''}`}
-                      onClick={() => btn.action && btn.action(editor) && debouncedCalculateIsActiveStates(editor)}
-                    >
-                      {btn.icon && <btn.icon />}
-                    </button>
-                  </Tooltip>
-                )
-            }
-          </>
+          btn.name === 'divider'
+            ? (<div key={(index + 1) + 'th-divider'} className='divider' />)
+            : (
+              <Tooltip key={btn.name} content={btn.label}>
+                <button
+                  className={`menubar-button flex ${isActiveStates[btn.name] ? 'active' : ''}`}
+                  onClick={() => btn.action && btn.action(editor) && debouncedCalculateIsActiveStates(editor)}
+                >
+                  {btn.icon && <btn.icon />}
+                </button>
+              </Tooltip>
+            )
         )
       })
+      }
+      {
+        activeNote?.id && editor && (
+          <Tooltip visible={isGlobalSearchActive} trigger='click' placement='bottomEnd' content={SearchSection()}>
+            <button className={`menubar-button flex`} >
+              <RiSearch2Line />
+            </button>
+          </Tooltip>
+        )
       }
 
       <LinkModal visible={linkModalVisible} onClose={closeLinkModal} url={currentUrl} />
