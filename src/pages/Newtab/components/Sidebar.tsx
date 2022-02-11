@@ -18,6 +18,8 @@ const Sidebar = () => {
 
   const [notes, setNotes] = useRecoilState(notesState)
 
+  const [searchTerm, setSearchTerm] = useState<string>("")
+
   const returnFormattedDateString = (timestamp: Date) => {
     return format(new Date(timestamp), 'PPpp')
   }
@@ -69,33 +71,68 @@ const Sidebar = () => {
     if (activeNote?.id === id) setActiveNote(undefined)
   }
 
+  const gimmeNotesToShow = () => {
+    let localNotes: Note[] = notes
+
+    if (searchTerm) {
+      const lowerCaseSearchTerm = searchTerm.toLowerCase().trim()
+
+      localNotes = localNotes
+        .filter(({ textContent, title }) => {
+          return title.toLowerCase().includes(lowerCaseSearchTerm) || textContent.replaceAll('\n\n', ' ').toLowerCase().includes(lowerCaseSearchTerm)
+        })
+    }
+
+    return (
+      !!localNotes.length && localNotes.map((note: Note) => {
+        return (
+          <article
+            onClick={() => changeActiveNoteTo(note)}
+            key={note.id}
+            className={`sidebar-note ${note.id === activeNote?.id ? 'active' : ''}`}
+          >
+            <section className='title-and-action-center flex'>
+              {getNoteTitle(note)}
+              <Tooltip
+                placement='bottomStart'
+                content={'Delete Note'}
+              >
+                <Button
+                  color="error"
+                  auto
+                  ghost
+                  size='sm'
+                  onClick={(e) => deleteNote(e, note.id)} icon={<FiTrash2 />}
+                />
+              </Tooltip>
+            </section>
+            {
+              note.textContent.trim().length
+                ? <Text> {note.textContent.length >= 40 ? note.textContent.substring(0, 40).trim() + '...' : note.textContent} </Text>
+                : <Text color="gray"> {'No content...'} </Text>
+            }
+            <Text size={12}> {returnFormattedDateString(new Date(note.timestamp))} </Text>
+          </article>
+        )
+      })
+    )
+  }
+
   return (
     <aside className={`sidebar ${sidebarActive ? 'active' : ''}`}>
       <section className='sidebar-top flex'>
-        <Input underlined fullWidth={true} placeholder='Search notes...' type="search" />
+        <Input
+          underlined
+          fullWidth={true}
+          placeholder='Search notes...'
+          type="search"
+          value={searchTerm}
+          onInput={e => setSearchTerm((e.target as HTMLInputElement).value)}
+        />
       </section>
 
       <section>
-        {
-          !!notes.length && notes.map((note: Note) => {
-            return (
-              <article onClick={() => changeActiveNoteTo(note)} key={note.id} className={`sidebar-note ${note.id === activeNote?.id ? 'active' : ''}`}>
-                <section className='title-and-action-center flex'>
-                  {getNoteTitle(note)}
-                  <Tooltip placement='bottomStart' content={'Delete Note'}>
-                    <Button color="error" auto ghost size='sm' onClick={(e) => deleteNote(e, note.id)} icon={<FiTrash2 />} />
-                  </Tooltip>
-                </section>
-                {
-                  note.textContent.trim().length
-                    ? <Text> {note.textContent.length >= 40 ? note.textContent.substring(0, 40).trim() + '...' : note.textContent} </Text>
-                    : <Text color="gray"> {'No content...'} </Text>
-                }
-                <Text size={12}> {returnFormattedDateString(new Date(note.timestamp))} </Text>
-              </article>
-            )
-          })
-        }
+        {gimmeNotesToShow()}
       </section>
     </aside>
   )
