@@ -1,4 +1,4 @@
-<img src="src/assets/img/logo.svg" width="400"/>
+<img src="src/assets/img/logo-placenoter.svg" width="400"/>
 
 # Chrome Extension Boilerplate with React 17 and Webpack 5
 
