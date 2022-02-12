@@ -1,6 +1,6 @@
 {
   "name": "chrome-extension-boilerplate-react",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "New tab replaced by note taking app.",
   "license": "MIT",
   "repository": {
