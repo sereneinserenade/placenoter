@@ -6,6 +6,8 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { EditorAreaContainer, Maintop, Sidebar, Tiptap } from './components';
 import { notesState, activeNoteState, sidebarActiveState } from './Store';
 import { Note } from './types';
+import PlaceNoterLogo from '../../assets/img/logo.svg';
+import './Main.scss'
 
 const { storage } = chrome
 
@@ -41,7 +43,19 @@ function Main() {
     if (notesFetchedFromDb) storage.sync.set({ dbnotes: notes })
   }, [notes])
 
+  const checkIfAnEmptyNoteExists = (): Note | undefined => {
+    return notes.find((n) => n.title.trim() === "" && n.textContent.trim() === "")
+  }
+
   const createNewNoteAndSetItAsActiveNote = () => {
+    const emptyNoteInNotesList = checkIfAnEmptyNoteExists()
+    if (emptyNoteInNotesList) {
+      setActiveNote(undefined)
+      setTimeout(() => setActiveNote(emptyNoteInNotesList))
+
+      return
+    }
+
     const newNote: Note = {
       id: uuidv4(),
       content: '',
@@ -97,6 +111,8 @@ function Main() {
               </main>
             ) : (
               <main className='no-note-selected flex h-full'>
+                <img className='logo' src={PlaceNoterLogo} alt="PlaceNoterLogo" />
+
                 <h1> No Note selected </h1>
 
                 <h3 className='flex'>

@@ -119,28 +119,16 @@ const MainTop = () => {
             className="title-input"
             onBlur={refreshNote} // TODO: make this logic better
           />
-          // : <Text
-          //   size={24.8}
-          //   css={{ textGradient: '45deg, $purple500 -20%, $pink500 100%' }}
-          //   weight="bold"
-          // >
-          //   PlaceNoter
-          // </Text>
         }
       </section>
 
       <section className='right-controls flex'>
-        <Tooltip placement='bottomStart' content={isDark ? 'Light mode' : 'Dark mode'}>
+        <Tooltip placement='bottomEnd' content={isDark ? 'Light mode' : 'Dark mode'}>
           <Switch
             checked={isDark}
             onChange={onThemeChange}
           />
         </Tooltip>
-        {/* {
-          activeNote && <Tooltip placement='bottomEnd' content={'Delete Note'}>
-            <Button color="error" auto ghost size='sm' onClick={deleteActiveNote} className="sidebar-control-button flex" icon={< FiTrash2 />} />
-          </Tooltip>
-        } */}
       </section>
     </section>
   )

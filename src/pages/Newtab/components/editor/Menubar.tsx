@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from 'react';
 
 import { Editor } from '@tiptap/core';
-import { RiBold, RiItalic, RiStrikethrough, RiCodeSSlashLine, RiH1, RiH2, RiH3, RiListUnordered, RiListOrdered, RiCodeBoxLine, RiDoubleQuotesL, RiSeparator, RiTextWrap, RiArrowGoBackLine, RiArrowGoForwardLine, RiUnderline, RiListCheck2, RiAlignLeft, RiAlignRight, RiAlignCenter, RiAlignJustify, RiLink, RiSearch2Line, RiFindReplaceLine } from 'react-icons/ri'
+import { BubbleMenu } from '@tiptap/react'
+import { RiBold, RiItalic, RiStrikethrough, RiCodeSSlashLine, RiH1, RiH2, RiH3, RiListUnordered, RiListOrdered, RiCodeBoxLine, RiDoubleQuotesL, RiSeparator, RiTextWrap, RiArrowGoBackLine, RiArrowGoForwardLine, RiUnderline, RiListCheck2, RiAlignLeft, RiAlignRight, RiAlignCenter, RiAlignJustify, RiLink, RiSearch2Line } from 'react-icons/ri'
 import { IconType } from 'react-icons'
-import { Button, Col, Container, Input, Row, Spacer, Tooltip } from '@nextui-org/react';
+import { Button, Input, Tooltip, Text } from '@nextui-org/react';
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { debounce } from 'lodash';
 
 import { activeNoteState, editorSearchState } from '../../Store';
 import LinkModal from './LinkModal'
 import './Menubar.scss'
+import LinkBubbleMenu from './LinkBubbleMenu';
 
 type MenubarProps = {
   editor: Editor
@@ -28,13 +30,15 @@ interface Button {
 const Menubar = ({ editor }: MenubarProps) => {
   if (!editor) return null
 
+  const activeNote = useRecoilValue(activeNoteState)
+
+  const [globalSearchTerm, setGlobalSearchTerm] = useRecoilState(editorSearchState)
+
   const [isActiveStates, setIsActiveStates] = useState<Record<string, boolean>>({})
 
   const [linkModalVisible, setLinkModalVisible] = useState<boolean>(false)
 
   const [currentUrl, setCurrentUrl] = useState<string>("")
-
-  const [globalSearchTerm, setGlobalSearchTerm] = useRecoilState(editorSearchState)
 
   const [localSearchTerm, setLocalSearchTerm] = useState<string>("")
 
@@ -62,8 +66,6 @@ const Menubar = ({ editor }: MenubarProps) => {
 
     url && editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run()
   }
-
-  const activeNote = useRecoilValue(activeNoteState)
 
   const buttons: Button[] = [
     {
@@ -296,41 +298,64 @@ const Menubar = ({ editor }: MenubarProps) => {
     return e
   }
 
-  const SearchSection = () => {
+  const SearchSection = () => (
+    <section className='search-and-replace-section flex'>
+      <section className='inputs-section flex'>
+        <Input
+          placeholder='Search for...'
+          size="sm"
+          value={localSearchTerm}
+          onInput={e => stopPrevent(e) && setLocalSearchTerm((e.target as HTMLInputElement).value)}
+        />
+        <Input
+          placeholder='Replace with...'
+          size="sm"
+          value={replaceTerm}
+          onInput={e => stopPrevent(e) && setReplaceTerm((e.target as HTMLInputElement).value)}
+          onKeyPress={e => e.key === 'Enter' && editor.commands.replace()}
+        />
+      </section>
+
+      <section className='buttons-section flex'>
+        <Button bordered size='sm' onClick={() => editor.commands.replace()}>
+          Replace
+        </Button>
+
+        <Button bordered ghost color='gradient' size='sm' onClick={() => editor.commands.replaceAll()}>
+          Replace All
+        </Button>
+      </section>
+    </section>
+  )
+
+  const GimmeBubbleMenu = ({ editor }: { editor: Editor }) => {
+    const nameOfButtons = ['bold', 'italic', 'underline', 'strike', 'link', 'alignLeft', 'alignCenter', 'alignRight', 'alignJustify', 'code']
 
     return (
-      <section className='search-and-replace-section flex'>
-        <section className='inputs-section flex'>
-          <Input
-            placeholder='Search for...'
-            size="sm"
-            value={localSearchTerm}
-            onInput={e => stopPrevent(e) && setLocalSearchTerm((e.target as HTMLInputElement).value)}
-          />
-          <Input
-            placeholder='Replace with...'
-            size="sm"
-            value={replaceTerm}
-            onInput={e => stopPrevent(e) && setReplaceTerm((e.target as HTMLInputElement).value)}
-            onKeyPress={e => e.key === 'Enter' && editor.commands.replace()}
-          />
-        </section>
-
-        <section className='buttons-section flex'>
-          <Button bordered size='sm' onClick={() => editor.commands.replace()}>
-            Replace
-          </Button>
-
-          <Button bordered ghost color='gradient' size='sm' onClick={() => editor.commands.replaceAll()}>
-            Replace All
-          </Button>
-        </section>
-      </section>
+      editor && activeNote?.id &&
+      <BubbleMenu editor={editor} className="bubble-menu menubar flex" tippyOptions={{ placement: 'top' }} >
+        {
+          buttons
+            .filter(b => nameOfButtons.some(n => b.name === n))
+            .map((btn, index) => {
+              return (
+                <Tooltip key={btn.name} content={btn.label}>
+                  <button
+                    className={`menubar-button flex ${isActiveStates[btn.name] ? 'active' : ''}`}
+                    onClick={() => btn.action && btn.action(editor) && debouncedCalculateIsActiveStates(editor)}
+                  >
+                    {btn.icon && <btn.icon />}
+                  </button>
+                </Tooltip>
+              )
+            })
+        }
+      </BubbleMenu>
     )
   }
 
   return (
-    <section className='menubar flex'>
+    <section className='menubar flex' aria-label='menubar-section'>
       {activeNote?.id && editor && buttons.map((btn, index) => {
         return (
           btn.name === 'divider'
@@ -350,8 +375,10 @@ const Menubar = ({ editor }: MenubarProps) => {
       }
       {
         activeNote?.id && editor && (
-          <Tooltip visible={!!globalSearchTerm.length} trigger='hover' placement='bottomEnd' content={SearchSection()}>
-            <button className={`menubar-button flex`} >
+          // Using `SearchSection()` instead of `<SearchSection />` cause the input
+          // elements were getting unfocused because of rerender when something was typed
+          <Tooltip visible={!!globalSearchTerm.length} trigger='click' placement='bottomEnd' content={SearchSection()}>
+            <button className="menubar-button flex" >
               <RiSearch2Line />
             </button>
           </Tooltip>
@@ -359,6 +386,10 @@ const Menubar = ({ editor }: MenubarProps) => {
       }
 
       <LinkModal visible={linkModalVisible} onClose={closeLinkModal} url={currentUrl} />
+
+      {editor && GimmeBubbleMenu({ editor })}
+
+      {editor && <LinkBubbleMenu editor={editor} currentUrl={currentUrl} closeLinkModal={closeLinkModal} />}
     </section>
   )
 }

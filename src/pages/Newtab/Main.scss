@@ -18,9 +18,11 @@
 
     .no-note-selected {
       height: 90vh;
-      align-items: center;
-      justify-content: center;
       flex-direction: column;
+
+      .logo {
+        width: 300px !important;
+      }
     }
   }
 }

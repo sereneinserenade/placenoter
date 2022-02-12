@@ -5,6 +5,16 @@
   flex-wrap: wrap;
   justify-content: center;
 
+  .divider {
+    height: 1.5em;
+    width: 2px;
+    background: rgba($color: black, $alpha: 0.2);
+    margin: 0 4px;
+  }
+}
+
+.menubar,
+.bubble-menu {
   .menubar-button {
     align-items: center;
     justify-content: center;
@@ -28,13 +38,6 @@
       }
     }
   }
-
-  .divider {
-    height: 1.5em;
-    width: 2px;
-    background: rgba($color: black, $alpha: 0.2);
-    margin: 0 4px;
-  }
 }
 
 .dark-theme {
@@ -44,6 +47,18 @@
 
   .divider {
     background: rgba($color: white, $alpha: 0.2);
+  }
+}
+
+.bubble-menu {
+  background: var(--nextui-colors-background);
+  border-radius: 14px;
+  box-shadow: var(--nextui-shadows-md);
+  padding: 0.5em;
+  margin: 0;
+
+  &.hide {
+    display: none;
   }
 }
 

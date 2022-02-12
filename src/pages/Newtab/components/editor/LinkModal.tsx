@@ -15,7 +15,7 @@ const LinkModal = ({ visible, onClose, url }: LinkModalProps) => {
 
   const [isLinkValid, setIsLinkValid] = useState<boolean>(true)
 
-  const onApply = () => onClose(link)
+  const onApply = () => isLinkValid && onClose(link)
 
   useEffect(() => { url ? setLink(url) : setLink("") }, [visible, url])
 
@@ -58,7 +58,7 @@ const LinkModal = ({ visible, onClose, url }: LinkModalProps) => {
         <Button auto flat color="error" onClick={() => onClose()}>
           Cancel
         </Button>
-        <Button auto onClick={onApply}>
+        <Button disabled={!isLinkValid} auto onClick={onApply}>
           Apply
         </Button>
       </Modal.Footer>
