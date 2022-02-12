@@ -1,4 +1,7 @@
-<img src="src/assets/img/logo-placenoter.svg" width="400"/>
+<p align="center">
+  <img src="src/assets/img/logo-placenoter.svg" width="300"/>
+</p>
+
 
 # PlaceNoter
 
