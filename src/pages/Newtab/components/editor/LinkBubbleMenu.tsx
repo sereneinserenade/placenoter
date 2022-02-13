@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Editor } from '@tiptap/core'
-import { Button, Input, Row, Text } from '@nextui-org/react';
+import { Button, Input, Row, Text, Tooltip } from '@nextui-org/react';
 import { BubbleMenu } from '@tiptap/react';
 import { RiExternalLinkFill } from 'react-icons/ri';
+import { test } from 'linkifyjs'
 
 import './LinkBubbleMenu.scss'
 
@@ -26,10 +27,7 @@ const LinkBubbleMenu = ({ editor, currentUrl, closeLinkModal }: LinkBubbleMenuPr
     else setUrl("")
   }, [currentUrl])
 
-  const urlPatternValidation = (url: string): boolean => {
-    const regex = new RegExp('(https?://)?([\\da-z.-]+)\\.([a-z.]{2,6})[/\\w .-]*/?');
-    return regex.test(url);
-  };
+  const urlPatternValidation = (url: string): boolean => test(url);
 
   useEffect(() => {
     setIsUrlValid(urlPatternValidation(url))
@@ -49,26 +47,30 @@ const LinkBubbleMenu = ({ editor, currentUrl, closeLinkModal }: LinkBubbleMenuPr
     <BubbleMenu shouldShow={shouldShowLinkMenu} editor={editor} className="bubble-menu link-bubble-menu" tippyOptions={{ placement: 'bottom' }}>
       {currentUrl && <section className='flex link-bubble-inner-section'>
         <section className='flex input-button-section'>
-          <Input
-            bordered
-            size="sm"
-            placeholder="https://xyz.abc"
-            value={url}
-            onInput={(e) => setUrl((e.target as HTMLInputElement).value.trim())}
-            onKeyPress={(e) => e.key === 'Enter' && onApply()}
-            animated={false}
-          />
+          <Tooltip content="Visit link in new tab">
+            <Button size='sm' auto ghost icon={<RiExternalLinkFill />} onClick={() => newTab(currentUrl)} />
+          </Tooltip>
 
-          <Button size='sm' auto ghost icon={<RiExternalLinkFill />} onClick={() => newTab(currentUrl)} />
-        </section>
-        {
-          !isUrlValid &&
           <section>
-            <Text color="error" size={12}>
-              Please enter a valid URL.
-            </Text>
+            <Input
+              // bordered
+              size="sm"
+              placeholder="https://xyz.abc"
+              value={url}
+              onInput={(e) => setUrl((e.target as HTMLInputElement).value.trim())}
+              onKeyPress={(e) => e.key === 'Enter' && onApply()}
+              animated={false}
+            />
+            {
+              !isUrlValid &&
+              <section>
+                <Text color="error" size={12}>
+                  Please enter a valid URL.
+                </Text>
+              </section>
+            }
           </section>
-        }
+        </section>
       </section>
       }
     </BubbleMenu>

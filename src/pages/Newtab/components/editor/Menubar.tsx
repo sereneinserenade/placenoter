@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 import { Editor } from '@tiptap/core';
 import { BubbleMenu } from '@tiptap/react'
-import { RiBold, RiItalic, RiStrikethrough, RiCodeSSlashLine, RiH1, RiH2, RiH3, RiListUnordered, RiListOrdered, RiCodeBoxLine, RiDoubleQuotesL, RiSeparator, RiTextWrap, RiArrowGoBackLine, RiArrowGoForwardLine, RiUnderline, RiListCheck2, RiAlignLeft, RiAlignRight, RiAlignCenter, RiAlignJustify, RiLink, RiSearch2Line } from 'react-icons/ri'
+import { RiBold, RiItalic, RiStrikethrough, RiCodeSSlashLine, RiH1, RiH2, RiH3, RiListUnordered, RiListOrdered, RiCodeBoxLine, RiDoubleQuotesL, RiSeparator, RiTextWrap, RiArrowGoBackLine, RiArrowGoForwardLine, RiUnderline, RiListCheck2, RiAlignLeft, RiAlignRight, RiAlignCenter, RiAlignJustify, RiLink, RiSearch2Line, RiTableLine } from 'react-icons/ri'
 import { IconType } from 'react-icons'
 import { Button, Input, Tooltip, Text } from '@nextui-org/react';
 import { useRecoilState, useRecoilValue } from 'recoil'
@@ -43,6 +43,34 @@ const Menubar = ({ editor }: MenubarProps) => {
   const [localSearchTerm, setLocalSearchTerm] = useState<string>("")
 
   const [replaceTerm, setReplaceTerm] = useState<string>("")
+
+  const [tableGridWidth, setTableGridWidth] = useState<number>(4)
+
+  const [tableGridHeight, setTableGridHeight] = useState<number>(4)
+
+  const [activeCell, setActiveCell] = useState<{ x: number, y: number }>({ x: 3, y: 3 })
+
+  const setGridDimensions = ({ x, y }: { x: number, y: number }) => {
+    if (x < 5 && y < 5) {
+      setTableGridWidth(5)
+      setTableGridHeight(5)
+      return
+    }
+
+    if (x < 5) setTableGridWidth(5)
+    if (x >= 5 && x <= 9) setTableGridWidth(x + 1)
+
+    if (y < 5) setTableGridHeight(5)
+    if (y >= 5 && x <= 9) setTableGridHeight(y + 1)
+  }
+
+  const insertTable = () => {
+    const [rows, cols] = [tableGridWidth, tableGridHeight]
+
+    editor.chain().focus().insertTable({ rows, cols, withHeaderRow: true }).run()
+  }
+
+  useEffect(() => { setGridDimensions(activeCell) }, [activeCell])
 
   useEffect(() => {
     editor.commands.setSearchTerm(localSearchTerm);
@@ -105,6 +133,13 @@ const Menubar = ({ editor }: MenubarProps) => {
       action: openLinkModal,
       isActive: (editor: Editor) => editor.isActive('link'),
       icon: RiLink,
+    },
+    {
+      name: 'code',
+      label: 'Code',
+      action: (editor: Editor) => editor.chain().focus().toggleCode().run(),
+      isActive: (editor: Editor) => editor.isActive('code'),
+      icon: RiCodeSSlashLine,
     },
     {
       name: 'divider',
@@ -210,11 +245,11 @@ const Menubar = ({ editor }: MenubarProps) => {
       name: 'divider',
     },
     {
-      name: 'code',
-      label: 'Code',
-      action: (editor: Editor) => editor.chain().focus().toggleCode().run(),
-      isActive: (editor: Editor) => editor.isActive('code'),
-      icon: RiCodeSSlashLine,
+      name: 'table',
+      label: 'Table',
+      action: () => insertTable(),
+      isActive: (editor: Editor) => editor.can().deleteTable(),
+      icon: RiTableLine,
     },
     {
       name: 'codeBlock',
@@ -354,25 +389,54 @@ const Menubar = ({ editor }: MenubarProps) => {
     )
   }
 
+  const TableControlButtons = () => {
+    return (
+      <></>
+    )
+  }
+
   return (
     <section className='menubar flex' aria-label='menubar-section'>
-      {activeNote?.id && editor && buttons.map((btn, index) => {
-        return (
-          btn.name === 'divider'
-            ? (<div key={(index + 1) + 'th-divider'} className='divider' />)
-            : (
-              <Tooltip key={btn.name} content={btn.label}>
-                <button
-                  className={`menubar-button flex ${isActiveStates[btn.name] ? 'active' : ''}`}
-                  onClick={() => btn.action && btn.action(editor) && debouncedCalculateIsActiveStates(editor)}
-                >
-                  {btn.icon && <btn.icon />}
-                </button>
-              </Tooltip>
+      {
+        activeNote?.id && editor && buttons.map((btn, index) => {
+          if (btn.name === 'divider') return (<div key={(index + 1) + 'th-divider'} className='divider' />)
+
+          if (btn.name === 'table') {
+            return (
+              <>
+                <Tooltip key={btn.name} content={btn.label}>
+                  <button
+                    className={`menubar-button flex ${isActiveStates[btn.name] ? 'active' : ''}`}
+                    onClick={() => btn.action && btn.action(editor) && debouncedCalculateIsActiveStates(editor)}
+                  >
+                    {btn.icon && <btn.icon />}
+                  </button>
+                </Tooltip>
+                <Tooltip key={'table-controls-button'} content={TableControlButtons()}>
+                  <button
+                    className={`menubar-button flex ${isActiveStates[btn.name] ? 'active' : ''}`}
+                    onClick={() => btn.action && btn.action(editor) && debouncedCalculateIsActiveStates(editor)}
+                  >
+                    {btn.icon && <btn.icon />}
+                  </button>
+                </Tooltip>
+              </>
             )
-        )
-      })
+          }
+
+          return (
+            <Tooltip key={btn.name} content={btn.label}>
+              <button
+                className={`menubar-button flex ${isActiveStates[btn.name] ? 'active' : ''}`}
+                onClick={() => btn.action && btn.action(editor) && debouncedCalculateIsActiveStates(editor)}
+              >
+                {btn.icon && <btn.icon />}
+              </button>
+            </Tooltip>
+          )
+        })
       }
+
       {
         activeNote?.id && editor && (
           // Using `SearchSection()` instead of `<SearchSection />` cause the input

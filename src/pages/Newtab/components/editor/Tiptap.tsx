@@ -1,6 +1,6 @@
 // src/Tiptap.jsx
 import React from 'react';
-import { useEditor, EditorContent, Content } from '@tiptap/react'
+import { useEditor, EditorContent, Content, Extension } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import Placeholder from '@tiptap/extension-placeholder';
 import Underline from '@tiptap/extension-underline';
@@ -15,20 +15,25 @@ import './Tiptap.scss'
 import Menubar from './Menubar'
 import { SearchNReplace } from './extensions'
 import { EditorView } from 'prosemirror-view';
+import Table from '@tiptap/extension-table';
+import TableCell from '@tiptap/extension-table-cell';
+import TableHeader from '@tiptap/extension-table-header';
+import TableRow from '@tiptap/extension-table-row';
 
 interface TiptapProps {
   onUpdate: Function
   content: Content
 }
 
-const MyLink = Link.extend({
+const LinkFocusSolver = Extension.create({
+  name: 'linkFocusSolver',
   addProseMirrorPlugins() {
     let theView: EditorView;
 
     let done: boolean = false
 
     const updaterPlugin = new Plugin({
-      key: new PluginKey('updaterPlugin'),
+      key: new PluginKey('linkFocusSolverPlugin'),
       view: (view) => {
         return {
           update(view) {
@@ -70,12 +75,19 @@ const Tiptap = ({ onUpdate, content }: TiptapProps) => {
       TextAlign.configure({
         types: ['heading', 'paragraph'],
       }),
-      MyLink.configure({
+      Link.configure({
         openOnClick: false,
         linkOnPaste: true,
         autolink: true,
       }),
       SearchNReplace,
+      LinkFocusSolver,
+      Table.configure({
+        resizable: true,
+      }),
+      TableRow,
+      TableHeader,
+      TableCell,
     ],
     content: content,
     onUpdate: ({ editor }) => onUpdate(editor.getHTML(), editor.getText()),

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 
 import { Button, Input, Modal, Text } from '@nextui-org/react'
 import { RiLink } from 'react-icons/ri'
+import { test } from 'linkifyjs'
 
 
 type LinkModalProps = {
@@ -21,10 +22,7 @@ const LinkModal = ({ visible, onClose, url }: LinkModalProps) => {
 
   useEffect(() => { link ? setIsLinkValid(urlPatternValidation(link)) : setIsLinkValid(true) }, [link])
 
-  const urlPatternValidation = (url: string): boolean => {
-    const regex = new RegExp('(https?://)?([\\da-z.-]+)\\.([a-z.]{2,6})[/\\w .-]*/?');
-    return regex.test(url);
-  };
+  const urlPatternValidation = (url: string): boolean => test(url);
 
   return (
     <Modal blur closeButton open={visible} onClose={onClose} >

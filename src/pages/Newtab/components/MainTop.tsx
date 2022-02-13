@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Button, Tooltip, FormElement, Input, useTheme, changeTheme, Switch } from '@nextui-org/react'
-import { RiMenuFoldFill, RiMenuUnfoldFill } from 'react-icons/ri'
+import { RiAddLine, RiMenuFoldFill, RiMenuUnfoldFill, RiMoonLine, RiPulseLine, RiSunLine } from 'react-icons/ri'
 import { FiFeather, FiHome, FiTrash2 } from 'react-icons/fi'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -101,7 +101,7 @@ const MainTop = () => {
           <Button color="primary" auto ghost size='sm' onClick={onSidebarControlButtonClicked} className={`sidebar-control-button flex`} icon={sidebarActive ? <RiMenuFoldFill /> : <RiMenuUnfoldFill />} />
         </Tooltip>
         <Tooltip placement='bottomStart' content={'Create new note'}>
-          <Button color="primary" auto ghost size='sm' onClick={createNewNoteAndSetItAsActiveNote} className="sidebar-control-button flex" icon={< FiFeather />} />
+          <Button color="primary" auto ghost size='sm' onClick={createNewNoteAndSetItAsActiveNote} className="sidebar-control-button flex" icon={< RiAddLine />} />
         </Tooltip>
         <Tooltip placement='bottomStart' content={'Home'}>
           <Button color="primary" auto ghost size='sm' onClick={() => goHome()} className="sidebar-control-button flex" icon={< FiHome />} />
@@ -127,6 +127,8 @@ const MainTop = () => {
           <Switch
             checked={isDark}
             onChange={onThemeChange}
+            iconOff={<RiSunLine />}
+            iconOn={<RiMoonLine />}
           />
         </Tooltip>
       </section>
