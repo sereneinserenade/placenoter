@@ -6,7 +6,7 @@ interface Props {
 }
 
 const Options: React.FC<Props> = ({ title }: Props) => {
-  return <div className="OptionsContainer">{title} Page</div>;
+  return <div className="OptionsContainer">{title} Page is coming soon</div>;
 };
 
 export default Options;
