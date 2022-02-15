@@ -144,7 +144,7 @@ const replaceAll = (replaceTerm: string, results: Result[], { tr, dispatch }: an
 
   let ourResults = results.slice()
 
-  if (!ourResults.length) return
+  if (!ourResults.length) return false
 
   for (let i = 0; i < ourResults.length; i += 1) {
     const { from, to } = ourResults[i]
@@ -160,6 +160,8 @@ const replaceAll = (replaceTerm: string, results: Result[], { tr, dispatch }: an
   }
 
   dispatch(tr)
+
+  return true
 }
 
 // eslint-disable-next-line @typescript-eslint/ban-types

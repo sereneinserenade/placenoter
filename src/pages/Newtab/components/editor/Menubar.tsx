@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 import { Editor } from '@tiptap/core';
 import { BubbleMenu } from '@tiptap/react'
-import { RiBold, RiItalic, RiStrikethrough, RiCodeSSlashLine, RiH1, RiH2, RiH3, RiListUnordered, RiListOrdered, RiCodeBoxLine, RiDoubleQuotesL, RiSeparator, RiTextWrap, RiArrowGoBackLine, RiArrowGoForwardLine, RiUnderline, RiListCheck2, RiAlignLeft, RiAlignRight, RiAlignCenter, RiAlignJustify, RiLink, RiSearch2Line, RiTableLine } from 'react-icons/ri'
+import { RiBold, RiItalic, RiStrikethrough, RiCodeSSlashLine, RiH1, RiH2, RiH3, RiListUnordered, RiListOrdered, RiCodeBoxLine, RiDoubleQuotesL, RiSeparator, RiTextWrap, RiArrowGoBackLine, RiArrowGoForwardLine, RiUnderline, RiListCheck2, RiAlignLeft, RiAlignRight, RiAlignCenter, RiAlignJustify, RiLink, RiSearch2Line, RiTableLine, RiArrowDownSLine } from 'react-icons/ri'
 import { IconType } from 'react-icons'
 import { Button, Input, Tooltip, Text } from '@nextui-org/react';
 import { useRecoilState, useRecoilValue } from 'recoil'
@@ -12,6 +12,7 @@ import { activeNoteState, editorSearchState } from '../../Store';
 import LinkModal from './LinkModal'
 import './Menubar.scss'
 import LinkBubbleMenu from './LinkBubbleMenu';
+import MenubarTableButtons from './MenubarTableButtons';
 
 type MenubarProps = {
   editor: Editor
@@ -44,28 +45,31 @@ const Menubar = ({ editor }: MenubarProps) => {
 
   const [replaceTerm, setReplaceTerm] = useState<string>("")
 
-  const [tableGridWidth, setTableGridWidth] = useState<number>(4)
+  const [tableGridWidth, setTableGridWidth] = useState<number>(6)
 
-  const [tableGridHeight, setTableGridHeight] = useState<number>(4)
+  const [tableGridHeight, setTableGridHeight] = useState<number>(6)
 
-  const [activeCell, setActiveCell] = useState<{ x: number, y: number }>({ x: 3, y: 3 })
+  const [activeCell, setActiveCell] = useState<{ x: number, y: number }>({ x: 2, y: 2 })
 
   const setGridDimensions = ({ x, y }: { x: number, y: number }) => {
-    if (x < 5 && y < 5) {
-      setTableGridWidth(5)
-      setTableGridHeight(5)
-      return
+    if (x >= 4 && x <= 9) {
+      const newWidth = x + 1
+
+      if (newWidth > tableGridWidth) setTableGridWidth(x + 1)
     }
 
-    if (x < 5) setTableGridWidth(5)
-    if (x >= 5 && x <= 9) setTableGridWidth(x + 1)
+    if (y >= 4 && y <= 9) {
+      const newHeight = y + 1
 
-    if (y < 5) setTableGridHeight(5)
-    if (y >= 5 && x <= 9) setTableGridHeight(y + 1)
+      if (newHeight > tableGridHeight) setTableGridHeight(y + 1)
+    }
   }
 
-  const insertTable = () => {
-    const [rows, cols] = [tableGridWidth, tableGridHeight]
+  const insertTable = ({ rows, cols, e }: { rows: number, cols: number, e?: Event }) => {
+    if (e) {
+      e.preventDefault()
+      e.stopPropagation()
+    }
 
     editor.chain().focus().insertTable({ rows, cols, withHeaderRow: true }).run()
   }
@@ -247,7 +251,7 @@ const Menubar = ({ editor }: MenubarProps) => {
     {
       name: 'table',
       label: 'Table',
-      action: () => insertTable(),
+      action: () => null,
       isActive: (editor: Editor) => editor.can().deleteTable(),
       icon: RiTableLine,
     },
@@ -356,7 +360,13 @@ const Menubar = ({ editor }: MenubarProps) => {
           Replace
         </Button>
 
-        <Button bordered ghost color='gradient' size='sm' onClick={() => editor.commands.replaceAll()}>
+        <Button
+          bordered
+          ghost
+          color='gradient'
+          size='sm'
+          onClick={() => editor.commands.replaceAll() && editor.commands.focus()}
+        >
           Replace All
         </Button>
       </section>
@@ -372,7 +382,7 @@ const Menubar = ({ editor }: MenubarProps) => {
         {
           buttons
             .filter(b => nameOfButtons.some(n => b.name === n))
-            .map((btn, index) => {
+            .map((btn) => {
               return (
                 <Tooltip key={btn.name} content={btn.label}>
                   <button
@@ -389,9 +399,45 @@ const Menubar = ({ editor }: MenubarProps) => {
     )
   }
 
-  const TableControlButtons = () => {
+  type TableGridProps = {
+    tableGridHeight: number,
+    tableGridWidth: number
+  }
+
+  const TableGrid = ({ tableGridHeight, tableGridWidth }: TableGridProps) => {
     return (
-      <></>
+      <section key={'table-grid'} className='table-grid'>
+        {
+          new Array(tableGridHeight).fill(0).map((h, i) => {
+            return (
+              <section key={`${i + 1}th_row`} className={`table-grid-row ${i === 0 ? 'first-row' : ''}`}>
+                {
+                  new Array(tableGridWidth)
+                    .fill(0)
+                    .map((w, j) => (
+                      <article
+                        key={`${j + 1}_${i + 1}_th_cell`}
+                        onMouseEnter={() => setActiveCell({ x: j + 1, y: i + 1 })}
+                      >
+                        <button
+                          className={`grid-box ${j + 1 <= activeCell.x && i + 1 <= activeCell.y && 'active'}`}
+                          onClick={(e: any) => insertTable({ rows: i + 1, cols: j + 1, e })}
+                        />
+                      </article>
+                    ))
+                }
+              </section>
+            )
+          })
+        }
+        {
+          <section className='flex justify-center'>
+            <Text>
+              {activeCell.y} Rows x {activeCell.x} Cols
+            </Text>
+          </section>
+        }
+      </section>
     )
   }
 
@@ -403,24 +449,24 @@ const Menubar = ({ editor }: MenubarProps) => {
 
           if (btn.name === 'table') {
             return (
-              <>
-                <Tooltip key={btn.name} content={btn.label}>
-                  <button
-                    className={`menubar-button flex ${isActiveStates[btn.name] ? 'active' : ''}`}
-                    onClick={() => btn.action && btn.action(editor) && debouncedCalculateIsActiveStates(editor)}
-                  >
+              <section key={'table-key-prop'} className='table-menu-section flex'>
+                <Tooltip
+                  key={btn.name}
+                  placement="bottomStart"
+                  content={TableGrid({ tableGridHeight, tableGridWidth })}
+                  trigger="click"
+                  onVisibleChange={(val) => !val && setTimeout(() => `${setTableGridHeight(6)} ${setTableGridWidth(6)}`, 50)}
+                >
+                  <button className={`menubar-button add-table-button flex ${isActiveStates[btn.name] ? 'active' : ''}`} >
                     {btn.icon && <btn.icon />}
                   </button>
                 </Tooltip>
-                <Tooltip key={'table-controls-button'} content={TableControlButtons()}>
-                  <button
-                    className={`menubar-button flex ${isActiveStates[btn.name] ? 'active' : ''}`}
-                    onClick={() => btn.action && btn.action(editor) && debouncedCalculateIsActiveStates(editor)}
-                  >
-                    {btn.icon && <btn.icon />}
+                <Tooltip key={'table-controls-button'} content={MenubarTableButtons({ editor })} trigger="click" placement='bottom'>
+                  <button className={`menubar-button table-controls-button flex ${isActiveStates[btn.name] ? 'active' : ''}`} >
+                    {<RiArrowDownSLine />}
                   </button>
                 </Tooltip>
-              </>
+              </section>
             )
           }
 
@@ -451,9 +497,9 @@ const Menubar = ({ editor }: MenubarProps) => {
 
       <LinkModal visible={linkModalVisible} onClose={closeLinkModal} url={currentUrl} />
 
-      {editor && GimmeBubbleMenu({ editor })}
+      {GimmeBubbleMenu({ editor })}
 
-      {editor && <LinkBubbleMenu editor={editor} currentUrl={currentUrl} closeLinkModal={closeLinkModal} />}
+      {LinkBubbleMenu({ editor, closeLinkModal, currentUrl })}
     </section>
   )
 }

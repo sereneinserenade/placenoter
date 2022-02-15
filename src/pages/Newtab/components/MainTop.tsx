@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from 'uuid'
 import './MainTop.scss'
 import { activeNoteState, notesState, sidebarActiveState } from '../Store'
 import { Note } from '../types'
-import { useRecoilState } from 'recoil'
+import { useRecoilState, useRecoilValue } from 'recoil'
 
 const { storage } = chrome
 
@@ -95,7 +95,7 @@ const MainTop = () => {
     setTimeout(() => setActiveNote(note))
   }
   return (
-    <section className='main-top flex'>
+    <section className={`main-top flex`}>
       <section className='left-controls flex' aria-label='left-controls'>
         <Tooltip placement='bottomStart' content={sidebarActive ? 'Close Sidebar' : 'Open Sidebar'}>
           <Button color="primary" auto ghost size='sm' onClick={onSidebarControlButtonClicked} className={`sidebar-control-button flex`} icon={sidebarActive ? <RiMenuFoldFill /> : <RiMenuUnfoldFill />} />

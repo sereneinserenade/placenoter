@@ -1,22 +1,28 @@
 {
-  "name": "chrome-extension-boilerplate-react",
+  "name": "placenoter",
   "version": "0.0.2",
   "description": "New tab replaced by note taking app.",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/lxieyang/chrome-extension-boilerplate-react.git"
+    "url": "https://github.com/sereneinserenade/placenoter/"
+  },
+  "author": {
+    "name": "Jeet Mandaliya",
+    "url": "https://github.com/sereneinserenade"
   },
   "scripts": {
     "build": "node utils/build.js",
     "start": "node utils/webserver.js",
-    "prettier": "prettier --write '**/*.{js,jsx,ts,tsx,json,css,scss,md}'"
+    "prettier": "prettier --write '**/*.{js,jsx,ts,tsx,json,css,scss,md}'",
+    "updateTiptapDeps": "npm update @tiptap/extension-character-count @tiptap/extension-link @tiptap/extension-placeholder @tiptap/extension-table @tiptap/extension-table-cell @tiptap/extension-table-header @tiptap/extension-table-row @tiptap/extension-task-item @tiptap/extension-task-list @tiptap/extension-text-align @tiptap/extension-underline @tiptap/react @tiptap/starter-kit @tiptap/extension-code-block-lowlight"
   },
   "dependencies": {
     "@extend-chrome/storage": "^1.5.0",
     "@hot-loader/react-dom": "^17.0.1",
     "@nextui-org/react": "^1.0.2-beta.4",
     "@tiptap/extension-character-count": "^2.0.0-beta.24",
+    "@tiptap/extension-code-block-lowlight": "^2.0.0-beta.68",
     "@tiptap/extension-link": "^2.0.0-beta.36",
     "@tiptap/extension-placeholder": "^2.0.0-beta.47",
     "@tiptap/extension-table": "^2.0.0-beta.48",
@@ -36,7 +42,6 @@
     "react-hot-loader": "^4.13.0",
     "react-icons": "^4.3.1",
     "recoil": "^0.6.1",
-    "use-dark-mode": "^2.3.1",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
