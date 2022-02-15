@@ -455,7 +455,7 @@ const Menubar = ({ editor }: MenubarProps) => {
                   placement="bottomStart"
                   content={TableGrid({ tableGridHeight, tableGridWidth })}
                   trigger="click"
-                  onVisibleChange={(val) => !val && setTimeout(() => `${setTableGridHeight(6)} ${setTableGridWidth(6)}`, 50)}
+                  onVisibleChange={(val) => !val && setTimeout(() => `${setTableGridHeight(6)} ${setTableGridWidth(6)}`, 500)}
                 >
                   <button className={`menubar-button add-table-button flex ${isActiveStates[btn.name] ? 'active' : ''}`} >
                     {btn.icon && <btn.icon />}
