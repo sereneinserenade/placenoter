@@ -67,7 +67,7 @@ const Tiptap = ({ onUpdate, content }: TiptapProps) => {
 
       (editorArea as HTMLDivElement).removeEventListener('click', () => editor?.commands.focus());
     },
-    autofocus: 'start'
+    autofocus: false
   })
 
   return (

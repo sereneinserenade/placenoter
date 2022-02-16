@@ -153,3 +153,21 @@
   padding: 4px;
   gap: 5px;
 }
+
+.code-block-language-selector-section {
+  padding: 0.65em;
+
+  select {
+    appearance: none;
+
+    background-color: var(--nextui-colors-background);
+    border: 2px solid var(--nextui-colors-primary);
+    border-radius: var(--nextui-radii-sm);
+    padding: 6px 0.75em;
+    margin: 0;
+    font-family: inherit;
+    font-size: inherit;
+    cursor: inherit;
+    line-height: inherit;
+  }
+}

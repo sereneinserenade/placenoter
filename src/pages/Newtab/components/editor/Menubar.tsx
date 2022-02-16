@@ -13,6 +13,7 @@ import LinkModal from './LinkModal'
 import './Menubar.scss'
 import LinkBubbleMenu from './LinkBubbleMenu';
 import MenubarTableButtons from './MenubarTableButtons';
+import { lowlight } from 'lowlight/lib/common.js';
 
 type MenubarProps = {
   editor: Editor
@@ -40,6 +41,8 @@ const Menubar = ({ editor }: MenubarProps) => {
   const [linkModalVisible, setLinkModalVisible] = useState<boolean>(false)
 
   const [currentUrl, setCurrentUrl] = useState<string>("")
+
+  const [currentLang, setCurrentLang] = useState<string>("")
 
   const [localSearchTerm, setLocalSearchTerm] = useState<string>("")
 
@@ -256,18 +259,18 @@ const Menubar = ({ editor }: MenubarProps) => {
       icon: RiTableLine,
     },
     {
-      name: 'codeBlock',
-      label: 'Code Block',
-      action: (editor: Editor) => editor.chain().focus().toggleCodeBlock().run(),
-      isActive: (editor: Editor) => editor.isActive('codeBlock'),
-      icon: RiCodeBoxLine,
-    },
-    {
       name: 'blockquote',
       label: 'Blockquote',
       action: (editor: Editor) => editor.chain().focus().toggleBlockquote().run(),
       isActive: (editor: Editor) => editor.isActive('blockquote'),
       icon: RiDoubleQuotesL,
+    },
+    {
+      name: 'codeBlock',
+      label: 'Code Block',
+      action: (editor: Editor) => editor.chain().focus().toggleCodeBlock().run(),
+      isActive: (editor: Editor) => editor.isActive('codeBlock'),
+      icon: RiCodeBoxLine,
     },
     {
       name: 'divider',
@@ -323,7 +326,10 @@ const Menubar = ({ editor }: MenubarProps) => {
 
     editor.on('transaction', ({ editor }) => debouncedCalculateIsActiveStates(editor))
 
-    editor.on('selectionUpdate', ({ editor }) => setCurrentUrl(editor.getAttributes('link').href))
+    editor.on('selectionUpdate', ({ editor }) => {
+      setCurrentUrl(editor.getAttributes('link').href)
+      setCurrentLang(editor.getAttributes('codeBlock').language)
+    })
 
     calculateIsActiveStates(editor)
   }
@@ -441,6 +447,47 @@ const Menubar = ({ editor }: MenubarProps) => {
     )
   }
 
+  type CodeBlockLanguageSelectorProps = {
+    editor: Editor,
+    currentLang: string
+  }
+
+  const CodeBlockLanguageSelector = ({ editor, currentLang }: CodeBlockLanguageSelectorProps) => {
+    const langs = lowlight.listLanguages() || []
+
+    langs.unshift('')
+
+    const [val, setVal] = useState<string>('')
+
+    useEffect(() => { setVal(currentLang) }, [currentLang])
+
+    const updateVal = (e: React.ChangeEvent<HTMLSelectElement>) => {
+      const { value } = e.target
+
+      editor.chain().updateAttributes('codeBlock', { language: value }).focus().run()
+
+      setTimeout(() => setCurrentLang(editor.getAttributes('codeBlock').language));
+    }
+
+    return (
+      <section className='code-block-language-selector-section'>
+        {
+          langs.length && editor.isActive('codeBlock')
+            ? (
+              <>
+                <Text weight={'medium'} size={'1.2em'} margin={'0 0 8px 0'}>Select Language: </Text>
+
+                <select value={val} name="language-selector" id="language-selector" onChange={(e) => updateVal(e)}>
+                  {langs.map((v: string) => (<option value={v}> {v.split("").map((a, i) => !i ? a.toUpperCase() : a).join("") || 'Choose Language'} </option>))}
+                </select>
+              </>
+            )
+            : (<Text color={'info'} small> Not inside a code block. </Text>)
+        }
+      </section>
+    )
+  }
+
   return (
     <section className='menubar flex' aria-label='menubar-section'>
       {
@@ -467,6 +514,19 @@ const Menubar = ({ editor }: MenubarProps) => {
                   </button>
                 </Tooltip>
               </section>
+            )
+          }
+
+          if (btn.name === 'codeBlock') {
+            return (
+              <Tooltip trigger='hover' key={btn.name} content={CodeBlockLanguageSelector({ editor, currentLang })} placement={'bottom'}>
+                <button
+                  className={`menubar-button flex ${isActiveStates[btn.name] ? 'active' : ''}`}
+                  onClick={() => btn.action && btn.action(editor) && debouncedCalculateIsActiveStates(editor)}
+                >
+                  {btn.icon && <btn.icon />}
+                </button>
+              </Tooltip>
             )
           }
 

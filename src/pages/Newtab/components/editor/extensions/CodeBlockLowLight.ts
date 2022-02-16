@@ -3,7 +3,7 @@ import { Decoration, DecorationSet } from 'prosemirror-view'
 import { Node as ProsemirrorNode } from 'prosemirror-model'
 import { findChildren } from '@tiptap/core'
 
-import { lowlight } from 'lowlight/lib/all.js'
+import { lowlight } from 'lowlight/lib/common.js'
 
 import { Node, textblockTypeInputRule, mergeAttributes } from '@tiptap/core'
 
@@ -232,7 +232,7 @@ export const CodeBlockLowLight = Node.create<CodeBlockOptions>({
           class: node.attrs.language
             ? this.options.languageClassPrefix + node.attrs.language
             : null,
-          'data-language': node.attrs.language
+          'data-language': node.attrs.language || 'auto'
         },
         0,
       ],
@@ -338,9 +338,12 @@ export const CodeBlockLowLight = Node.create<CodeBlockOptions>({
       },
 
       Tab: ({ editor }) => {
-        editor.view.dispatch(editor.state.tr.insertText("  "))
+        if (editor.isActive('codeBlock')) {
+          editor.view.dispatch(editor.state.tr.insertText("  "))
+          return true
+        }
 
-        return true
+        return false
       },
     }
   },
