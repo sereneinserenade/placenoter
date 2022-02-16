@@ -15,14 +15,13 @@
     "build": "node utils/build.js",
     "start": "node utils/webserver.js",
     "prettier": "prettier --write '**/*.{js,jsx,ts,tsx,json,css,scss,md}'",
-    "updateTiptapDeps": "npm update @tiptap/extension-character-count @tiptap/extension-link @tiptap/extension-placeholder @tiptap/extension-table @tiptap/extension-table-cell @tiptap/extension-table-header @tiptap/extension-table-row @tiptap/extension-task-item @tiptap/extension-task-list @tiptap/extension-text-align @tiptap/extension-underline @tiptap/react @tiptap/starter-kit @tiptap/extension-code-block-lowlight"
+    "updateTiptapDeps": "npm update @tiptap/extension-character-count @tiptap/extension-link @tiptap/extension-placeholder @tiptap/extension-table @tiptap/extension-table-cell @tiptap/extension-table-header @tiptap/extension-table-row @tiptap/extension-task-item @tiptap/extension-task-list @tiptap/extension-text-align @tiptap/extension-underline @tiptap/react @tiptap/starter-kit"
   },
   "dependencies": {
     "@extend-chrome/storage": "^1.5.0",
     "@hot-loader/react-dom": "^17.0.1",
     "@nextui-org/react": "^1.0.2-beta.4",
     "@tiptap/extension-character-count": "^2.0.0-beta.24",
-    "@tiptap/extension-code-block-lowlight": "^2.0.0-beta.68",
     "@tiptap/extension-link": "^2.0.0-beta.36",
     "@tiptap/extension-placeholder": "^2.0.0-beta.47",
     "@tiptap/extension-table": "^2.0.0-beta.48",
@@ -37,6 +36,7 @@
     "@tiptap/starter-kit": "^2.0.0-beta.180",
     "date-fns": "^2.28.0",
     "lodash": "^4.17.21",
+    "lowlight": "^2.5.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-hot-loader": "^4.13.0",

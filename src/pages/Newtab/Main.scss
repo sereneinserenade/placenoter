@@ -11,9 +11,8 @@
       width: 100%;
     }
 
-    .editor-area {
-      max-height: 90vh;
-      overflow-y: auto;
+    .editor-content {
+      border-radius: var(--nextui-radii-md);
     }
 
     .no-note-selected {
@@ -24,5 +23,11 @@
         width: 300px !important;
       }
     }
+  }
+}
+
+.dark-theme {
+  .editor-content {
+    background: rgba(white, 0.1);
   }
 }

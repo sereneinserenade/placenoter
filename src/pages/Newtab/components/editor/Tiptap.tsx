@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { useEditor, EditorContent, Content, Extension } from '@tiptap/react'
+import { useEditor, EditorContent, Content } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import Placeholder from '@tiptap/extension-placeholder';
 import Underline from '@tiptap/extension-underline';
@@ -9,8 +9,6 @@ import TaskList from '@tiptap/extension-task-list';
 import CharacterCount from '@tiptap/extension-character-count';
 import TextAlign from '@tiptap/extension-text-align';
 import Link from '@tiptap/extension-link';
-import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight'
-import lowlight from 'lowlight'
 
 import './Tiptap.scss'
 import Menubar from './Menubar'
@@ -46,14 +44,7 @@ const Tiptap = ({ onUpdate, content }: TiptapProps) => {
       TableRow,
       TableHeader,
       TableCell,
-      // CodeBlockLowlight.configure({
-      //   defaultLanguage: 'plaintext',
-      //   lowlight
-      // }),
-      CodeBlockLowLight.configure({
-        defaultLanguage: 'plaintext',
-        lowlight
-      }),
+      CodeBlockLowLight,
 
       CustomPurposeExtension,
     ],

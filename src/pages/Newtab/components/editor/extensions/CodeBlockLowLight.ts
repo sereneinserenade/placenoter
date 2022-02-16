@@ -1,9 +1,9 @@
-import { Plugin, PluginKey, TextSelection  } from 'prosemirror-state'
+import { Plugin, PluginKey, TextSelection } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 import { Node as ProsemirrorNode } from 'prosemirror-model'
 import { findChildren } from '@tiptap/core'
 
-import lowlight from 'lowlight/lib/core'
+import { lowlight } from 'lowlight/lib/all.js'
 
 import { Node, textblockTypeInputRule, mergeAttributes } from '@tiptap/core'
 
@@ -31,15 +31,14 @@ function parseNodes(nodes: any[], className: string[] = []): { text: string, cla
 
 function getHighlightNodes(result: any) {
   // `.value` for lowlight v1, `.children` for lowlight v2
-  return result.value || result.children || []
+  return result.children
 }
 
 function getDecorations({
   doc,
   name,
-  lowlight,
   defaultLanguage,
-}: { doc: ProsemirrorNode, name: string, lowlight: any, defaultLanguage: string | null | undefined }) {
+}: { doc: ProsemirrorNode, name: string, defaultLanguage: string | null | undefined }) {
   const decorations: Decoration[] = []
 
   findChildren(doc, node => node.type.name === name)
@@ -67,7 +66,7 @@ function getDecorations({
   return DecorationSet.create(doc, decorations)
 }
 
-export function LowlightPlugin({ name, lowlight, defaultLanguage }: { name: string, lowlight: any, defaultLanguage: string | null | undefined }) {
+export function LowlightPlugin({ name, defaultLanguage }: { name: string, defaultLanguage: string | null | undefined }) {
   return new Plugin({
     key: new PluginKey('lowlight'),
 
@@ -75,7 +74,6 @@ export function LowlightPlugin({ name, lowlight, defaultLanguage }: { name: stri
       init: (_, { doc }) => getDecorations({
         doc,
         name,
-        lowlight,
         defaultLanguage,
       }),
       apply: (transaction, decorationSet, oldState, newState) => {
@@ -112,7 +110,6 @@ export function LowlightPlugin({ name, lowlight, defaultLanguage }: { name: stri
           return getDecorations({
             doc: transaction.doc,
             name,
-            lowlight,
             defaultLanguage,
           })
         }
@@ -149,7 +146,6 @@ export interface CodeBlockOptions {
    * Custom HTML attributes that should be added to the rendered HTML tag.
    */
   HTMLAttributes: Record<string, any>,
-  lowlight: any,
   defaultLanguage: string | null | undefined,
 }
 
@@ -180,7 +176,6 @@ export const CodeBlockLowLight = Node.create<CodeBlockOptions>({
       exitOnTripleEnter: true,
       exitOnArrowDown: true,
       HTMLAttributes: {},
-      lowlight,
       defaultLanguage: null,
     }
   },
@@ -237,6 +232,7 @@ export const CodeBlockLowLight = Node.create<CodeBlockOptions>({
           class: node.attrs.language
             ? this.options.languageClassPrefix + node.attrs.language
             : null,
+          'data-language': node.attrs.language
         },
         0,
       ],
@@ -422,7 +418,6 @@ export const CodeBlockLowLight = Node.create<CodeBlockOptions>({
       }),
       LowlightPlugin({
         name: this.name,
-        lowlight: this.options.lowlight,
         defaultLanguage: this.options.defaultLanguage,
       }),
     ]
