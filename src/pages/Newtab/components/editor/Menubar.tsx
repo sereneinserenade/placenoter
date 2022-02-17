@@ -384,7 +384,7 @@ const Menubar = ({ editor }: MenubarProps) => {
 
     return (
       editor && activeNote?.id &&
-      <BubbleMenu editor={editor} className="bubble-menu menubar flex" tippyOptions={{ placement: 'top' }} >
+      <BubbleMenu editor={editor} className={`bubble-menu menubar flex ${isActiveStates['codeBlock'] && 'hide'}`} tippyOptions={{ placement: 'top' }} >
         {
           buttons
             .filter(b => nameOfButtons.some(n => b.name === n))
@@ -478,7 +478,7 @@ const Menubar = ({ editor }: MenubarProps) => {
                 <Text weight={'medium'} size={'1.2em'} margin={'0 0 8px 0'}>Select Language: </Text>
 
                 <select value={val} name="language-selector" id="language-selector" onChange={(e) => updateVal(e)}>
-                  {langs.map((v: string) => (<option value={v}> {v.split("").map((a, i) => !i ? a.toUpperCase() : a).join("") || 'Choose Language'} </option>))}
+                  {langs.map((v: string) => (<option key={`${v}_option`} value={v}> {v.split("").map((a, i) => !i ? a.toUpperCase() : a).join("") || 'Choose Language'} </option>))}
                 </select>
               </>
             )

@@ -19,33 +19,38 @@
     height: 8vh;
   }
 
-  .sidebar-note {
-    padding: 8px;
-    cursor: pointer;
-    border-bottom: 2px solid rgba($color: #000000, $alpha: 0.15);
-    transition: border 0.2s ease-in-out;
+  .sidebar-notes-list {
+    max-height: 92vh;
+    overflow-y: auto;
 
-    &:hover {
-      background: rgba($color: #000000, $alpha: 0.05);
+    .sidebar-note {
+      padding: 8px;
+      cursor: pointer;
+      border-bottom: 2px solid rgba($color: #000000, $alpha: 0.15);
       transition: border 0.2s ease-in-out;
-    }
 
-    &.active {
-      transition: border 0.2s ease-in-out;
-      border-left: 6px solid black;
-      background: rgba($color: #000000, $alpha: 0.05);
-    }
+      &:hover {
+        background: rgba($color: #000000, $alpha: 0.05);
+        transition: border 0.2s ease-in-out;
+      }
 
-    .title-and-action-center {
-      justify-content: space-between;
+      &.active {
+        transition: border 0.2s ease-in-out;
+        border-left: 6px solid black;
+        background: rgba($color: #000000, $alpha: 0.05);
+      }
 
-      .title-editor-input {
-        background: none;
-        border: none;
-        outline: none;
-        padding: none;
+      .title-and-action-center {
+        justify-content: space-between;
 
-        font-size: 1.2em;
+        .title-editor-input {
+          background: none;
+          border: none;
+          outline: none;
+          padding: none;
+
+          font-size: 1.2em;
+        }
       }
     }
   }

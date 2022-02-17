@@ -18,6 +18,7 @@ import TableCell from '@tiptap/extension-table-cell';
 import TableHeader from '@tiptap/extension-table-header';
 import TableRow from '@tiptap/extension-table-row';
 import { CodeBlockLowLight } from './extensions/CodeBlockLowLight';
+import { Text } from '@nextui-org/react';
 
 interface TiptapProps {
   onUpdate: Function
@@ -67,7 +68,12 @@ const Tiptap = ({ onUpdate, content }: TiptapProps) => {
 
       (editorArea as HTMLDivElement).removeEventListener('click', () => editor?.commands.focus());
     },
-    autofocus: false
+    autofocus: false,
+    editorProps: {
+      attributes: {
+        spellcheck: 'false'
+      }
+    }
   })
 
   return (
@@ -76,7 +82,7 @@ const Tiptap = ({ onUpdate, content }: TiptapProps) => {
 
       <EditorContent className='editor-content' editor={editor} />
 
-      <section className='word-and-character-count-section flex'>
+      <Text className='word-and-character-count-section flex'>
         <span>
           {editor?.storage.characterCount.characters()} Characters
         </span>
@@ -84,7 +90,7 @@ const Tiptap = ({ onUpdate, content }: TiptapProps) => {
         <span>
           {editor?.storage.characterCount.words()} Words
         </span>
-      </section>
+      </Text>
     </>
   )
 }

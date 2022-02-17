@@ -8,6 +8,7 @@ import { notesState, activeNoteState, sidebarActiveState } from './Store';
 import { Note } from './types';
 import PlaceNoterLogo from '../../assets/img/logo.svg';
 import './Main.scss'
+import { debounce } from 'lodash';
 
 const { storage } = chrome
 
@@ -39,9 +40,11 @@ function Main() {
     }
   }, [activeNote])
 
-  useEffect(() => {
-    if (notesFetchedFromDb) storage.sync.set({ dbnotes: notes })
-  }, [notes])
+  const setNotesInLocalStorage = () => storage.local.set({ dbnotes: notes })
+
+  const debouncedSetNotesInLocalStorage = debounce(setNotesInLocalStorage, 300)
+
+  useEffect(() => { notesFetchedFromDb && debouncedSetNotesInLocalStorage() }, [notes])
 
   const checkIfAnEmptyNoteExists = (): Note | undefined => {
     return notes.find((n) => n.title.trim() === "" && n.textContent.trim() === "")
@@ -73,15 +76,15 @@ function Main() {
   }
 
   const fetchNotesFromSyncStorage = () => {
-    // storage.sync.set({ dbnotes: [] })
+    // storage.local.set({ dbnotes: [] })
 
-    storage.sync.get('dbnotes', ({ dbnotes }) => {
+    storage.local.get('dbnotes', ({ dbnotes }) => {
       if (dbnotes) setNotes(dbnotes)
-      else storage.sync.set({ dbnotes: [] })
+      else storage.local.set({ dbnotes: [] })
 
       setNotesFetchedFromDb(true)
 
-      storage.sync.get('lastActiveNoteId', ({ lastActiveNoteId }) => {
+      storage.local.get('lastActiveNoteId', ({ lastActiveNoteId }) => {
         const foundNote = dbnotes.find((n: Note) => n.id === lastActiveNoteId)
         setActiveNote(foundNote)
       })

@@ -7,6 +7,26 @@ import { lowlight } from 'lowlight/lib/common.js'
 
 import { Node, textblockTypeInputRule, mergeAttributes } from '@tiptap/core'
 
+const langAliases: Record<string, string | string[]> = {
+  arduino: "ard",
+  cpp: "c++",
+  csharp: "c#",
+  javascript: 'js',
+  kotlin: "kot",
+  makefile: ['make', 'mk'],
+  markdown: ['md'],
+  objectivec: "objc",
+  python: 'py',
+  typescript: "ts",
+}
+
+const reverseLangAliases: Record<string, string> = {}
+
+for (const [lang, alias] of Object.entries(langAliases)) {
+  if (Array.isArray(alias)) { alias.forEach(a => reverseLangAliases[a] = lang) }
+  else reverseLangAliases[alias] = lang
+}
+
 function parseNodes(nodes: any[], className: string[] = []): { text: string, classes: string[] }[] {
   return nodes
     .map(node => {
@@ -46,8 +66,13 @@ function getDecorations({
       let from = block.pos + 1
       const language = block.node.attrs.language || defaultLanguage
       const languages = lowlight.listLanguages()
-      const nodes = language && languages.includes(language)
-        ? getHighlightNodes(lowlight.highlight(language, block.node.textContent))
+
+      const mainLang = reverseLangAliases[language]
+
+      debugger
+
+      const nodes = (language && languages.includes(language)) || mainLang
+        ? getHighlightNodes(lowlight.highlight(mainLang || language, block.node.textContent))
         : getHighlightNodes(lowlight.highlightAuto(block.node.textContent))
 
       parseNodes(nodes).forEach(node => {
@@ -223,6 +248,10 @@ export const CodeBlockLowLight = Node.create<CodeBlockOptions>({
   },
 
   renderHTML({ node, HTMLAttributes }) {
+    const mainLang = reverseLangAliases[node.attrs.language]
+
+    const langToShow = node.attrs.language ? node.attrs.language + `${mainLang ? " - " +  mainLang : ""}`.trim() : 'auto'
+
     return [
       'pre',
       mergeAttributes(this.options.HTMLAttributes, HTMLAttributes),
@@ -232,7 +261,7 @@ export const CodeBlockLowLight = Node.create<CodeBlockOptions>({
           class: node.attrs.language
             ? this.options.languageClassPrefix + node.attrs.language
             : null,
-          'data-language': node.attrs.language || 'auto'
+          'data-language': langToShow
         },
         0,
       ],

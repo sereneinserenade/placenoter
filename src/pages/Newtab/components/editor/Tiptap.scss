@@ -4,16 +4,9 @@
   bottom: 0;
   gap: 4px;
   padding: 4px;
-  background: white;
+  background-color: var(--nextui-colors-background);
   box-shadow: 0 0 10px rgba($color: black, $alpha: 0.2);
   border-radius: 6px;
-}
-
-.dark-theme {
-  .word-and-character-count-section {
-    background: var(--nextui-colors-black);
-    box-shadow: 0 0 10px 4px rgba($color: white, $alpha: 0.25);
-  }
 }
 
 .editor-content {
@@ -176,7 +169,7 @@
         margin: 0 0 1em 0;
         border-radius: var(--nextui-radii-sm);
         font-family: var(--nextui-fonts-sans);
-        color: var(--nextui-colors-error);
+        color: var(--nextui-colors-warning);
         font-size: 1.2em;
         font-weight: 500;
         text-transform: capitalize;

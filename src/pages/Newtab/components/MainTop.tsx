@@ -76,7 +76,7 @@ const MainTop = () => {
   const goHome = () => {
     setActiveNote(undefined)
 
-    storage.sync.set({ lastActiveNoteId: undefined })
+    storage.local.set({ lastActiveNoteId: undefined })
   }
 
   const onThemeChange = () => {

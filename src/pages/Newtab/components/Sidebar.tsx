@@ -31,7 +31,7 @@ const Sidebar = () => {
 
     setTimeout(() => setActiveNote(note))
 
-    storage.sync.set({ lastActiveNoteId: note?.id })
+    storage.local.set({ lastActiveNoteId: note?.id })
   }
 
   const setNoteTitle = (note: Note, newTitle: string) => {
@@ -131,7 +131,7 @@ const Sidebar = () => {
         />
       </section>
 
-      <section>
+      <section className='sidebar-notes-list'>
         {gimmeNotesToShow()}
       </section>
     </aside>
