@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import { Editor } from '@tiptap/core';
 import { BubbleMenu } from '@tiptap/react'
@@ -14,6 +14,7 @@ import './Menubar.scss'
 import LinkBubbleMenu from './LinkBubbleMenu';
 import MenubarTableButtons from './MenubarTableButtons';
 import { lowlight } from 'lowlight/lib/common.js';
+import { gimmeReverseLangAlias } from './extensions/CodeBlockLowLight';
 
 type MenubarProps = {
   editor: Editor
@@ -453,13 +454,16 @@ const Menubar = ({ editor }: MenubarProps) => {
   }
 
   const CodeBlockLanguageSelector = ({ editor, currentLang }: CodeBlockLanguageSelectorProps) => {
+    const reverseLangAlias = useMemo(gimmeReverseLangAlias, [])
+
     const langs = lowlight.listLanguages() || []
 
     langs.unshift('')
 
     const [val, setVal] = useState<string>('')
 
-    useEffect(() => { setVal(currentLang) }, [currentLang])
+    useEffect(() => { setVal(reverseLangAlias[currentLang] || currentLang) }, [currentLang])
+
 
     const updateVal = (e: React.ChangeEvent<HTMLSelectElement>) => {
       const { value } = e.target

@@ -27,6 +27,8 @@ for (const [lang, alias] of Object.entries(langAliases)) {
   else reverseLangAliases[alias] = lang
 }
 
+export const gimmeReverseLangAlias = () => reverseLangAliases
+
 function parseNodes(nodes: any[], className: string[] = []): { text: string, classes: string[] }[] {
   return nodes
     .map(node => {
@@ -68,8 +70,6 @@ function getDecorations({
       const languages = lowlight.listLanguages()
 
       const mainLang = reverseLangAliases[language]
-
-      debugger
 
       const nodes = (language && languages.includes(language)) || mainLang
         ? getHighlightNodes(lowlight.highlight(mainLang || language, block.node.textContent))
@@ -250,7 +250,7 @@ export const CodeBlockLowLight = Node.create<CodeBlockOptions>({
   renderHTML({ node, HTMLAttributes }) {
     const mainLang = reverseLangAliases[node.attrs.language]
 
-    const langToShow = node.attrs.language ? node.attrs.language + `${mainLang ? " - " +  mainLang : ""}`.trim() : 'auto'
+    const langToShow = node.attrs.language ? node.attrs.language + " " + `${mainLang ? `- ${mainLang}` : ""}`.trim() : 'auto'
 
     return [
       'pre',
