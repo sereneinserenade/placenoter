@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Button, Tooltip, FormElement, Input, useTheme, changeTheme, Switch } from '@nextui-org/react'
-import { RiAddLine, RiMenuFoldFill, RiMenuUnfoldFill, RiMoonLine, RiPulseLine, RiSunLine } from 'react-icons/ri'
-import { FiFeather, FiHome, FiTrash2 } from 'react-icons/fi'
+import { RiAddLine, RiMenuFoldFill, RiMenuUnfoldFill, RiMoonLine, RiPrinterLine, RiPulseLine, RiSunLine } from 'react-icons/ri'
+import { FiHome } from 'react-icons/fi'
 import { v4 as uuidv4 } from 'uuid'
 
 import './MainTop.scss'
@@ -94,6 +94,20 @@ const MainTop = () => {
 
     setTimeout(() => setActiveNote(note))
   }
+
+  const printEditorContent = () => {
+    const printContents = document.querySelector(".editor-content")?.innerHTML;
+
+    if (!printContents) {
+      console.warn('Empty Editor Content could not be printed.')
+      return
+    }
+
+    document.body.innerHTML = printContents;
+    window.print();
+    document.location.href = document.location.href
+  }
+
   return (
     <section className={`main-top flex`}>
       <section className='left-controls flex' aria-label='left-controls'>
@@ -123,6 +137,13 @@ const MainTop = () => {
       </section>
 
       <section className='right-controls flex'>
+        {
+          // TODO: Give option to share in cloud storage
+          activeNote?.id && <Tooltip placement='bottomEnd' content={'Print Document'}>
+            <Button color="primary" auto ghost size='sm' onClick={() => printEditorContent()} className="sidebar-control-button flex" icon={< RiPrinterLine />} />
+          </Tooltip>
+        }
+
         <Tooltip placement='bottomEnd' content={isDark ? 'Light mode' : 'Dark mode'}>
           <Switch
             checked={isDark}

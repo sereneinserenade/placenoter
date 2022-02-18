@@ -7,9 +7,12 @@ import { Note } from '../../types'
 import Tiptap from './Tiptap'
 
 import './EditorAreaContainer.scss'
+import { useTitle } from 'react-use'
 
 const EditorAreaContainer = () => {
   const [activeNote, setActiveNote] = useRecoilState(activeNoteState)
+
+  useTitle(activeNote?.title || "PlaceNoter")
 
   const setNoteContent = (content: string, textContent: string) => {
     if (typeof content === 'string') content = content.trim()
