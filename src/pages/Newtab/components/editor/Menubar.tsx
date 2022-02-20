@@ -383,27 +383,30 @@ const Menubar = ({ editor }: MenubarProps) => {
   const GimmeBubbleMenu = ({ editor }: { editor: Editor }) => {
     const nameOfButtons = ['bold', 'italic', 'underline', 'strike', 'link', 'alignLeft', 'alignCenter', 'alignRight', 'alignJustify', 'code']
 
-    return (
-      editor && activeNote?.id &&
-      <BubbleMenu editor={editor} className={`bubble-menu menubar flex ${isActiveStates['codeBlock'] && 'hide'}`} tippyOptions={{ placement: 'top' }} >
-        {
-          buttons
-            .filter(b => nameOfButtons.some(n => b.name === n))
-            .map((btn) => {
-              return (
-                <Tooltip key={btn.name} content={btn.label}>
-                  <button
-                    className={`menubar-button flex ${isActiveStates[btn.name] ? 'active' : ''}`}
-                    onClick={() => btn.action && btn.action(editor) && debouncedCalculateIsActiveStates(editor)}
-                  >
-                    {btn.icon && <btn.icon />}
-                  </button>
-                </Tooltip>
-              )
-            })
-        }
-      </BubbleMenu>
-    )
+    return BubbleMenu({
+      editor,
+      className: `bubble-menu menubar flex ${isActiveStates['codeBlock'] && 'hide'}`,
+      tippyOptions: { placement: 'top' },
+      children: (
+        <>
+          {
+            buttons.filter(b => nameOfButtons.some(n => b.name === n))
+              .map((btn) => {
+                return (
+                  <Tooltip key={btn.name} content={btn.label}>
+                    <button
+                      className={`menubar-button flex ${isActiveStates[btn.name] ? 'active' : ''}`}
+                      onClick={() => btn.action && btn.action(editor) && debouncedCalculateIsActiveStates(editor)}
+                    >
+                      {btn.icon && <btn.icon />}
+                    </button>
+                  </Tooltip>
+                )
+              })
+          }
+        </>
+      )
+    })
   }
 
   type TableGridProps = {
@@ -561,9 +564,14 @@ const Menubar = ({ editor }: MenubarProps) => {
 
       <LinkModal visible={linkModalVisible} onClose={closeLinkModal} url={currentUrl} />
 
-      {GimmeBubbleMenu({ editor })}
+      {
+        editor && activeNote?.id &&
+        <>
+          {GimmeBubbleMenu({ editor })}
+          {LinkBubbleMenu({ editor, closeLinkModal, currentUrl })}
+        </>
+      }
 
-      {LinkBubbleMenu({ editor, closeLinkModal, currentUrl })}
     </section>
   )
 }
