@@ -305,6 +305,42 @@ const Menubar = ({ editor }: MenubarProps) => {
     }
   ]
 
+  const isMac = useMemo<boolean>(() => navigator.userAgent.toLowerCase().includes('mac'), [])
+
+  const buttonKeys = useMemo<Record<string, string>>(() => ({
+    bold: isMac ? "⌘ + B" : "ctrl + B",
+    italic: isMac ? "⌘ + I" : "ctrl + I",
+    underline: isMac ? "⌘ + U" : "ctrl + U",
+    strike: isMac ? "⌘ + Shift + X" : "ctrl + Shift + X",
+    // link: isMac ? "" : "",
+    code: isMac ? "⌘ + E" : "ctrl + E",
+    alignLeft: isMac ? "⌘ + Shift + L" : "ctrl + Shift + L",
+    alignCenter: isMac ? "⌘ + Shift + E" : "ctrl + Shift + E",
+    alignRight: isMac ? "⌘ + Shift + R" : "ctrl + Shift + R",
+    alignJustify: isMac ? "⌘ + Shift + J" : "ctrl + Shift + J",
+    h1: isMac ? "⌘ + Alt + 1" : "ctrl + Alt + 1",
+    h2: isMac ? "⌘ + Alt + 2" : "ctrl + Alt + 2",
+    h3: isMac ? "⌘ + Alt + 3" : "ctrl + Alt + 3",
+    orderedList: isMac ? "⌘ + shift + 7" : "ctrl + shift + 7",
+    bulletList: isMac ? "⌘ + shift + 8" : "ctrl + shift + 8",
+    taskList: isMac ? "⌘ + shift + 9" : "ctrl + shift + 9",
+    // table: isMac ? "" : "",
+    blockquote: isMac ? "⌘ + shift + B" : "ctrl + shift + B",
+    codeBlock: isMac ? "⌘ + Alt + C" : "ctrl + Alt + C",
+    // horizontalRule: isMac ? "" : "",
+    // hardBreak: isMac ? "" : "",
+    undo: isMac ? "⌘ + Z" : "ctrl + Z",
+    redo: isMac ? "⌘ + shift + Z" : "ctrl + shift + z",
+  }), [isMac])
+
+  const GimmeTooltip = (tooltip: string, name: string) => {
+    if (buttonKeys[name]) return <Text> {tooltip} ( <kbd> {buttonKeys[name]} </kbd> )</Text>
+
+    console.log(navigator.userAgent)
+
+    return <Text> {tooltip} </Text>
+  }
+
   const calculateIsActiveStates = (editor: Editor) => {
     const states: Record<string, boolean> = {}
 
@@ -393,7 +429,7 @@ const Menubar = ({ editor }: MenubarProps) => {
             buttons.filter(b => nameOfButtons.some(n => b.name === n))
               .map((btn) => {
                 return (
-                  <Tooltip key={btn.name} content={btn.label}>
+                  <Tooltip key={btn.name} content={btn.label ? GimmeTooltip(btn.label, btn.name) : btn.label}>
                     <button
                       className={`menubar-button flex ${isActiveStates[btn.name] ? 'active' : ''}`}
                       onClick={() => btn.action && btn.action(editor) && debouncedCalculateIsActiveStates(editor)}
@@ -538,7 +574,7 @@ const Menubar = ({ editor }: MenubarProps) => {
           }
 
           return (
-            <Tooltip key={btn.name} content={btn.label}>
+            <Tooltip key={btn.name} content={btn.label ? GimmeTooltip(btn.label, btn.name) : btn.label}>
               <button
                 className={`menubar-button flex ${isActiveStates[btn.name] ? 'active' : ''}`}
                 onClick={() => btn.action && btn.action(editor) && debouncedCalculateIsActiveStates(editor)}
