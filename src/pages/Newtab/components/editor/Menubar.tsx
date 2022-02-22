@@ -336,8 +336,6 @@ const Menubar = ({ editor }: MenubarProps) => {
   const GimmeTooltip = (tooltip: string, name: string) => {
     if (buttonKeys[name]) return <Text> {tooltip} ( <kbd> {buttonKeys[name]} </kbd> )</Text>
 
-    console.log(navigator.userAgent)
-
     return <Text> {tooltip} </Text>
   }
 
