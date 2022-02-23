@@ -2,8 +2,17 @@ import { Extension } from '@tiptap/react'
 import { EditorView } from 'prosemirror-view';
 import { Plugin, PluginKey, TextSelection } from 'prosemirror-state';
 
-export const CustomPurposeExtension = Extension.create({
+interface CustomPurposeExtensionOptions {
+  onLinkShortcutEntered: Function
+}
+
+export const CustomPurposeExtension = Extension.create<CustomPurposeExtensionOptions>({
   name: 'customPurposeExtension',
+  addOptions() {
+    return {
+      onLinkShortcutEntered: () => {}
+    }
+  },
   addStorage() {
     return {
       isSearchActive: false
@@ -48,7 +57,8 @@ export const CustomPurposeExtension = Extension.create({
   addKeyboardShortcuts() {
     return {
       'Mod-f': ({ editor }) => editor.storage.customPurposeExtension.isSearchActive = true,
-      'Esc': ({ editor }) => editor.storage.customPurposeExtension.isSearchActive = false
+      'Esc': ({ editor }) => editor.storage.customPurposeExtension.isSearchActive = false,
+      'Mod-k': ({ editor }) => this.options.onLinkShortcutEntered(),
     }
   },
 })

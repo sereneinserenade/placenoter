@@ -22,3 +22,8 @@ export const editorSearchState = atom<string>({
   key: 'editorSearchState',
   default: ""
 })
+
+export const linkModalState = atom<boolean>({
+  key: 'linkModalState',
+  default: false
+})

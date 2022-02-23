@@ -117,10 +117,10 @@ const MenubarTableButtons = ({ editor }: MenubarTableButtonsProps) => {
       {
         buttons.map((btn) => {
           return (
-            <Tooltip key={btn.name} content={btn.label}>
+            <Tooltip key={btn.name} content={btn.label + `${isActiveStates[btn.name] ? '' : ' (disabled)'}`}>
               <button
                 className={`menubar-button flex ${isActiveStates[btn.name] ? '' : 'disabled'}`}
-                onClick={() => btn.action && btn.action(editor) && debouncedCalculateIsActiveStates(editor)}
+                onClick={() => isActiveStates[btn.name] && btn.action && btn.action(editor) && debouncedCalculateIsActiveStates(editor)}
               >
                 {btn.icon && <btn.icon />}
               </button>

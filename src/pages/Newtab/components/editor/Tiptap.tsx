@@ -19,6 +19,8 @@ import TableHeader from '@tiptap/extension-table-header';
 import TableRow from '@tiptap/extension-table-row';
 import { CodeBlockLowLight } from './extensions/CodeBlockLowLight';
 import { Text } from '@nextui-org/react';
+import { useSetRecoilState } from 'recoil';
+import { linkModalState } from '../../Store';
 
 interface TiptapProps {
   onUpdate: Function
@@ -26,6 +28,8 @@ interface TiptapProps {
 }
 
 const Tiptap = ({ onUpdate, content }: TiptapProps) => {
+  const setGlobalLinkModalVisibleState = useSetRecoilState(linkModalState)
+
   const editor = useEditor({
     extensions: [
       StarterKit.configure({ codeBlock: false, }),
@@ -47,7 +51,7 @@ const Tiptap = ({ onUpdate, content }: TiptapProps) => {
       TableCell,
       CodeBlockLowLight,
 
-      CustomPurposeExtension,
+      CustomPurposeExtension.configure({ onLinkShortcutEntered: () => setGlobalLinkModalVisibleState(true) }),
     ],
     content: content,
     onUpdate: ({ editor }) => {

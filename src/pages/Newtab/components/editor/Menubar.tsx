@@ -8,7 +8,7 @@ import { Button, Input, Tooltip, Text } from '@nextui-org/react';
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { debounce } from 'lodash';
 
-import { activeNoteState, editorSearchState } from '../../Store';
+import { activeNoteState, editorSearchState, linkModalState } from '../../Store';
 import LinkModal from './LinkModal'
 import './Menubar.scss'
 import LinkBubbleMenu from './LinkBubbleMenu';
@@ -53,7 +53,11 @@ const Menubar = ({ editor }: MenubarProps) => {
 
   const [tableGridHeight, setTableGridHeight] = useState<number>(6)
 
-  const [activeCell, setActiveCell] = useState<{ x: number, y: number }>({ x: 2, y: 2 })
+  const [activeCell, setActiveCell] = useState<{ x: number, y: number }>({ x: 3, y: 3 })
+
+  const [globalLinkModalVisibleState, setGlobalLinkModalVisibleState] = useRecoilState(linkModalState)
+
+  useEffect(() => { if (globalLinkModalVisibleState) setLinkModalVisible(true) }, [globalLinkModalVisibleState])
 
   const setGridDimensions = ({ x, y }: { x: number, y: number }) => {
     if (x >= 4 && x <= 9) {
@@ -91,6 +95,9 @@ const Menubar = ({ editor }: MenubarProps) => {
 
   const closeLinkModal = (url?: string) => {
     setLinkModalVisible(false)
+    setGlobalLinkModalVisibleState(false)
+
+    editor?.commands.focus()
 
     if (url === null || !editor) return
 
@@ -229,18 +236,18 @@ const Menubar = ({ editor }: MenubarProps) => {
     //   icon: RiH6,
     // },
     {
-      name: 'bulletList',
-      label: 'Bullet List',
-      action: (editor: Editor) => editor.chain().focus().toggleBulletList().run(),
-      isActive: (editor: Editor) => editor.isActive('bulletList'),
-      icon: RiListUnordered,
-    },
-    {
       name: 'orderedList',
       label: 'Ordered List',
       action: (editor: Editor) => editor.chain().focus().toggleOrderedList().run(),
       isActive: (editor: Editor) => editor.isActive('orderedList'),
       icon: RiListOrdered,
+    },
+    {
+      name: 'bulletList',
+      label: 'Bullet List',
+      action: (editor: Editor) => editor.chain().focus().toggleBulletList().run(),
+      isActive: (editor: Editor) => editor.isActive('bulletList'),
+      icon: RiListUnordered,
     },
     {
       name: 'taskList',
@@ -276,65 +283,65 @@ const Menubar = ({ editor }: MenubarProps) => {
     {
       name: 'divider',
     },
-    {
-      name: 'horizontalRule',
-      label: 'Horizontal Rule',
-      action: (editor: Editor) => editor.chain().focus().setHorizontalRule().run(),
-      icon: RiSeparator,
-    },
-    {
-      name: 'hardBreak',
-      label: 'Hard Break',
-      action: (editor: Editor) => editor.chain().focus().setHardBreak().run(),
-      icon: RiTextWrap,
-    },
-    {
-      name: 'divider',
-    },
-    {
-      name: 'undo',
-      label: 'Undo',
-      action: (editor: Editor) => editor.chain().focus().undo().run(),
-      icon: RiArrowGoBackLine,
-    },
-    {
-      name: 'redo',
-      label: 'Redo',
-      action: (editor: Editor) => editor.chain().focus().redo().run(),
-      icon: RiArrowGoForwardLine,
-    }
+    // {
+    //   name: 'horizontalRule',
+    //   label: 'Horizontal Rule',
+    //   action: (editor: Editor) => editor.chain().focus().setHorizontalRule().run(),
+    //   icon: RiSeparator,
+    // },
+    // {
+    //   name: 'hardBreak',
+    //   label: 'Hard Break',
+    //   action: (editor: Editor) => editor.chain().focus().setHardBreak().run(),
+    //   icon: RiTextWrap,
+    // },
+    // {
+    //   name: 'divider',
+    // },
+    // {
+    //   name: 'undo',
+    //   label: 'Undo',
+    //   action: (editor: Editor) => editor.chain().focus().undo().run(),
+    //   icon: RiArrowGoBackLine,
+    // },
+    // {
+    //   name: 'redo',
+    //   label: 'Redo',
+    //   action: (editor: Editor) => editor.chain().focus().redo().run(),
+    //   icon: RiArrowGoForwardLine,
+    // }
   ]
 
   const isMac = useMemo<boolean>(() => navigator.userAgent.toLowerCase().includes('mac'), [])
 
   const buttonKeys = useMemo<Record<string, string>>(() => ({
-    bold: isMac ? "⌘ + B" : "ctrl + B",
-    italic: isMac ? "⌘ + I" : "ctrl + I",
-    underline: isMac ? "⌘ + U" : "ctrl + U",
-    strike: isMac ? "⌘ + shift + X" : "ctrl + shift + X",
-    // link: isMac ? "" : "",
-    code: isMac ? "⌘ + E" : "ctrl + E",
-    alignLeft: isMac ? "⌘ + shift + L" : "ctrl + shift + L",
-    alignCenter: isMac ? "⌘ + shift + E" : "ctrl + shift + E",
-    alignRight: isMac ? "⌘ + shift + R" : "ctrl + shift + R",
-    alignJustify: isMac ? "⌘ + shift + J" : "ctrl + shift + J",
-    h1: isMac ? "⌘ + alt + 1" : "ctrl + alt + 1",
-    h2: isMac ? "⌘ + alt + 2" : "ctrl + alt + 2",
-    h3: isMac ? "⌘ + alt + 3" : "ctrl + alt + 3",
-    orderedList: isMac ? "⌘ + shift + 7" : "ctrl + shift + 7",
-    bulletList: isMac ? "⌘ + shift + 8" : "ctrl + shift + 8",
-    taskList: isMac ? "⌘ + shift + 9" : "ctrl + shift + 9",
-    // table: isMac ? "" : "",
-    blockquote: isMac ? "⌘ + shift + B" : "ctrl + shift + B",
-    codeBlock: isMac ? "⌘ + alt + C" : "ctrl + alt + C",
-    // horizontalRule: isMac ? "" : "",
-    // hardBreak: isMac ? "" : "",
-    undo: isMac ? "⌘ + Z" : "ctrl + Z",
-    redo: isMac ? "⌘ + shift + Z" : "ctrl + shift + z",
+    bold: isMac ? "⌘+B" : "ctrl+B",
+    italic: isMac ? "⌘+I" : "ctrl+I",
+    underline: isMac ? "⌘+U" : "ctrl+U",
+    strike: isMac ? "⌘+shift+X" : "ctrl+shift+X",
+    link: isMac ? "⌘+K" : "ctrl+k",
+    code: isMac ? "⌘+E" : "ctrl+E",
+    alignLeft: isMac ? "⌘+shift+L" : "ctrl+shift+L",
+    alignCenter: isMac ? "⌘+shift+E" : "ctrl+shift+E",
+    alignRight: isMac ? "⌘+shift+R" : "ctrl+shift+R",
+    alignJustify: isMac ? "⌘+shift+J" : "ctrl+shift+J",
+    h1: isMac ? "⌘+⌥+1" : "ctrl+alt+1",
+    h2: isMac ? "⌘+⌥+2" : "ctrl+alt+2",
+    h3: isMac ? "⌘+⌥+3" : "ctrl+alt+3",
+    orderedList: isMac ? "⌘+shift+7" : "ctrl+shift+7",
+    bulletList: isMac ? "⌘+shift+8" : "ctrl+shift+8",
+    taskList: isMac ? "⌘+shift+9" : "ctrl+shift+9",
+    //table:isMac?"":"",
+    blockquote: isMac ? "⌘+shift+B" : "ctrl+shift+B",
+    codeBlock: isMac ? "⌘+⌥+C" : "ctrl+alt+C",
+    //horizontalRule:isMac?"":"",
+    //hardBreak:isMac?"":"",
+    undo: isMac ? "⌘+Z" : "ctrl+Z",
+    redo: isMac ? "⌘+shift+Z" : "ctrl+shift+z",
   }), [isMac])
 
   const GimmeTooltip = (tooltip: string, name: string) => {
-    if (buttonKeys[name]) return <Text> {tooltip} ( <kbd> {buttonKeys[name]} </kbd> )</Text>
+    if (buttonKeys[name]) return <Text> {tooltip} (<kbd>{buttonKeys[name]}</kbd>)</Text>
 
     return <Text> {tooltip} </Text>
   }
@@ -532,80 +539,84 @@ const Menubar = ({ editor }: MenubarProps) => {
   return (
     <section className='menubar flex' aria-label='menubar-section'>
       {
-        activeNote?.id && editor && buttons.map((btn, index) => {
-          if (btn.name === 'divider') return (<div key={(index + 1) + 'th-divider'} className='divider' />)
+        activeNote?.id && editor &&
 
-          if (btn.name === 'table') {
-            return (
-              <section key={'table-key-prop'} className='table-menu-section flex'>
-                <Tooltip
-                  key={btn.name}
-                  placement="bottomStart"
-                  content={TableGrid({ tableGridHeight, tableGridWidth })}
-                  trigger="click"
-                  onVisibleChange={(val) => !val && setTimeout(() => `${setTableGridHeight(6)} ${setTableGridWidth(6)}`, 500)}
-                >
-                  <button className={`menubar-button add-table-button flex ${isActiveStates[btn.name] ? 'active' : ''}`} >
+        <>
+          {
+            buttons.map((btn, index) => {
+              if (btn.name === 'divider') return (<div key={(index + 1) + 'th-divider'} className='divider' />)
+
+              if (btn.name === 'table') {
+                return (
+                  <section key={'table-key-prop'} className='table-menu-section flex'>
+                    <Tooltip
+                      key={btn.name}
+                      placement="bottomStart"
+                      content={TableGrid({ tableGridHeight, tableGridWidth })}
+                      trigger="click"
+                      onVisibleChange={(val) => !val && setTimeout(() => `${setTableGridHeight(6)} ${setTableGridWidth(6)}`, 500)}
+                    >
+                      <Tooltip placement='top' content={btn.label}>
+                        <button className={`menubar-button add-table-button flex ${isActiveStates[btn.name] ? 'active' : ''}`} >
+                          {btn.icon && <btn.icon />}
+                        </button>
+                      </Tooltip>
+                    </Tooltip>
+                    <Tooltip key={'table-controls-button'} content={MenubarTableButtons({ editor })} trigger="click" placement='bottom'>
+                      <Tooltip placement='top' content={'Table Options'}>
+                        <button className={`menubar-button table-controls-button flex ${isActiveStates[btn.name] ? 'active' : ''}`} >
+                          {<RiArrowDownSLine />}
+                        </button>
+                      </Tooltip>
+                    </Tooltip>
+                  </section>
+                )
+              }
+
+              if (btn.name === 'codeBlock') {
+                return (
+                  <Tooltip trigger='hover' key={btn.name} placement='top' content={btn.label ? GimmeTooltip(btn.label, btn.name) : btn.label}>
+                    <Tooltip trigger='hover' content={CodeBlockLanguageSelector({ editor, currentLang })} placement={'bottom'}>
+                      <button
+                        className={`menubar-button flex ${isActiveStates[btn.name] ? 'active' : ''}`}
+                        onClick={() => btn.action && btn.action(editor) && debouncedCalculateIsActiveStates(editor)}
+                      >
+                        {btn.icon && <btn.icon />}
+                      </button>
+                    </Tooltip>
+                  </Tooltip>
+                )
+              }
+
+              return (
+                <Tooltip key={btn.name} content={btn.label ? GimmeTooltip(btn.label, btn.name) : btn.label}>
+                  <button
+                    className={`menubar-button flex ${isActiveStates[btn.name] ? 'active' : ''}`}
+                    onClick={() => btn.action && btn.action(editor) && debouncedCalculateIsActiveStates(editor)}
+                  >
                     {btn.icon && <btn.icon />}
                   </button>
                 </Tooltip>
-                <Tooltip key={'table-controls-button'} content={MenubarTableButtons({ editor })} trigger="click" placement='bottom'>
-                  <button className={`menubar-button table-controls-button flex ${isActiveStates[btn.name] ? 'active' : ''}`} >
-                    {<RiArrowDownSLine />}
-                  </button>
-                </Tooltip>
-              </section>
-            )
+              )
+            })
           }
 
-          if (btn.name === 'codeBlock') {
-            return (
-              <Tooltip trigger='hover' key={btn.name} content={CodeBlockLanguageSelector({ editor, currentLang })} placement={'bottom'}>
-                <button
-                  className={`menubar-button flex ${isActiveStates[btn.name] ? 'active' : ''}`}
-                  onClick={() => btn.action && btn.action(editor) && debouncedCalculateIsActiveStates(editor)}
-                >
-                  {btn.icon && <btn.icon />}
-                </button>
-              </Tooltip>
-            )
-          }
+          {/* Using `SearchSection()` instead of `<SearchSection />` cause the input
+            elements were getting unfocused because of rerender when something was typed */}
 
-          return (
-            <Tooltip key={btn.name} content={btn.label ? GimmeTooltip(btn.label, btn.name) : btn.label}>
-              <button
-                className={`menubar-button flex ${isActiveStates[btn.name] ? 'active' : ''}`}
-                onClick={() => btn.action && btn.action(editor) && debouncedCalculateIsActiveStates(editor)}
-              >
-                {btn.icon && <btn.icon />}
-              </button>
-            </Tooltip>
-          )
-        })
-      }
-
-      {
-        activeNote?.id && editor && (
-          // Using `SearchSection()` instead of `<SearchSection />` cause the input
-          // elements were getting unfocused because of rerender when something was typed
           <Tooltip visible={!!globalSearchTerm.length} trigger='click' placement='bottomEnd' content={SearchSection()}>
             <button className="menubar-button flex" >
               <RiSearch2Line />
             </button>
           </Tooltip>
-        )
-      }
 
-      <LinkModal visible={linkModalVisible} onClose={closeLinkModal} url={currentUrl} />
+          <LinkModal visible={linkModalVisible} onClose={closeLinkModal} url={currentUrl} />
 
-      {
-        editor && activeNote?.id &&
-        <>
           {GimmeBubbleMenu({ editor })}
+
           {LinkBubbleMenu({ editor, closeLinkModal, currentUrl })}
         </>
       }
-
     </section>
   )
 }

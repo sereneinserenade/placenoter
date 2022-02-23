@@ -25,7 +25,7 @@ const LinkModal = ({ visible, onClose, url }: LinkModalProps) => {
   const urlPatternValidation = (url: string): boolean => test(url);
 
   return (
-    <Modal blur closeButton open={visible} onClose={onClose} >
+    <Modal closeButton open={visible} onClose={onClose} >
       <Modal.Header>
         <Text id="modal-title" b size={18}>
           Enter URL:
