@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
 
 import { useEditor, EditorContent, Content } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
@@ -30,6 +30,29 @@ interface TiptapProps {
 const Tiptap = ({ onUpdate, content }: TiptapProps) => {
   const setGlobalLinkModalVisibleState = useSetRecoilState(linkModalState)
 
+  const [isLocalSearchVisible, setIsLocalSearchVisible] = useState<boolean>(false)
+
+  const focusSearchInput = async (): Promise<void> => {
+    await new Promise((r) => setTimeout(r, 300))
+
+    const searchInputEl = document.querySelector('#search-input') as HTMLInputElement
+
+    if (searchInputEl) searchInputEl.focus()
+  }
+
+  const onModFPressed = (e: KeyboardEvent) => {
+    const isModF = e.code === 'KeyF' && e.metaKey
+
+    if (!isModF) return
+
+    e.stopPropagation()
+    e.preventDefault()
+
+    setIsLocalSearchVisible(true)
+
+    focusSearchInput()
+  }
+
   const editor = useEditor({
     extensions: [
       StarterKit.configure({ codeBlock: false, }),
@@ -57,20 +80,27 @@ const Tiptap = ({ onUpdate, content }: TiptapProps) => {
     onUpdate: ({ editor }) => {
       onUpdate(editor.getHTML(), editor.getText())
     },
-    onCreate: () => {
-      const editorArea = document.querySelector('.editor-area');
+    onCreate: ({ editor }) => {
+      // const editorArea = document.querySelector('.editor-area');
 
-      if (!editorArea) return
+      // if (!editorArea) return
 
-      (editorArea as HTMLDivElement).addEventListener('click', () => editor?.commands.focus());
+      // (editorArea as HTMLDivElement).addEventListener('click', () => editor?.commands.focus());
 
+      const prosemirror = document.querySelector('.ProseMirror') as HTMLDivElement
+
+      prosemirror.addEventListener('keydown', onModFPressed);
     },
     onDestroy: () => {
-      const editorArea = document.querySelector('.editor-area');
+      // const editorArea = document.querySelector('.editor-area');
 
-      if (!editorArea) return
+      // if (!editorArea) return
 
-      (editorArea as HTMLDivElement).removeEventListener('click', () => editor?.commands.focus());
+      // (editorArea as HTMLDivElement).removeEventListener('click', () => editor?.commands.focus());
+
+      const prosemirror = document.querySelector('.ProseMirror') as HTMLDivElement
+
+      prosemirror.addEventListener('keydown', onModFPressed);
     },
     autofocus: false,
     editorProps: {
@@ -82,7 +112,15 @@ const Tiptap = ({ onUpdate, content }: TiptapProps) => {
 
   return (
     <>
-      {editor && <Menubar editor={editor} />}
+      {
+        editor && (
+          <Menubar
+            editor={editor}
+            isLocalSearchVisible={isLocalSearchVisible}
+            onSearchTooltipClose={() => setIsLocalSearchVisible(false)}
+          />
+        )
+      }
 
       <EditorContent className='editor-content' editor={editor} />
 

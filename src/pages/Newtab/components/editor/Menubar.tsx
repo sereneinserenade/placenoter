@@ -17,7 +17,9 @@ import { lowlight } from 'lowlight/lib/common.js';
 import { gimmeReverseLangAlias } from './extensions/CodeBlockLowLight';
 
 type MenubarProps = {
-  editor: Editor
+  editor: Editor,
+  isLocalSearchVisible: boolean,
+  onSearchTooltipClose: () => any
 }
 
 type ActionType = (editor: Editor) => boolean
@@ -30,7 +32,7 @@ interface Button {
   icon?: IconType
 }
 
-const Menubar = ({ editor }: MenubarProps) => {
+const Menubar = ({ editor, isLocalSearchVisible, onSearchTooltipClose }: MenubarProps) => {
   if (!editor) return null
 
   const activeNote = useRecoilValue(activeNoteState)
@@ -341,7 +343,7 @@ const Menubar = ({ editor }: MenubarProps) => {
   }), [isMac])
 
   const GimmeTooltip = (tooltip: string, name: string) => {
-    if (buttonKeys[name]) return <Text> {tooltip} (<kbd>{buttonKeys[name]}</kbd>)</Text>
+    if (buttonKeys[name]) return <Text> {tooltip} <kbd>({buttonKeys[name]})</kbd></Text>
 
     return <Text> {tooltip} </Text>
   }
@@ -393,6 +395,9 @@ const Menubar = ({ editor }: MenubarProps) => {
           size="sm"
           value={localSearchTerm}
           onInput={e => stopPrevent(e) && setLocalSearchTerm((e.target as HTMLInputElement).value)}
+          id="search-input"
+          animated={false}
+          shadow={false}
         />
         <Input
           placeholder='Replace with...'
@@ -400,6 +405,8 @@ const Menubar = ({ editor }: MenubarProps) => {
           value={replaceTerm}
           onInput={e => stopPrevent(e) && setReplaceTerm((e.target as HTMLInputElement).value)}
           onKeyPress={e => e.key === 'Enter' && editor.commands.replace()}
+          animated={false}
+          shadow={false}
         />
       </section>
 
@@ -420,6 +427,7 @@ const Menubar = ({ editor }: MenubarProps) => {
       </section>
     </section>
   )
+
 
   const GimmeBubbleMenu = ({ editor }: { editor: Editor }) => {
     const nameOfButtons = ['bold', 'italic', 'underline', 'strike', 'link', 'alignLeft', 'alignCenter', 'alignRight', 'alignJustify', 'code']
@@ -604,7 +612,13 @@ const Menubar = ({ editor }: MenubarProps) => {
           {/* Using `SearchSection()` instead of `<SearchSection />` cause the input
             elements were getting unfocused because of rerender when something was typed */}
 
-          <Tooltip visible={!!globalSearchTerm.length} trigger='click' placement='bottomEnd' content={SearchSection()}>
+          <Tooltip
+            visible={!!globalSearchTerm.length || isLocalSearchVisible}
+            trigger='click'
+            placement='bottom'
+            content={SearchSection()}
+            onVisibleChange={(val) => val ? null : onSearchTooltipClose()}
+          >
             <button className="menubar-button flex" >
               <RiSearch2Line />
             </button>

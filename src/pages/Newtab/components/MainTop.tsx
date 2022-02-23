@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { Button, Tooltip, FormElement, Input, useTheme, changeTheme, Switch } from '@nextui-org/react'
-import { RiAddLine, RiMenuFoldFill, RiMenuUnfoldFill, RiMoonLine, RiPrinterLine, RiPulseLine, RiSunLine } from 'react-icons/ri'
+import { RiAddLine, RiMenuFoldFill, RiMenuUnfoldFill, RiMoonFill, RiPrinterLine, RiSunFill } from 'react-icons/ri'
 import { FiHome } from 'react-icons/fi'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -148,8 +148,8 @@ const MainTop = () => {
           <Switch
             checked={isDark}
             onChange={onThemeChange}
-            iconOff={<RiSunLine />}
-            iconOn={<RiMoonLine />}
+            iconOff={<RiSunFill />}
+            iconOn={<RiMoonFill />}
           />
         </Tooltip>
       </section>

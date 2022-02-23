@@ -3,25 +3,22 @@ import { EditorView } from 'prosemirror-view';
 import { Plugin, PluginKey, TextSelection } from 'prosemirror-state';
 
 interface CustomPurposeExtensionOptions {
-  onLinkShortcutEntered: Function
+  onLinkShortcutEntered: Function,
 }
 
 export const CustomPurposeExtension = Extension.create<CustomPurposeExtensionOptions>({
   name: 'customPurposeExtension',
   addOptions() {
     return {
-      onLinkShortcutEntered: () => {}
-    }
-  },
-  addStorage() {
-    return {
-      isSearchActive: false
+      onLinkShortcutEntered: () => {},
     }
   },
   addProseMirrorPlugins() {
     let theView: EditorView;
 
     let done: boolean = false
+
+    const { editor } = this
 
     const updaterPlugin = new Plugin({
       key: new PluginKey('linkFocusSolverPlugin'),
@@ -34,17 +31,22 @@ export const CustomPurposeExtension = Extension.create<CustomPurposeExtensionOpt
       },
       props: {
         handleClick(view, pos) {
-          const { doc, tr } = view.state;
+          setTimeout(() => {
+            if (!editor.isActive('link')) return
 
-          const [$start, $end] = [doc.resolve(view.state.selection.from + 1), doc.resolve(view.state.selection.to + 1)];
+            const { doc, tr } = view.state;
 
-          if ($start.pos !== $end.pos) return true
+            const [$start, $end] = [doc.resolve(view.state.selection.from + 1), doc.resolve(view.state.selection.to + 1)];
 
-          view.dispatch(tr.setSelection(new TextSelection($start, $end)));
+            if ($start.pos !== $end.pos) return true
 
-          const [$newStart, $newEnd] = [doc.resolve(view.state.selection.from - 1), doc.resolve(view.state.selection.to - 1)];
+            view.dispatch(tr.setSelection(new TextSelection($start, $end)));
 
-          view.dispatch(tr.setSelection(new TextSelection($newStart, $newEnd)));
+            const [$newStart, $newEnd] = [doc.resolve(view.state.selection.from - 1), doc.resolve(view.state.selection.to - 1)];
+
+            view.dispatch(tr.setSelection(new TextSelection($newStart, $newEnd)));
+
+          })
 
           return true
         },
@@ -56,9 +58,7 @@ export const CustomPurposeExtension = Extension.create<CustomPurposeExtensionOpt
 
   addKeyboardShortcuts() {
     return {
-      'Mod-f': ({ editor }) => editor.storage.customPurposeExtension.isSearchActive = true,
-      'Esc': ({ editor }) => editor.storage.customPurposeExtension.isSearchActive = false,
-      'Mod-k': ({ editor }) => this.options.onLinkShortcutEntered(),
+      'Mod-k': () => this.options.onLinkShortcutEntered(),
     }
   },
 })

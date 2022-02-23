@@ -58,14 +58,14 @@
 
 .dark-theme {
   .sidebar {
-    border-right: 1px solid rgba($color: white, $alpha: 0.2);
+    border-right: 1px solid gray;
 
     .sidebar-note {
-      border-bottom: 2px solid rgba($color: white, $alpha: 0.15);
+      border-bottom: 1px solid gray;
 
       &.active {
-        border-left: 6px solid white;
-        background: rgba($color: white, $alpha: 0.05);
+        border-left: 6px solid gray;
+        background: rgba($color: gray, $alpha: 0.25);
       }
     }
   }
