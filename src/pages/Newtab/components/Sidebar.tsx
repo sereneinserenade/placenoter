@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Button, Input, Text, Tooltip } from '@nextui-org/react';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Button, getDocumentTheme, Input, Row, Text, Tooltip, useTheme } from '@nextui-org/react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { format } from 'date-fns'
 
@@ -8,6 +8,7 @@ import { Note } from '../types';
 
 import './Sidebar.scss'
 import { FiTrash2 } from 'react-icons/fi';
+import { toast } from 'react-toastify';
 
 const { storage } = chrome
 
@@ -19,6 +20,52 @@ const Sidebar = () => {
   const [globalSearchTerm, setGlobalSearchTerm] = useRecoilState(editorSearchState)
 
   const [notes, setNotes] = useRecoilState(notesState)
+
+  const [notesToBeDeleted, setNotesToBeDeleted] = useState<string[]>([])
+
+  interface UndoProps {
+    onUndo: () => any,
+    closeToast?: () => any
+  }
+
+  const Undo = ({ onUndo, closeToast }: UndoProps) => {
+    const handleClick = () => {
+      onUndo();
+      closeToast?.();
+    };
+
+    return (
+      <Row gap={1}>
+        <Text>
+          Note will be deleted.
+        </Text>
+
+        <Button auto size='xs' color="warning" onClick={handleClick}>
+          Undo
+        </Button>
+      </Row>
+    );
+  };
+
+  const warnBeforeDeletion = useCallback((noteId: string) => {
+    let newTheme = getDocumentTheme(document?.documentElement);
+
+    const timeout = setTimeout(() => {
+      deleteNote(noteId)
+      setNotesToBeDeleted(notesToBeDeleted.filter((id) => id !== noteId))
+    }, 6000)
+
+    toast.warn(
+      <Undo onUndo={() => clearTimeout(timeout)} />,
+      {
+        theme: newTheme === 'dark-theme' ? 'dark' : 'light',
+        onClose: () => setNotesToBeDeleted(notesToBeDeleted.filter((id) => id !== noteId)),
+        autoClose: 5000,
+        pauseOnHover: false,
+        closeButton: false,
+      }
+    )
+  }, [])
 
   const returnFormattedDateString = (timestamp: Date) => {
     return format(new Date(timestamp), 'PPpp')
@@ -54,12 +101,7 @@ const Sidebar = () => {
     return <input placeholder='Add Title...' className='title-editor-input' onClick={e => e.stopPropagation()} value={note.title} onInput={e => setNoteTitle(note, (e as any).target.value)} />
   }
 
-  const deleteNote = (e: any, id: string) => {
-    if (e) {
-      (e as MouseEvent).stopPropagation();
-      (e as MouseEvent).preventDefault()
-    }
-
+  const deleteNote = (id: string) => {
     const localNotes: Note[] = JSON.parse(JSON.stringify(notes))
 
     const index = localNotes.findIndex((n) => n.id === id)
@@ -69,6 +111,17 @@ const Sidebar = () => {
     setNotes(JSON.parse(JSON.stringify(localNotes)))
 
     if (activeNote?.id === id) setActiveNote(undefined)
+  }
+
+  const initiateDelete = (e: any, id: string) => {
+    if (e) {
+      (e as MouseEvent).stopPropagation();
+      (e as MouseEvent).preventDefault()
+    }
+
+    setNotesToBeDeleted([...notesToBeDeleted, id])
+
+    warnBeforeDeletion(id)
   }
 
   const gimmeNotesToShow = () => {
@@ -102,7 +155,8 @@ const Sidebar = () => {
                   auto
                   ghost
                   size='sm'
-                  onClick={(e) => deleteNote(e, note.id)} icon={<FiTrash2 />}
+                  onClick={(e) => initiateDelete(e, note.id)}
+                  icon={<FiTrash2 />}
                 />
               </Tooltip>
             </section>
