@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Button, getDocumentTheme, Input, Row, Text, Tooltip, useTheme } from '@nextui-org/react';
+import { Button, Container, getDocumentTheme, Input, Row, Text, Tooltip, useTheme } from '@nextui-org/react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { format } from 'date-fns'
 
@@ -35,15 +35,15 @@ const Sidebar = () => {
     };
 
     return (
-      <Row gap={1}>
+      <section className='flex undo-notification-container'>
         <Text>
           Note will be deleted.
         </Text>
 
-        <Button auto size='xs' color="warning" onClick={handleClick}>
-          Undo
+        <Button auto size='sm' color="warning" onClick={handleClick}>
+          UNDO
         </Button>
-      </Row>
+      </section>
     );
   };
 
