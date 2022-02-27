@@ -2,6 +2,8 @@ import { Container, FormElement, Input, Link } from '@nextui-org/react';
 import React, { EffectCallback, useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid'
 import { useRecoilState, useRecoilValue } from 'recoil';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.min.css';
 
 import { EditorAreaContainer, Maintop, Sidebar, Tiptap } from './components';
 import { notesState, activeNoteState, sidebarActiveState } from './Store';
@@ -9,6 +11,7 @@ import { Note } from './types';
 import PlaceNoterLogo from '../../assets/img/logo.svg';
 import './Main.scss'
 import { debounce } from 'lodash';
+
 
 const { storage } = chrome
 
@@ -127,6 +130,17 @@ function Main() {
 
 
       </section>
+
+      <ToastContainer
+        position="bottom-left"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
     </main>
   )
 }

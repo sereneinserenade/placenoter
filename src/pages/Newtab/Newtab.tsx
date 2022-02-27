@@ -26,7 +26,7 @@ const Newtab = () => {
     let theme = window.localStorage.getItem('data-theme');
     setIsDark(theme === 'dark-theme');
 
-    const observer = new MutationObserver((mutation) => {
+    const observer = new MutationObserver(() => {
       let newTheme = getDocumentTheme(document?.documentElement);
       setIsDark(newTheme === 'dark-theme');
     });
