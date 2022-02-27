@@ -100,7 +100,7 @@ const Tiptap = ({ onUpdate, content }: TiptapProps) => {
 
       const prosemirror = document.querySelector('.ProseMirror') as HTMLDivElement
 
-      prosemirror.addEventListener('keydown', onModFPressed);
+      prosemirror?.removeEventListener('keydown', onModFPressed);
     },
     autofocus: false,
     editorProps: {
