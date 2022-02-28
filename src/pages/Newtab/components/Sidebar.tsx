@@ -21,8 +21,6 @@ const Sidebar = () => {
 
   const [notes, setNotes] = useRecoilState(notesState)
 
-  const [notesToBeDeleted, setNotesToBeDeleted] = useState<string[]>([])
-
   interface UndoProps {
     onUndo: () => any,
     closeToast?: () => any
@@ -37,7 +35,7 @@ const Sidebar = () => {
     return (
       <section className='flex undo-notification-container'>
         <Text>
-          Note will be deleted.
+          Note will be permanently deleted.
         </Text>
 
         <Button auto size='sm' color="warning" onClick={handleClick}>
@@ -47,25 +45,20 @@ const Sidebar = () => {
     );
   };
 
-  const warnBeforeDeletion = useCallback((noteId: string) => {
+  const warnAfterDeletion = useCallback((note: Note) => {
     let newTheme = getDocumentTheme(document?.documentElement);
 
-    const timeout = setTimeout(() => {
-      deleteNote(noteId)
-      setNotesToBeDeleted(notesToBeDeleted.filter((id) => id !== noteId))
-    }, 6000)
+    const restoreNote = (ns: Note[]) => {
+      setNotes(JSON.parse(JSON.stringify(ns)))
+    }
 
     toast.warn(
-      <Undo onUndo={() => clearTimeout(timeout)} />,
+      <Undo onUndo={() => restoreNote(notes)} />,
       {
         theme: newTheme === 'dark-theme' ? 'dark' : 'light',
-        onClose: () => setNotesToBeDeleted(notesToBeDeleted.filter((id) => id !== noteId)),
-        autoClose: 5000,
-        pauseOnHover: false,
-        closeButton: false,
       }
     )
-  }, [])
+  }, [notes])
 
   const returnFormattedDateString = (timestamp: Date) => {
     return format(new Date(timestamp), 'PPpp')
@@ -104,13 +97,18 @@ const Sidebar = () => {
   const deleteNote = (id: string) => {
     const localNotes: Note[] = JSON.parse(JSON.stringify(notes))
 
+
     const index = localNotes.findIndex((n) => n.id === id)
+
+    const noteToBeDeleted = JSON.parse(JSON.stringify(localNotes[index]))
 
     localNotes.splice(index, 1)
 
     setNotes(JSON.parse(JSON.stringify(localNotes)))
 
     if (activeNote?.id === id) setActiveNote(undefined)
+
+    return noteToBeDeleted
   }
 
   const initiateDelete = (e: any, id: string) => {
@@ -119,9 +117,9 @@ const Sidebar = () => {
       (e as MouseEvent).preventDefault()
     }
 
-    setNotesToBeDeleted([...notesToBeDeleted, id])
+    const note = deleteNote(id)
 
-    warnBeforeDeletion(id)
+    warnAfterDeletion(note)
   }
 
   const gimmeNotesToShow = () => {
