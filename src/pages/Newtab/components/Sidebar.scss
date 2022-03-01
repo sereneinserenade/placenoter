@@ -82,12 +82,20 @@
   .sidebar {
     border-right: 1px solid gray;
 
-    .sidebar-note {
-      border-bottom: 1px solid gray;
+    .sidebar-notes-list {
+      .sidebar-note {
+        border-bottom: 1px solid gray;
 
-      &.active {
-        border-left: 6px solid gray;
-        background: rgba($color: gray, $alpha: 0.25);
+        &.active {
+          border-left: 6px solid gray;
+          background: rgba($color: gray, $alpha: 0.25);
+        }
+      }
+
+      .bin-section {
+        .sidebar-note:first-of-type {
+          border-top: 1px solid gray;
+        }
       }
     }
   }

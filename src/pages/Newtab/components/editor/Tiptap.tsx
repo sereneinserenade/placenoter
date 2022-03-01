@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import { useEditor, EditorContent, Content } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
@@ -25,9 +25,10 @@ import { linkModalState } from '../../Store';
 interface TiptapProps {
   onUpdate: Function
   content: Content
+  isNoteInBin: boolean
 }
 
-const Tiptap = ({ onUpdate, content }: TiptapProps) => {
+const Tiptap = ({ onUpdate, content, isNoteInBin }: TiptapProps) => {
   const setGlobalLinkModalVisibleState = useSetRecoilState(linkModalState)
 
   const [isLocalSearchVisible, setIsLocalSearchVisible] = useState<boolean>(false)
@@ -107,13 +108,15 @@ const Tiptap = ({ onUpdate, content }: TiptapProps) => {
       attributes: {
         spellcheck: 'false'
       }
-    }
+    },
   })
+
+  useEffect(() => { editor?.setEditable(!isNoteInBin) }, [isNoteInBin])
 
   return (
     <>
       {
-        editor && (
+        editor && !isNoteInBin && (
           <Menubar
             editor={editor}
             isLocalSearchVisible={isLocalSearchVisible}

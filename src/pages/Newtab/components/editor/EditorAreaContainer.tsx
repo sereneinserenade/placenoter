@@ -1,8 +1,8 @@
-import React from 'react'
-import { useRecoilState } from 'recoil'
+import React, { useEffect, useState } from 'react'
+import { useRecoilState, useRecoilValue } from 'recoil'
 import { Container } from '@nextui-org/react'
 
-import { activeNoteState } from '../../Store'
+import { activeNoteState, binNotesState } from '../../Store'
 import { Note } from '../../types'
 import Tiptap from './Tiptap'
 
@@ -11,6 +11,14 @@ import { useTitle } from 'react-use'
 
 const EditorAreaContainer = () => {
   const [activeNote, setActiveNote] = useRecoilState(activeNoteState)
+
+  const binNotes = useRecoilValue(binNotesState)
+
+  const [isActiveNoteInBin, setIsActiveNoteInBin] = useState<boolean>(false)
+
+  useEffect(() => {
+    setIsActiveNoteInBin(binNotes.findIndex(n => n.id === activeNote?.id) >= 0)
+  }, [activeNote, binNotes])
 
   useTitle(activeNote?.title || "PlaceNoter")
 
@@ -23,7 +31,11 @@ const EditorAreaContainer = () => {
 
   return (
     <Container sm>
-      <Tiptap content={`${activeNote?.content}` || ''} onUpdate={setNoteContent} />
+      <Tiptap
+        content={`${activeNote?.content}` || ''}
+        onUpdate={setNoteContent}
+        isNoteInBin={isActiveNoteInBin}
+      />
     </Container>
   )
 }

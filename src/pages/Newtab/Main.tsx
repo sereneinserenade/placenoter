@@ -5,7 +5,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 // import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
 
-import { EditorAreaContainer, Maintop, Sidebar, Tiptap } from './components';
+import { EditorAreaContainer, Maintop, Sidebar } from './components';
 import { notesState, activeNoteState, sidebarActiveState, binNotesState } from './Store';
 import { Note } from './types';
 import PlaceNoterLogo from '../../assets/img/logo.svg';
@@ -34,17 +34,46 @@ function Main() {
   useEffect(() => {
     if (!activeNote) return
 
+    const binNoteIndex = binNotes.findIndex((n) => n?.id === activeNote.id)
+
+    const isInBin = binNoteIndex >= 0
+
     const noteIndex = notes.findIndex((n) => n?.id === activeNote.id)
-    const foundNote = notes[noteIndex]
 
-    if (activeNote?.content === foundNote?.content && activeNote?.title === foundNote?.title) return
+    if (isInBin) {
+      const foundNote = binNotes[binNoteIndex]
 
-    const copyOfNotes = [...notes.slice()]
+      if (activeNote?.content === foundNote?.content && activeNote?.title === foundNote?.title) return
 
-    if (activeNote) {
-      copyOfNotes[noteIndex] = activeNote
-      setNotes(copyOfNotes)
+      const copyOfNotes = [...binNotes.slice()]
+
+      if (activeNote) {
+        copyOfNotes[binNoteIndex] = activeNote
+        setBinNotes(copyOfNotes)
+      }
+
+      return
+    } else if (noteIndex >= 0) {
+
+      const foundNote = notes[noteIndex]
+
+      if (activeNote?.content === foundNote?.content && activeNote?.title === foundNote?.title) return
+
+      const copyOfNotes = [...notes.slice()]
+
+      if (activeNote) {
+        copyOfNotes[noteIndex] = activeNote
+        setNotes(copyOfNotes)
+      }
+
+      return
     }
+
+    const { id, title } = activeNote
+
+    debugger
+
+    console.error(`This activeNote is not inside \`notes\` and \`binNotes\` \n ${JSON.stringify({ id, title })}`)
   }, [activeNote])
 
   const setNotesInLocalStorage = () => storage.local.set({ dbnotes: notes })
@@ -57,7 +86,7 @@ function Main() {
 
   const debouncedSetBinNotesInLocalStorage = debounce(setBinNotesInLocalStorage, 300)
 
-  useEffect(() => { binNotesFetchedFromDb && debouncedSetBinNotesInLocalStorage() })
+  useEffect(() => { binNotesFetchedFromDb && debouncedSetBinNotesInLocalStorage() }, [binNotes])
 
   const checkIfAnEmptyNoteExists = (): Note | undefined => {
     return notes.find((n) => n.title.trim() === "" && n.textContent.trim() === "")
@@ -68,7 +97,6 @@ function Main() {
     if (emptyNoteInNotesList) {
       setActiveNote(undefined)
       setTimeout(() => setActiveNote(emptyNoteInNotesList))
-
       return
     }
 
@@ -83,8 +111,8 @@ function Main() {
     setActiveNote(undefined)
 
     setTimeout(() => {
-      setActiveNote(JSON.parse(JSON.stringify(newNote)))
       setNotes([newNote, ...notes])
+      setActiveNote(newNote)
     })
   }
 
@@ -104,8 +132,9 @@ function Main() {
     })
 
     storage.local.get('binNotes', ({ binNotes }) => {
-      if (binNotes) setBinNotes(binNotes)
-      else storage.local.set({ binNotes: [] })
+      if (binNotes) {
+        setBinNotes(binNotes)
+      } else storage.local.set({ binNotes: [] })
 
       setBinNotesFetchedFromDb(true)
     })

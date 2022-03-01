@@ -47,8 +47,8 @@ const MainTop = () => {
     setActiveNote(undefined)
 
     setTimeout(() => {
-      setActiveNote(JSON.parse(JSON.stringify(newNote)))
       setNotes([newNote, ...notes])
+      setActiveNote(newNote)
     })
   }
 
@@ -138,19 +138,20 @@ const MainTop = () => {
           <Button color="primary" auto ghost size='sm' onClick={onSidebarControlButtonClicked} className={`sidebar-control-button flex`} icon={sidebarActive ? <RiMenuFoldFill /> : <RiMenuUnfoldFill />} />
         </Tooltip>
         <Tooltip placement='bottomStart' content={'Create new note'}>
-          <Button color="primary" auto ghost size='sm' onClick={createNewNoteAndSetItAsActiveNote} className="sidebar-control-button flex" icon={< RiAddLine />} />
-        </Tooltip>
-        <Tooltip placement='bottomStart' content={'Home'}>
-          <Button color="primary" auto ghost size='sm' onClick={() => goHome()} className="sidebar-control-button flex" icon={< FiHome />} />
-        </Tooltip>
-        <Tooltip placement='bottomStart' content={'Export Data'}>
-          <Button color="primary" auto ghost size='sm' onClick={() => exportData(notes, binNotes)} className="sidebar-control-button flex" icon={< FiShare />} />
+          <Button
+            color="gradient"
+            auto
+            size='sm'
+            onClick={createNewNoteAndSetItAsActiveNote}
+            className="sidebar-control-button flex"
+            icon={< RiAddLine />}
+          />
         </Tooltip>
       </section>
 
       <section className='middle-controls'>
         {
-          activeNote &&
+          activeNote && binNotes.findIndex(n => n.id === activeNote.id) === -1 &&
           <Input
             underlined
             placeholder="Title..."
@@ -169,6 +170,13 @@ const MainTop = () => {
             <Button color="primary" auto ghost size='sm' onClick={() => printEditorContent()} className="sidebar-control-button flex" icon={< RiPrinterLine />} />
           </Tooltip>
         }
+
+        <Tooltip placement='bottomStart' content={'Home'}>
+          <Button color="primary" auto ghost size='sm' onClick={() => goHome()} className="sidebar-control-button flex" icon={< FiHome />} />
+        </Tooltip>
+        <Tooltip placement='bottomStart' content={'Export Data'}>
+          <Button color="primary" auto ghost size='sm' onClick={() => exportData(notes, binNotes)} className="sidebar-control-button flex" icon={< FiShare />} />
+        </Tooltip>
 
         <Tooltip placement='bottomEnd' content={isDark ? 'Light mode' : 'Dark mode'}>
           <Switch

@@ -55,8 +55,8 @@ const Sidebar = () => {
     setActiveNote(undefined)
 
     setTimeout(() => {
-      setActiveNote(JSON.parse(JSON.stringify(newNote)))
       setNotes([newNote, ...notes])
+      setActiveNote(newNote)
     })
   }
 
@@ -70,10 +70,10 @@ const Sidebar = () => {
     storage.local.set({ lastActiveNoteId: note?.id })
   }
 
-  const setNoteTitle = (note: Note, newTitle: string) => {
+  const setNoteTitle = (note: Note, newTitle: string, isInBin: boolean = false) => {
     const { id } = note
 
-    const localNotes: Note[] = JSON.parse(JSON.stringify(notes))
+    const localNotes: Note[] = isInBin ? JSON.parse(JSON.stringify(binNotes)) : JSON.parse(JSON.stringify(notes))
 
     const index = localNotes.findIndex(n => n.id === id)
 
@@ -81,17 +81,19 @@ const Sidebar = () => {
 
     localNotes[index] = JSON.parse(JSON.stringify(newNote))
 
-    setNotes(localNotes)
+    if (isInBin) setBinNotes(localNotes)
+    else setNotes(localNotes)
 
     if (note.id === activeNote?.id) setActiveNote(JSON.parse(JSON.stringify(newNote)))
   }
 
-  const GetNoteTitle = (note: Note) => (<input
+  const GetNoteTitle = (note: Note, isInBin: boolean = false) => (<input
     placeholder='Add Title...'
     className='title-editor-input'
     onClick={e => e.stopPropagation()}
     value={note.title}
-    onInput={e => setNoteTitle(note, (e as any).target.value)}
+    onInput={e => setNoteTitle(note, (e as any).target.value, isInBin)}
+    disabled={isInBin}
   />)
 
 
@@ -126,11 +128,12 @@ const Sidebar = () => {
   const moveNoteToBin = (note: Note) => {
     const { id } = note
 
-    // Adding note to `binNotes`
-    setBinNotes(JSON.parse(JSON.stringify([note, ...binNotes])))
-
     // Removing note from `notes`
     setNotes(JSON.parse(JSON.stringify(notes.filter(n => n.id !== id))))
+
+    // Adding note to `binNotes`
+    // TODO: don't need so much vars/consts
+    setBinNotes(JSON.parse(JSON.stringify([note, ...binNotes])))
   }
 
   const initiateMoveToBin = (e: any, note: Note) => {
@@ -208,7 +211,7 @@ const Sidebar = () => {
                           className={`sidebar-note ${note.id === activeNote?.id ? 'active' : ''}`}
                         >
                           <section className='title-and-action-center flex'>
-                            {GetNoteTitle(note)}
+                            {GetNoteTitle(note, true)}
                             <Tooltip
                               placement='top'
                               content={'Recycle'}
@@ -303,7 +306,7 @@ const Sidebar = () => {
             margin: '1rem 0 0 10px',
             fontSize: '1.1em'
           }}>
-            No notes here, <Link onClick={createNewNoteAndSetItAsActiveNote}> Create one + </Link>
+            No notes here, <Link onClick={createNewNoteAndSetItAsActiveNote}> Create a note + </Link>
           </Text>
         )
     )

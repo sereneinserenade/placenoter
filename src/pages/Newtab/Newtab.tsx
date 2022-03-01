@@ -16,7 +16,8 @@ const Newtab = () => {
     type: 'dark',
     theme: {
       colors: {
-        primary: '#3D9CF7'
+        primary: '#3D9CF7',
+        link: '#3D9CF7',
       }
     }
   })
