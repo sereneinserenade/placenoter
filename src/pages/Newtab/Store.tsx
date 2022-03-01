@@ -8,6 +8,11 @@ export const notesState = atom<Note[]>({
   default: []
 })
 
+export const binNotesState = atom<Note[]>({
+  key: 'binNotes',
+  default: []
+})
+
 export const sidebarActiveState = atom<boolean>({
   key: 'sidebarActiveState',
   default: true

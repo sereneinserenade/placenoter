@@ -2,11 +2,11 @@ import { Container, FormElement, Input, Link } from '@nextui-org/react';
 import React, { EffectCallback, useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid'
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { ToastContainer } from 'react-toastify';
+// import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
 
 import { EditorAreaContainer, Maintop, Sidebar, Tiptap } from './components';
-import { notesState, activeNoteState, sidebarActiveState } from './Store';
+import { notesState, activeNoteState, sidebarActiveState, binNotesState } from './Store';
 import { Note } from './types';
 import PlaceNoterLogo from '../../assets/img/logo.svg';
 import './Main.scss'
@@ -20,9 +20,13 @@ function Main() {
 
   const [notes, setNotes] = useRecoilState(notesState)
 
+  const [binNotes, setBinNotes] = useRecoilState(binNotesState)
+
   const [activeNote, setActiveNote] = useRecoilState(activeNoteState)
 
   const [notesFetchedFromDb, setNotesFetchedFromDb] = useState(false)
+
+  const [binNotesFetchedFromDb, setBinNotesFetchedFromDb] = useState(false)
 
   const useMountEffect = (fun: EffectCallback) => useEffect(fun, [])
 
@@ -48,6 +52,12 @@ function Main() {
   const debouncedSetNotesInLocalStorage = debounce(setNotesInLocalStorage, 300)
 
   useEffect(() => { notesFetchedFromDb && debouncedSetNotesInLocalStorage() }, [notes])
+
+  const setBinNotesInLocalStorage = () => storage.local.set({ binNotes })
+
+  const debouncedSetBinNotesInLocalStorage = debounce(setBinNotesInLocalStorage, 300)
+
+  useEffect(() => { binNotesFetchedFromDb && debouncedSetBinNotesInLocalStorage() })
 
   const checkIfAnEmptyNoteExists = (): Note | undefined => {
     return notes.find((n) => n.title.trim() === "" && n.textContent.trim() === "")
@@ -92,6 +102,13 @@ function Main() {
         setActiveNote(foundNote)
       })
     })
+
+    storage.local.get('binNotes', ({ binNotes }) => {
+      if (binNotes) setBinNotes(binNotes)
+      else storage.local.set({ binNotes: [] })
+
+      setBinNotesFetchedFromDb(true)
+    })
   }
 
   useMountEffect(fetchNotesFromSyncStorage)
@@ -131,7 +148,7 @@ function Main() {
 
       </section>
 
-      <ToastContainer
+      {/* <ToastContainer
         position="bottom-left"
         autoClose={5000}
         hideProgressBar={false}
@@ -141,7 +158,7 @@ function Main() {
         draggable={false}
         pauseOnHover={false}
         closeButton={false}
-      />
+      /> */}
     </main>
   )
 }
