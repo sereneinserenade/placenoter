@@ -1,11 +1,12 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import { Button, Tooltip, FormElement, Input, useTheme, changeTheme, Switch } from '@nextui-org/react'
 import { RiAddLine, RiMenuFoldFill, RiMenuUnfoldFill, RiMoonFill, RiPrinterLine, RiSunFill } from 'react-icons/ri'
-import { FiHome } from 'react-icons/fi'
+import { FiHome, FiShare } from 'react-icons/fi'
 import { v4 as uuidv4 } from 'uuid'
+import { saveAs } from 'file-saver';
 
 import './MainTop.scss'
-import { activeNoteState, notesState, sidebarActiveState } from '../Store'
+import { activeNoteState, binNotesState, notesState, sidebarActiveState } from '../Store'
 import { Note } from '../types'
 import { useRecoilState, useRecoilValue } from 'recoil'
 
@@ -13,8 +14,12 @@ const { storage } = chrome
 
 const MainTop = () => {
   const [activeNote, setActiveNote] = useRecoilState(activeNoteState)
+
   const [sidebarActive, setSidebarActive] = useRecoilState(sidebarActiveState)
+
   const [notes, setNotes] = useRecoilState(notesState)
+
+  const binNotes = useRecoilValue(binNotesState)
 
   const { type, isDark } = useTheme();
 
@@ -108,6 +113,24 @@ const MainTop = () => {
     document.location.href = document.location.href
   }
 
+  const exportData = useCallback((notes: Note[], binNotes: Note[]) => {
+    interface Data {
+      notes: Note[];
+      binNotes: Note[]
+    }
+
+    const data: Data = {
+      notes,
+      binNotes
+    }
+
+    const fileToSave = new Blob([JSON.stringify(data)], {
+      type: 'application/json'
+    });
+
+    saveAs(fileToSave, 'PlaceNoter Data.json');
+  }, [])
+
   return (
     <section className={`main-top flex`}>
       <section className='left-controls flex' aria-label='left-controls'>
@@ -119,6 +142,9 @@ const MainTop = () => {
         </Tooltip>
         <Tooltip placement='bottomStart' content={'Home'}>
           <Button color="primary" auto ghost size='sm' onClick={() => goHome()} className="sidebar-control-button flex" icon={< FiHome />} />
+        </Tooltip>
+        <Tooltip placement='bottomStart' content={'Export Data'}>
+          <Button color="primary" auto ghost size='sm' onClick={() => exportData(notes, binNotes)} className="sidebar-control-button flex" icon={< FiShare />} />
         </Tooltip>
       </section>
 
