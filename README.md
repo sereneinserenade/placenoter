@@ -1,12 +1,14 @@
 <p align="center">
-  <img src="src/assets/img/logo-placenoter.svg" width="300"/>
+  <img src="src/assets/img/logo-placenoter.svg" width="200"/>
 </p>
 
 
 # PlaceNoter
 
 - This extension replaces your new tab with a note taking app so you never have to leave chrome. (that's it for now.)
-- Download the extension from chrome webstore https://chrome.google.com/webstore/detail/pagenoter/jefjneinemilpncgcfdglggeheiaakfc?hl=en-GB&authuser=0
+
+## Downloading the extension 
+- You can do it from [chrome webstore.](https://chrome.google.com/webstore/detail/pagenoter/jefjneinemilpncgcfdglggeheiaakfc?hl=en-GB&authuser=0)
 
 ## Demo
 
