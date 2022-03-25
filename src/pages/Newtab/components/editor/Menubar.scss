@@ -1,9 +1,12 @@
 .menubar {
   gap: 5px;
-  margin: 2em 0;
+  margin: 1em 0;
   align-items: center;
   flex-wrap: wrap;
-  justify-content: center;
+  padding: var(--nextui-space-6);
+  box-shadow: var(--nextui-shadows-sm);
+  border-radius: var(--nextui-radii-sm);
+  width: fit-content;
 
   .divider {
     height: 1.5em;
@@ -16,6 +19,7 @@
 .menubar,
 .bubble-menu,
 .table-controls-buttons-section {
+
   .menubar-button {
     align-items: center;
     justify-content: center;
@@ -60,8 +64,16 @@
 }
 
 .dark-theme {
-  .menubar-button {
-    box-shadow: 0 0 4px 1px rgba($color: white, $alpha: 0.2);
+  .menubar {
+    background: rgba(white, 0.1);
+  }
+
+  .menubar-button:not(.active) {
+    box-shadow: 0 0 0 1px rgba(white, 0.25);
+  }
+
+  .menubar-button.active {
+    box-shadow: 0 0 0 1px var(--nextui-colors-primary);
   }
 
   .divider {
@@ -78,7 +90,7 @@
 }
 
 .bubble-menu {
-  background: var(--nextui-colors-background);
+  background: var(--nextui-colors-background) !important;
   border-radius: 14px;
   box-shadow: var(--nextui-shadows-md);
   padding: 0.65em;
