@@ -1,6 +1,6 @@
 {
   "name": "placenoter",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "New tab replaced by note taking app.",
   "license": "MIT",
   "repository": {
@@ -20,7 +20,7 @@
   "dependencies": {
     "@extend-chrome/storage": "^1.5.0",
     "@hot-loader/react-dom": "^17.0.1",
-    "@nextui-org/react": "^1.0.4-beta.5",
+    "@nextui-org/react": "^1.0.5-beta.5",
     "@tiptap/extension-character-count": "^2.0.0-beta.24",
     "@tiptap/extension-link": "^2.0.0-beta.36",
     "@tiptap/extension-placeholder": "^2.0.0-beta.47",
