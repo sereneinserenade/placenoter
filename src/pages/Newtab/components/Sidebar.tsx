@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { sidebarActiveState, activeNoteState, notesState, editorSearchState, binNotesState } from '../Store'
 import { Note } from '../types';
 
-import './Sidebar.scss'
+import './css/Sidebar.scss'
 import { FiTrash2 } from 'react-icons/fi';
 import { RiArrowLeftSLine, RiDeleteBin2Line, RiRecycleLine } from 'react-icons/ri';
 // import { toast } from 'react-toastify';
@@ -66,8 +66,6 @@ const Sidebar = () => {
     setActiveNote(undefined)
 
     setTimeout(() => setActiveNote(note))
-
-    storage.local.set({ lastActiveNoteId: note?.id })
   }
 
   const setNoteTitle = (note: Note, newTitle: string, isInBin: boolean = false) => {
@@ -114,15 +112,6 @@ const Sidebar = () => {
     if (activeNote?.id === id) setActiveNote(undefined)
 
     return noteToBeDeleted
-  }
-
-  const initiateDelete = (e: any, note: Note) => {
-    if (e) {
-      (e as MouseEvent).stopPropagation();
-      (e as MouseEvent).preventDefault()
-    }
-
-    deleteNote(note.id)
   }
 
   const moveNoteToBin = (note: Note) => {

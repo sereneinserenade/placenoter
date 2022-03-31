@@ -1,0 +1,40 @@
+.quick-links-section {
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 50ch;
+  gap: 4px;
+
+  .quick-link-item {
+    display: grid;
+    grid-template-rows: 2fr 1fr;
+    padding: 1rem;
+    color: inherit;
+    text-decoration: inherit;
+    justify-items: center;
+    gap: 10px;
+    border-radius: var(--nextui-radii-md);
+
+    &:hover {
+      background-color: rgba(gray, 0.1);
+    }
+
+    .icon {
+      width: 40px;
+      border-radius: 50%;
+    }
+
+    .plus-icon {
+      transform: scale(2.5);
+    }
+  }
+}
+
+.dark-theme {
+  .quick-links-section {
+    .quick-link-item {
+      &:hover {
+        background-color: rgba(white, 0.1);
+      }
+    }
+  }
+}

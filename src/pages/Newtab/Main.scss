@@ -16,8 +16,10 @@
     }
 
     .no-note-selected {
-      height: 90vh;
-      flex-direction: column;
+      padding: 2rem;
+      padding-top: 10rem;
+      align-items: center;
+      gap: 1rem;
 
       .logo {
         width: 300px !important;

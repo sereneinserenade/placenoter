@@ -5,7 +5,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 // import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
 
-import { EditorAreaContainer, Maintop, Sidebar } from './components';
+import { EditorAreaContainer, Maintop, Sidebar, QuickLinks } from './components';
 import { notesState, activeNoteState, sidebarActiveState, binNotesState } from './Store';
 import { Note } from './types';
 import PlaceNoterLogo from '../../assets/img/logo.svg';
@@ -27,6 +27,8 @@ function Main() {
   const [notesFetchedFromDb, setNotesFetchedFromDb] = useState(false)
 
   const [binNotesFetchedFromDb, setBinNotesFetchedFromDb] = useState(false)
+
+  const [internetSearchText, setInternetSearchText] = useState('')
 
   const useMountEffect = (fun: EffectCallback) => useEffect(fun, [])
 
@@ -124,11 +126,6 @@ function Main() {
       else storage.local.set({ dbnotes: [] })
 
       setNotesFetchedFromDb(true)
-
-      storage.local.get('lastActiveNoteId', ({ lastActiveNoteId }) => {
-        const foundNote = dbnotes.find((n: Note) => n.id === lastActiveNoteId)
-        setActiveNote(foundNote)
-      })
     })
 
     storage.local.get('binNotes', ({ binNotes }) => {
@@ -148,6 +145,12 @@ function Main() {
 
     createNewNoteAndSetItAsActiveNote()
   }
+
+  const searchInternet = (text: string) => {
+    window.location.href = `https://google.com/search?q=${text}`
+  }
+
+
   return (
     <main className="placenoter">
       <Sidebar />
@@ -162,14 +165,29 @@ function Main() {
                 <EditorAreaContainer />
               </main>
             ) : (
-              <main className='no-note-selected flex h-full'>
-                <img className='logo' src={PlaceNoterLogo} alt="PlaceNoterLogo" />
+              <main className='no-note-selected flex flex-col h-full'>
+                {/* <img className='logo' src={PlaceNoterLogo} alt="PlaceNoterLogo" />
 
                 <h1> No Note selected </h1>
 
                 <h3 className='flex'>
                   Select or <Link color='primary' onClick={(e) => onCreateNewNoteClicked(e)} > &nbsp; create a new &nbsp; </Link>  note.
-                </h3>
+                </h3> */}
+
+                <Input
+                  bordered
+                  placeholder="Search Google..."
+                  onInput={(e) => setInternetSearchText((e.target as HTMLInputElement).value)}
+                  onKeyPress={(e) => e.code === 'Enter' && searchInternet(internetSearchText)}
+                  css={{
+                    width: '50ch'
+                  }}
+                />
+
+                <QuickLinks />
+
+
+
               </main>
             )
         }

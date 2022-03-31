@@ -16,8 +16,6 @@ export const CustomPurposeExtension = Extension.create<CustomPurposeExtensionOpt
   addProseMirrorPlugins() {
     let theView: EditorView;
 
-    let done: boolean = false
-
     const { editor } = this
 
     const updaterPlugin = new Plugin({
@@ -45,7 +43,6 @@ export const CustomPurposeExtension = Extension.create<CustomPurposeExtensionOpt
             const [$newStart, $newEnd] = [doc.resolve(view.state.selection.from - 1), doc.resolve(view.state.selection.to - 1)];
 
             view.dispatch(tr.setSelection(new TextSelection($newStart, $newEnd)));
-
           })
 
           return true

@@ -5,7 +5,7 @@ import { FiHome, FiShare } from 'react-icons/fi'
 import { v4 as uuidv4 } from 'uuid'
 import { saveAs } from 'file-saver';
 
-import './MainTop.scss'
+import './css/MainTop.scss'
 import { activeNoteState, binNotesState, notesState, sidebarActiveState } from '../Store'
 import { Note } from '../types'
 import { useRecoilState, useRecoilValue } from 'recoil'
@@ -80,8 +80,6 @@ const MainTop = () => {
 
   const goHome = () => {
     setActiveNote(undefined)
-
-    storage.local.set({ lastActiveNoteId: undefined })
   }
 
   const onThemeChange = () => {
