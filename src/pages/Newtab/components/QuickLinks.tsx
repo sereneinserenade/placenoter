@@ -249,7 +249,7 @@ const QuickLinks: React.FC<QuickLinksProps> = () => {
             localQuickLinksOrder.map(id => {
               const { url, iconUrl, name } = localQuickLinks[id]
               return (<SortableItem key={id} id={id} >
-                <Tooltip placement='bottom' content={url}>
+                <Tooltip placement='bottom' content={`${name || 'No Title'} - ${url}`}>
                   <article
                     onClick={(e) => handleLinkClicked(e, url)}
                     key={url}
