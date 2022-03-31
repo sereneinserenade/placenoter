@@ -17,6 +17,7 @@
     height: 100px;
     cursor: pointer;
     transition: box-shadow 0.2s ease-in-out;
+    z-index: var(--nextui-zIndices-1);
 
     &:hover {
       background-color: rgba(128, 128, 128, 0.1);
@@ -36,6 +37,10 @@
     .plus-icon {
       transform: scale(2.5);
     }
+
+    .name {
+      white-space: nowrap;
+    }
   }
 }
 
@@ -48,6 +53,7 @@
 
       &.being-dragged {
         border: 1px dashed var(--nextui-colors-text);
+        background-color: var(--nextui-colors-background);
       }
     }
   }

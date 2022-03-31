@@ -79,16 +79,13 @@ const QuickLinks: React.FC<QuickLinksProps> = () => {
 
   const [isLinkValid, setIsLinkValid] = useState<boolean>(true)
 
+  const [linkAlreadyExists, setLinkAlreadyExists] = useState<boolean>(false)
+
   const [isItemBeingDragged, setIsItemBeingDragged] = useState<boolean>(false)
 
   const [itemBeingDragged, setItemBeingDragged] = useState<string>('')
 
-  useEffect(() => {
-    console.log(isItemBeingDragged)
-  }, [isItemBeingDragged])
-
   const sensors = useSensors(
-    // useSensor(PointerSensor),
     useSensor(PointerSensor, {
       activationConstraint: {
         delay: 250,
@@ -100,7 +97,20 @@ const QuickLinks: React.FC<QuickLinksProps> = () => {
     }),
   );
 
-  useEffect(() => { link ? setIsLinkValid(urlPatternValidation(link)) : setIsLinkValid(true) }, [link])
+  useEffect(() => {
+    link ? setIsLinkValid(urlPatternValidation(link)) : setIsLinkValid(true)
+
+    for (const [, quickLink] of Object.entries(localQuickLinks)) {
+      if (quickLink.url === link) {
+        setLinkAlreadyExists(true)
+        return
+      }
+    }
+
+    setLinkAlreadyExists(false)
+
+    console.log(linkAlreadyExists)
+  }, [link])
 
   useEffect(() => {
     storage.local.get('quicklinks', ({ quicklinks }) => {
@@ -320,10 +330,15 @@ const QuickLinks: React.FC<QuickLinksProps> = () => {
           } */}
         </Modal.Body>
         <Modal.Footer>
+          {
+            linkAlreadyExists && <Text color="error" css={{ mr: '$4' }}>
+              Shortcut already exists.
+            </Text>
+          }
           <Button auto flat color="error" onClick={onAddQuickLinkModalClose}>
             Close
           </Button>
-          <Button auto onClick={addQuickLink} disabled={!link || !isLinkValid}>
+          <Button auto onClick={addQuickLink} disabled={!link || !isLinkValid || linkAlreadyExists}>
             Add
           </Button>
         </Modal.Footer>
