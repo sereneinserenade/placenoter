@@ -18,6 +18,8 @@
     "updateTiptapDeps": "npm update @tiptap/extension-character-count @tiptap/extension-link @tiptap/extension-placeholder @tiptap/extension-table @tiptap/extension-table-cell @tiptap/extension-table-header @tiptap/extension-table-row @tiptap/extension-task-item @tiptap/extension-task-list @tiptap/extension-text-align @tiptap/extension-underline @tiptap/react @tiptap/starter-kit"
   },
   "dependencies": {
+    "@dnd-kit/core": "^5.0.3",
+    "@dnd-kit/sortable": "^6.0.1",
     "@extend-chrome/storage": "^1.5.0",
     "@hot-loader/react-dom": "^17.0.1",
     "@nextui-org/react": "^1.0.5-beta.5",

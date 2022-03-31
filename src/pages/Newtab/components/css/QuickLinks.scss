@@ -2,7 +2,7 @@
   flex-direction: row;
   flex-wrap: wrap;
   width: 50ch;
-  gap: 4px;
+  gap: 1ch;
 
   .quick-link-item {
     display: grid;
@@ -13,9 +13,19 @@
     justify-items: center;
     gap: 10px;
     border-radius: var(--nextui-radii-md);
+    width: 9ch;
+    height: 100px;
+    cursor: pointer;
+    transition: box-shadow 0.2s ease-in-out;
 
     &:hover {
-      background-color: rgba(gray, 0.1);
+      background-color: rgba(128, 128, 128, 0.1);
+    }
+
+    &.being-dragged {
+      background-color: var(--nextui-colors-background);
+      z-index: var(--nextui-zIndices-max);
+      border: 1px dashed var(--nextui-colors-text);
     }
 
     .icon {
@@ -34,6 +44,10 @@
     .quick-link-item {
       &:hover {
         background-color: rgba(white, 0.1);
+      }
+
+      &.being-dragged {
+        border: 1px dashed var(--nextui-colors-text);
       }
     }
   }
