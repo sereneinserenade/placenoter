@@ -166,14 +166,6 @@ function Main() {
               </main>
             ) : (
               <main className='no-note-selected flex flex-col h-full'>
-                {/* <img className='logo' src={PlaceNoterLogo} alt="PlaceNoterLogo" />
-
-                <h1> No Note selected </h1>
-
-                <h3 className='flex'>
-                  Select or <Link color='primary' onClick={(e) => onCreateNewNoteClicked(e)} > &nbsp; create a new &nbsp; </Link>  note.
-                </h3> */}
-
                 <Input
                   bordered
                   placeholder="Search Google..."
@@ -182,12 +174,10 @@ function Main() {
                   css={{
                     width: '50ch'
                   }}
+                  autoFocus
                 />
 
                 <QuickLinks />
-
-
-
               </main>
             )
         }

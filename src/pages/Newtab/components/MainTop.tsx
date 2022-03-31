@@ -135,6 +135,9 @@ const MainTop = () => {
         <Tooltip placement='bottomStart' content={sidebarActive ? 'Close Sidebar' : 'Open Sidebar'}>
           <Button color="primary" auto ghost size='sm' onClick={onSidebarControlButtonClicked} className={`sidebar-control-button flex`} icon={sidebarActive ? <RiMenuFoldFill /> : <RiMenuUnfoldFill />} />
         </Tooltip>
+        <Tooltip placement='bottomStart' content={'Home'}>
+          <Button color="primary" auto ghost size='sm' onClick={() => goHome()} className="sidebar-control-button flex" icon={< FiHome />} />
+        </Tooltip>
         <Tooltip placement='bottomStart' content={'Create new note'}>
           <Button
             color="gradient"
@@ -169,9 +172,6 @@ const MainTop = () => {
           </Tooltip>
         }
 
-        <Tooltip placement='bottomStart' content={'Home'}>
-          <Button color="primary" auto ghost size='sm' onClick={() => goHome()} className="sidebar-control-button flex" icon={< FiHome />} />
-        </Tooltip>
         <Tooltip placement='bottomStart' content={'Export Data'}>
           <Button color="primary" auto ghost size='sm' onClick={() => exportData(notes, binNotes)} className="sidebar-control-button flex" icon={< FiShare />} />
         </Tooltip>

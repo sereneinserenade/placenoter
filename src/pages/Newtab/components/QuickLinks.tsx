@@ -257,7 +257,7 @@ const QuickLinks: React.FC<QuickLinksProps> = () => {
                   >
                     <img className='icon' src={iconUrl} alt={`Icon for ${name}`} />
 
-                    <span className='name'> {name.length > 6 ? `${name.substring(0, 6)}...` : name} </span>
+                    <span className='name'> {name.length > 6 ? `${name.substring(0, 6)}...` : `${name || 'No Title'}`} </span>
                   </article>
                 </Tooltip>
               </SortableItem>
@@ -266,19 +266,6 @@ const QuickLinks: React.FC<QuickLinksProps> = () => {
           }
         </SortableContext>
       </DndContext>
-
-
-      {
-        // localQuickLinks.map(({ name, iconUrl, url }, i) => {
-        //   return (
-        // <a key={url} href={url} className='quick-link-item'>
-        //   <img className='icon' src={iconUrl} alt={`Icon for ${name}`} />
-
-        //   <span> {name} </span>
-        // </a>
-        //   )
-        // })
-      }
 
       <Tooltip placement='bottom' content={'Add shortcut!'}>
         <a onClick={() => openAddQuickLinkModal()} className='quick-link-item flex'>

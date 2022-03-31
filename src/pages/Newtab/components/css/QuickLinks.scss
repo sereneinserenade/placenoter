@@ -16,17 +16,17 @@
     width: 9ch;
     height: 100px;
     cursor: pointer;
-    transition: box-shadow 0.2s ease-in-out;
+    transition: all 0.2s ease-in-out;
     z-index: var(--nextui-zIndices-1);
 
     &:hover {
-      background-color: rgba(128, 128, 128, 0.1);
+      transform: scale(1.05);
     }
 
     &.being-dragged {
       background-color: var(--nextui-colors-background);
       z-index: var(--nextui-zIndices-max);
-      border: 1px dashed var(--nextui-colors-text);
+      box-shadow: var(--nextui-shadows-lg);
     }
 
     .icon {
@@ -47,9 +47,6 @@
 .dark-theme {
   .quick-links-section {
     .quick-link-item {
-      &:hover {
-        background-color: rgba(white, 0.1);
-      }
 
       &.being-dragged {
         border: 1px dashed var(--nextui-colors-text);
