@@ -15,7 +15,7 @@ export const binNotesState = atom<Note[]>({
 
 export const sidebarActiveState = atom<boolean>({
   key: 'sidebarActiveState',
-  default: true
+  default: false
 })
 
 export const activeNoteState = atom<Note | undefined>({

@@ -19,5 +19,12 @@
 
   .right-controls {
     gap: 0.5em;
+    align-items: center;
+
+    .theme-button {
+      transform: scale(1.2);
+      cursor: pointer;
+      margin-right: 0.5rem;
+    }
   }
 }

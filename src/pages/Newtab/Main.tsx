@@ -1,5 +1,5 @@
-import { Container, FormElement, Input, Link } from '@nextui-org/react';
-import React, { EffectCallback, useEffect, useState } from 'react';
+import { Input, Loading } from '@nextui-org/react';
+import React, { EffectCallback, useCallback, useEffect, useRef, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid'
 import { useRecoilState, useRecoilValue } from 'recoil';
 // import { ToastContainer } from 'react-toastify';
@@ -11,7 +11,6 @@ import { Note } from './types';
 import PlaceNoterLogo from '../../assets/img/logo.svg';
 import './Main.scss'
 import { debounce } from 'lodash';
-
 
 const { storage } = chrome
 
@@ -29,6 +28,20 @@ function Main() {
   const [binNotesFetchedFromDb, setBinNotesFetchedFromDb] = useState(false)
 
   const [internetSearchText, setInternetSearchText] = useState('')
+
+  const [loading, setLoading] = useState<boolean>(false)
+
+  const searchInputEl = useRef(null);
+
+  const focusSearchInput = useCallback(() => {
+    (searchInputEl.current as unknown as HTMLInputElement).focus();
+  }, [searchInputEl])
+
+  useEffect(() => {
+    if (activeNote?.id) return
+
+    focusSearchInput()
+  }, [activeNote])
 
   const useMountEffect = (fun: EffectCallback) => useEffect(fun, [])
 
@@ -137,6 +150,8 @@ function Main() {
 
   useMountEffect(fetchNotesFromSyncStorage)
 
+  useMountEffect(() => { setTimeout(focusSearchInput, 500) })
+
   const onCreateNewNoteClicked = (e: React.MouseEvent<unknown, MouseEvent>) => {
     e.preventDefault()
     e.stopPropagation()
@@ -145,9 +160,10 @@ function Main() {
   }
 
   const searchInternet = (text: string) => {
+    setLoading(true)
+
     window.location.href = `https://google.com/search?q=${text}`
   }
-
 
   return (
     <main className="placenoter">
@@ -164,36 +180,25 @@ function Main() {
               </main>
             ) : (
               <main className='no-note-selected flex flex-col h-full'>
+                <img className='logo' src={PlaceNoterLogo} alt="PlaceNoterLogo" />
+
                 <Input
                   bordered
                   labelPlaceholder="Search Google..."
                   onInput={(e) => setInternetSearchText((e.target as HTMLInputElement).value)}
                   onKeyPress={(e) => e.code === 'Enter' && searchInternet(internetSearchText)}
-                  css={{
-                    width: '50ch'
-                  }}
-                  autoFocus
+                  size="xl"
+                  css={{ width: '50ch' }}
+                  ref={searchInputEl}
+                  tabIndex={1}
+                  contentRight={loading && <Loading css={{ transform: 'translateX(-1rem)' }} />}
                 />
 
                 <QuickLinks />
               </main>
             )
         }
-
-
       </section>
-
-      {/* <ToastContainer
-        position="bottom-left"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop
-        closeOnClick={false}
-        pauseOnFocusLoss={false}
-        draggable={false}
-        pauseOnHover={false}
-        closeButton={false}
-      /> */}
     </main>
   )
 }

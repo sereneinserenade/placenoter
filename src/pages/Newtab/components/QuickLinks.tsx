@@ -85,6 +85,8 @@ const QuickLinks: React.FC<QuickLinksProps> = () => {
 
   const [quickLinkBeingEdited, setQuickLinkBeingEdited] = useState<string>('')
 
+  const [gotQuickLinksFromDb, setGotQuickLinksFromDb] = useState<boolean>(false)
+
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -108,8 +110,6 @@ const QuickLinks: React.FC<QuickLinksProps> = () => {
     }
 
     setLinkAlreadyExists(false)
-
-    console.log(linkAlreadyExists)
   }, [link])
 
   useEffect(() => {
@@ -118,6 +118,7 @@ const QuickLinks: React.FC<QuickLinksProps> = () => {
       else storage.local.set({ quicklinks: {} })
 
       processQuickLinksOrder()
+
     })
   }, [])
 
@@ -132,22 +133,29 @@ const QuickLinks: React.FC<QuickLinksProps> = () => {
           storage.local.set({ quicklinksorder: keys })
           setLocalQuickLinksOrder(keys)
 
+          setGotQuickLinksFromDb(true)
           return
         }
 
         storage.local.set({ quicklinksorder: [] })
         setLocalQuickLinksOrder([])
       }
+
+      setGotQuickLinksFromDb(true)
     })
   }, [setLocalQuickLinksOrder, localQuickLinks])
 
   useEffect(() => {
+    if (!gotQuickLinksFromDb) return
+
     const quicklinksorder = localQuickLinksOrder
 
     if (quicklinksorder.length) storage.local.set({ quicklinksorder })
   }, [localQuickLinksOrder])
 
   useEffect(() => {
+    if (!gotQuickLinksFromDb) return
+
     storage.local.set({ quicklinks: localQuickLinks })
 
     processQuickLinksOrder()

@@ -4,6 +4,7 @@
   width: 50ch;
   gap: 1ch;
   justify-content: center;
+  margin-top: 2rem;
 
   .quick-link-item {
     display: grid;
@@ -41,6 +42,11 @@
       background-color: var(--nextui-colors-background);
       z-index: var(--nextui-zIndices-max);
       box-shadow: var(--nextui-shadows-lg);
+
+      .remove-icon,
+      .edit-icon {
+        display: none;
+      }
     }
 
     .icon {

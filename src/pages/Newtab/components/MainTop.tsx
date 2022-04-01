@@ -172,18 +172,14 @@ const MainTop = () => {
           </Tooltip>
         }
 
-        <Tooltip placement='bottomStart' content={'Export Data'}>
+        {/* TODO: enable this when it's time */}
+        {/* <Tooltip placement='bottomStart' content={'Export Data'}>
           <Button color="primary" auto ghost size='sm' onClick={() => exportData(notes, binNotes)} className="sidebar-control-button flex" icon={< FiShare />} />
-        </Tooltip>
+        </Tooltip> */}
 
-        <Tooltip placement='bottomEnd' content={isDark ? 'Light mode' : 'Dark mode'}>
-          <Switch
-            checked={isDark}
-            onChange={onThemeChange}
-            iconOff={<RiSunFill />}
-            iconOn={<RiMoonFill />}
-          />
-        </Tooltip>
+        <span className='theme-button' onClick={onThemeChange} title={isDark ? 'Light Theme' : 'Dark Theme'}>
+          {isDark ? <RiSunFill /> : <RiMoonFill />}
+        </span>
       </section>
     </section>
   )
