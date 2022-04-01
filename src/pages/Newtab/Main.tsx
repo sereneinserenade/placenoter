@@ -73,8 +73,6 @@ function Main() {
 
     const { id, title } = activeNote
 
-    debugger
-
     console.error(`This activeNote is not inside \`notes\` and \`binNotes\` \n ${JSON.stringify({ id, title })}`)
   }, [activeNote])
 

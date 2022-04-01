@@ -7,13 +7,11 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
-  MouseSensor,
   DragStartEvent,
 } from '@dnd-kit/core';
 import {
   arrayMove,
   sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
   rectSortingStrategy,
   useSortable,
   SortableContext
@@ -24,7 +22,7 @@ import { v4 as uuidv4 } from 'uuid'
 
 import { Button, Input, Modal, Text, Tooltip } from '@nextui-org/react';
 
-import { FiPlusCircle, FiLink } from 'react-icons/fi'
+import { FiPlusCircle, FiLink, FiTrash2, FiEdit } from 'react-icons/fi'
 import { test } from 'linkifyjs'
 
 import './css/QuickLinks.scss'
@@ -85,6 +83,8 @@ const QuickLinks: React.FC<QuickLinksProps> = () => {
 
   const [itemBeingDragged, setItemBeingDragged] = useState<string>('')
 
+  const [quickLinkBeingEdited, setQuickLinkBeingEdited] = useState<string>('')
+
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -144,9 +144,7 @@ const QuickLinks: React.FC<QuickLinksProps> = () => {
   useEffect(() => {
     const quicklinksorder = localQuickLinksOrder
 
-    if (quicklinksorder.length) {
-      storage.local.set({ quicklinksorder })
-    }
+    if (quicklinksorder.length) storage.local.set({ quicklinksorder })
   }, [localQuickLinksOrder])
 
   useEffect(() => {
@@ -165,7 +163,7 @@ const QuickLinks: React.FC<QuickLinksProps> = () => {
     const domainMatch = link.match(domainRegex)
     const domain = domainMatch && domainMatch[1]
 
-    const id = uuidv4()
+    const id = quickLinkBeingEdited || uuidv4()
 
     const quickLink: QuickLink = {
       name,
@@ -178,9 +176,14 @@ const QuickLinks: React.FC<QuickLinksProps> = () => {
 
     setLocalQuickLinks({ ...localQuickLinks, [id]: quickLink })
 
-    setLocalQuickLinksOrder([...localQuickLinksOrder, id])
+    if (!quickLinkBeingEdited) setLocalQuickLinksOrder([...localQuickLinksOrder, id])
 
     onAddQuickLinkModalClose()
+
+    setQuickLinkBeingEdited('')
+
+    setName("")
+    setLink("")
   }
 
   const handleDragStart = ({ active }: DragStartEvent) => {
@@ -204,7 +207,10 @@ const QuickLinks: React.FC<QuickLinksProps> = () => {
     setItemBeingDragged('')
   }
 
-  const handleRemove = (id: string) => {
+  const handleRemove = (e: React.MouseEvent<HTMLSpanElement, MouseEvent>, id: string) => {
+    e.stopPropagation()
+    e.preventDefault()
+
     setLocalQuickLinksOrder((ids) => ids.filter((item) => item !== id))
 
     const newQuickLinks = JSON.parse(JSON.stringify(localQuickLinks))
@@ -213,11 +219,27 @@ const QuickLinks: React.FC<QuickLinksProps> = () => {
     setLocalQuickLinks(newQuickLinks)
   }
 
-  const handleLinkClicked = (e: React.MouseEvent<HTMLElement, MouseEvent>, url: string) => {
+  const handleEdit = (e: React.MouseEvent<HTMLSpanElement, MouseEvent>, id: string) => {
     e.stopPropagation()
     e.preventDefault()
 
-    debugger
+    const quickLinkToEdit = localQuickLinks[id]
+
+    if (!quickLinkToEdit) return
+
+    setQuickLinkBeingEdited(id)
+
+    const { name, url } = quickLinkToEdit
+
+    setName(name)
+    setLink(url)
+
+    openAddQuickLinkModal()
+  }
+
+  const handleLinkClicked = (e: React.MouseEvent<HTMLElement, MouseEvent>, url: string) => {
+    e.stopPropagation()
+    e.preventDefault()
 
     if (isItemBeingDragged) return
 
@@ -247,8 +269,11 @@ const QuickLinks: React.FC<QuickLinksProps> = () => {
         >
           {
             localQuickLinksOrder.map(id => {
+              if (!localQuickLinks[id]) return
+
               const { url, iconUrl, name } = localQuickLinks[id]
-              return (<SortableItem key={id} id={id} >
+
+              return (<SortableItem key={id} id={id}>
                 <Tooltip placement='bottom' content={`${name || 'No Title'} - ${url}`}>
                   <article
                     onClick={(e) => handleLinkClicked(e, url)}
@@ -257,7 +282,15 @@ const QuickLinks: React.FC<QuickLinksProps> = () => {
                   >
                     <img className='icon' src={iconUrl} alt={`Icon for ${name}`} />
 
-                    <span className='name'> {name.length > 6 ? `${name.substring(0, 6)}...` : `${name || 'No Title'}`} </span>
+                    <span className='name'> {name.length > 6 ? `${name.substring(0, 6).trim()}…` : `${name || '-'}`} </span>
+
+                    <span className='remove-icon' onClick={(e) => handleRemove(e, id)} title="Remove Shortcut">
+                      <FiTrash2 />
+                    </span>
+
+                    <span className='edit-icon' onClick={(e) => handleEdit(e, id)} title="Edit Shortcut">
+                      <FiEdit />
+                    </span>
                   </article>
                 </Tooltip>
               </SortableItem>
@@ -268,11 +301,17 @@ const QuickLinks: React.FC<QuickLinksProps> = () => {
       </DndContext>
 
       <Tooltip placement='bottom' content={'Add shortcut!'}>
-        <a onClick={() => openAddQuickLinkModal()} className='quick-link-item flex'>
-          <FiPlusCircle className='icon plus-icon' />
+        <article onClick={() => {
+          setName("")
+          setLink("")
+          openAddQuickLinkModal()
+        }} className='flex flex-col add-button'>
+          <span>
+            <FiPlusCircle className='icon plus-icon' />
+          </span>
 
           <span> Add </span>
-        </a>
+        </article>
       </Tooltip>
 
       <Modal
@@ -318,14 +357,14 @@ const QuickLinks: React.FC<QuickLinksProps> = () => {
         </Modal.Body>
         <Modal.Footer>
           {
-            linkAlreadyExists && <Text color="error" css={{ mr: '$4' }}>
+            linkAlreadyExists && !quickLinkBeingEdited && <Text color="error" css={{ mr: '$4' }}>
               Shortcut already exists.
             </Text>
           }
           <Button auto flat color="error" onClick={onAddQuickLinkModalClose}>
             Close
           </Button>
-          <Button auto onClick={addQuickLink} disabled={!link || !isLinkValid || linkAlreadyExists}>
+          <Button auto onClick={addQuickLink} disabled={!link || !isLinkValid || (linkAlreadyExists && !quickLinkBeingEdited)}>
             Add
           </Button>
         </Modal.Footer>

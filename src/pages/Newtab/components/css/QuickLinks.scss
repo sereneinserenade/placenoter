@@ -3,6 +3,7 @@
   flex-wrap: wrap;
   width: 50ch;
   gap: 1ch;
+  justify-content: center;
 
   .quick-link-item {
     display: grid;
@@ -11,6 +12,7 @@
     color: inherit;
     text-decoration: inherit;
     justify-items: center;
+    align-items: center;
     gap: 10px;
     border-radius: var(--nextui-radii-md);
     width: 9ch;
@@ -18,9 +20,21 @@
     cursor: pointer;
     transition: all 0.2s ease-in-out;
     z-index: var(--nextui-zIndices-1);
+    position: relative;
 
     &:hover {
       transform: scale(1.05);
+
+      .remove-icon,
+      .edit-icon {
+        display: inline;
+        transition: all 0.2s ease-in-out;
+        right: 2px;
+
+        &:hover {
+          transform: scale(1.1);
+        }
+      }
     }
 
     &.being-dragged {
@@ -34,12 +48,33 @@
       border-radius: 50%;
     }
 
-    .plus-icon {
-      transform: scale(2.5);
-    }
-
     .name {
       white-space: nowrap;
+    }
+
+    .remove-icon {
+      position: absolute;
+      display: none;
+      bottom: 2px;
+    }
+
+    .edit-icon {
+      position: absolute;
+      display: none;
+      top: 2px;
+    }
+  }
+
+  .add-button {
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    margin-top: 8px;
+    cursor: pointer;
+
+    .icon {
+      transform: scale(2.5);
     }
   }
 }
