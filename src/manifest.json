@@ -2,6 +2,7 @@
   "manifest_version": 3,
   "name": "PlaceNoter",
   "options_page": "options.html",
+  "offline_enabled": true,
   "action": {
     "default_popup": "popup.html",
     "default_icon": "icon-34.png"
