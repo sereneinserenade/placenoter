@@ -166,7 +166,7 @@ function Main() {
               <main className='no-note-selected flex flex-col h-full'>
                 <Input
                   bordered
-                  placeholder="Search Google..."
+                  labelPlaceholder="Search Google..."
                   onInput={(e) => setInternetSearchText((e.target as HTMLInputElement).value)}
                   onKeyPress={(e) => e.code === 'Enter' && searchInternet(internetSearchText)}
                   css={{
