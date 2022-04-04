@@ -20,7 +20,7 @@ import { CSS } from '@dnd-kit/utilities';
 import { v4 as uuidv4 } from 'uuid'
 
 
-import { Button, Input, Modal, Text, Tooltip } from '@nextui-org/react';
+import { Button, Input, Loading, Modal, Text, Tooltip } from '@nextui-org/react';
 
 import { FiPlusCircle, FiLink, FiTrash2, FiEdit } from 'react-icons/fi'
 import { test } from 'linkifyjs'
@@ -87,6 +87,8 @@ const QuickLinks: React.FC<QuickLinksProps> = () => {
 
   const [gotQuickLinksFromDb, setGotQuickLinksFromDb] = useState<boolean>(false)
 
+  const [idOfLinkToBeLoaded, setIdOfLinkToBeLoaded] = useState<string>("")
+
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -126,7 +128,7 @@ const QuickLinks: React.FC<QuickLinksProps> = () => {
     storage.local.get('quicklinksorder', ({ quicklinksorder }) => {
       const keys = Object.keys(localQuickLinks)
 
-      if (quicklinksorder.length) {
+      if (quicklinksorder?.length) {
         setLocalQuickLinksOrder(quicklinksorder)
       } else {
         if (keys.length) {
@@ -245,11 +247,13 @@ const QuickLinks: React.FC<QuickLinksProps> = () => {
     openAddQuickLinkModal()
   }
 
-  const handleLinkClicked = (e: React.MouseEvent<HTMLElement, MouseEvent>, url: string) => {
+  const handleLinkClicked = (e: React.MouseEvent<HTMLElement, MouseEvent>, { id, url }: { id: string, url: string }) => {
     e.stopPropagation()
     e.preventDefault()
 
     if (isItemBeingDragged) return
+
+    setIdOfLinkToBeLoaded(id)
 
     window.location.href = url
   }
@@ -284,11 +288,15 @@ const QuickLinks: React.FC<QuickLinksProps> = () => {
               return (<SortableItem key={id} id={id}>
                 <Tooltip placement='bottom' content={`${name || 'No Title'} - ${url}`}>
                   <article
-                    onClick={(e) => handleLinkClicked(e, url)}
+                    onClick={(e) => handleLinkClicked(e, { url, id })}
                     key={url}
                     className={`quick-link-item ${itemBeingDragged === id && 'being-dragged'}`}
                   >
-                    <img className='icon' src={iconUrl} alt={`Icon for ${name}`} />
+                    {
+                      id === idOfLinkToBeLoaded
+                        ? <Loading size='lg' />
+                        : <img className='icon' src={iconUrl} alt={`Icon for ${name}`} />
+                    }
 
                     <span className='name'> {name.length > 6 ? `${name.substring(0, 6).trim()}…` : `${name || '-'}`} </span>
 

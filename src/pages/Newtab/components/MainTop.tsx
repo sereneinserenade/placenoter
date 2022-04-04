@@ -177,7 +177,7 @@ const MainTop = () => {
           <Button color="primary" auto ghost size='sm' onClick={() => exportData(notes, binNotes)} className="sidebar-control-button flex" icon={< FiShare />} />
         </Tooltip> */}
 
-        <span className='theme-button' onClick={onThemeChange} title={isDark ? 'Light Theme' : 'Dark Theme'}>
+        <span className='theme-button flex' onClick={onThemeChange} title={isDark ? 'Light Theme' : 'Dark Theme'}>
           {isDark ? <RiSunFill /> : <RiMoonFill />}
         </span>
       </section>
