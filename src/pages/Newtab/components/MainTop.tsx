@@ -1,11 +1,13 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useState } from 'react'
 import { Button, Tooltip, FormElement, Input, useTheme, changeTheme, Switch } from '@nextui-org/react'
 import { RiAddLine, RiMenuFoldFill, RiMenuUnfoldFill, RiMoonFill, RiPrinterLine, RiSunFill } from 'react-icons/ri'
-import { FiHome, FiShare } from 'react-icons/fi'
+import { FiHome } from 'react-icons/fi'
+import { BiImport, BiExport } from 'react-icons/bi'
 import { v4 as uuidv4 } from 'uuid'
 import { saveAs } from 'file-saver';
 
 import './css/MainTop.scss'
+import { ImportDataModal } from './data'
 import { activeNoteState, binNotesState, notesState, sidebarActiveState } from '../Store'
 import { Note } from '../types'
 import { useRecoilState, useRecoilValue } from 'recoil'
@@ -18,6 +20,8 @@ const MainTop = () => {
   const [sidebarActive, setSidebarActive] = useRecoilState(sidebarActiveState)
 
   const [notes, setNotes] = useRecoilState(notesState)
+
+  const [showImportDataModal, setShowImportDataModal] = useState(false)
 
   const binNotes = useRecoilValue(binNotesState)
 
@@ -171,11 +175,21 @@ const MainTop = () => {
             <Button color="primary" auto ghost size='sm' onClick={() => printEditorContent()} className="sidebar-control-button flex" icon={< RiPrinterLine />} />
           </Tooltip>
         }
+        {
+          !activeNote?.id &&
+          (<>
+            <Tooltip placement='bottomEnd' content={'Import Data from text.'}>
+              <Button color="primary" auto ghost size='sm' onClick={() => setShowImportDataModal(true)} className="sidebar-control-button flex" icon={< BiImport />} />
+            </Tooltip>
 
-        {/* TODO: enable this when it's time */}
-        {/* <Tooltip placement='bottomStart' content={'Export Data'}>
-          <Button color="primary" auto ghost size='sm' onClick={() => exportData(notes, binNotes)} className="sidebar-control-button flex" icon={< FiShare />} />
-        </Tooltip> */}
+            <Tooltip placement='bottomStart' content={'Export Data to a file.'}>
+              <Button color="primary" auto ghost size='sm' onClick={() => exportData(notes, binNotes)} className="sidebar-control-button flex" icon={< BiExport />} />
+            </Tooltip>
+
+            <ImportDataModal onClose={() => setShowImportDataModal(false)} isImportDataModelOpen={showImportDataModal} />
+          </>)
+        }
+
 
         <span className='theme-button flex' onClick={onThemeChange} title={isDark ? 'Light Theme' : 'Dark Theme'}>
           {isDark ? <RiSunFill /> : <RiMoonFill />}
