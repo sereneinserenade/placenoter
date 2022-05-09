@@ -120,7 +120,6 @@ const QuickLinks: React.FC<QuickLinksProps> = () => {
       else storage.local.set({ quicklinks: {} })
 
       processQuickLinksOrder()
-
     })
   }, [])
 

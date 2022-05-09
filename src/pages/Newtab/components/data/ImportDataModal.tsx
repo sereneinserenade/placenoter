@@ -1,9 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
-import { Modal, Text, Input, Button } from '@nextui-org/react';
-import { Note } from '../../types';
-import { useRecoilState, useSetRecoilState } from 'recoil';
-import { binNotesState, notesState, sidebarActiveState } from '../../Store';
+import { Modal, Text, Button, Loading } from '@nextui-org/react';
+import { useRecoilValue } from 'recoil';
+import { isPlainObject } from 'lodash';
+
+import { Note, QuickLink } from '../../types';
+import { binNotesState, notesState } from '../../Store';
+import './css/ImportDataModel.scss'
 
 interface ImportDataModalProps {
   isImportDataModelOpen: boolean
@@ -11,8 +14,10 @@ interface ImportDataModalProps {
 }
 
 interface Data {
-  notes: Note[]
+  dbnotes: Note[]
   binNotes: Note[]
+  quicklinks: QuickLink[]
+  quicklinksorder: string[]
 }
 
 const { storage } = chrome
@@ -22,11 +27,13 @@ export const ImportDataModal: React.FC<ImportDataModalProps> = ({ isImportDataMo
 
   const [isJsonValid, setIsJsonValid] = useState(false)
 
-  const setSidebarActive = useSetRecoilState(sidebarActiveState)
+  const [loading, setLoading] = useState(false)
 
-  const [notes, setNotes] = useRecoilState(notesState)
+  const [fileName, setFileName] = useState("")
 
-  const [binNotes, setBinNotes] = useRecoilState(binNotesState)
+  const notes = useRecoilValue(notesState)
+
+  const binNotes = useRecoilValue(binNotesState)
 
   useEffect(() => {
     if (!jsonDataString) {
@@ -36,13 +43,13 @@ export const ImportDataModal: React.FC<ImportDataModalProps> = ({ isImportDataMo
 
     try {
       const json: Data = JSON.parse(jsonDataString)
-      const { notes, binNotes } = json
+      const { dbnotes, binNotes, quicklinks, quicklinksorder } = json
 
-      debugger
-      const [isNotesValid, isBinNotesValid] = [Array.isArray(notes), Array.isArray(binNotes)]
+      const [isNotesValid, isBinNotesValid, isQuicklinksValid, isQuicklinksOrderValid] = [Array.isArray(dbnotes), Array.isArray(binNotes), isPlainObject(quicklinks), Array.isArray(quicklinksorder)]
 
-      if (!isNotesValid || !isBinNotesValid) {
-        console.error(`${!isNotesValid ? 'notes and ' : ''}${!isBinNotesValid ? 'binNotes' : ''} not valid.`)
+      if (!isNotesValid || !isBinNotesValid || !isQuicklinksOrderValid || !isQuicklinksValid) {
+        const err = `${!isNotesValid ? 'notes, ' : ""}${!isBinNotesValid ? 'binNotes, ' : ""}${!isQuicklinksValid ? 'quicklinks, ' : ""}${!isQuicklinksOrderValid ? 'quicklinksorder' : ""} not valid.`
+        console.error(err)
         setIsJsonValid(false)
         return
       }
@@ -54,17 +61,44 @@ export const ImportDataModal: React.FC<ImportDataModalProps> = ({ isImportDataMo
   }, [jsonDataString])
 
   const importData = () => {
+    setLoading(true)
+
     const jsonData: Data = JSON.parse(jsonDataString)
 
-    storage.local.set({ dbnotes: jsonData.notes, binNotes: jsonData.binNotes })
+    storage.local.set(jsonData, () => {
+      setLoading(false)
 
-    if (jsonData.notes.length) setSidebarActive(true)
+      window.location.reload()
+    })
+  }
 
-    onClose()
+  const readFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault()
 
-    setNotes(JSON.parse(JSON.stringify(jsonData.notes)))
+    const reader = new FileReader()
 
-    setBinNotes(JSON.parse(JSON.stringify(jsonData.binNotes)))
+    reader.onload = async (e) => {
+      const text = (e.target?.result)
+
+      if (text) setJsonDataString(text as string)
+    };
+
+    const file = e.target.files && e.target.files[0]
+
+    if (file) {
+      reader.readAsText(file)
+      setFileName(file.name)
+    }
+  }
+
+  const inputLabelRef = useRef(null)
+
+  const getTruncatedFileName = (fileName: string) => {
+    let [name, ext] = fileName.split('.')
+
+    if (name.length > 20) name = name.substring(0, 20) + '...'
+
+    return `${name}${!name.endsWith('.') ? "." : ''}${ext}`
   }
 
   return (
@@ -82,20 +116,15 @@ export const ImportDataModal: React.FC<ImportDataModalProps> = ({ isImportDataMo
       <Modal.Body>
         <section className='flex flex-col'>
           {
-            (binNotes.length || notes.length) ? <Text color="warning" css={{ mb: '2rem' }}>
+            (binNotes.length || notes.length) ? <Text color="warning" css={{ mb: '1rem' }}>
               There are {notes.length} Active Notes, and {binNotes.length} Notes in recycle bin. If you import data, all that data will be overridden with new data.
             </Text> : <></>
           }
-          <Input
-            clearable
-            bordered
-            fullWidth
-            size="lg"
-            labelPlaceholder="Enter the data in text form"
-            onInput={(e) => setJsonDataString((e.target as HTMLInputElement).value)}
-            autoFocus
-            onKeyPress={e => e.code === 'Enter' && importData()}
-          />
+
+          <Button auto onClick={() => (inputLabelRef.current as unknown as HTMLInputElement)?.click()}>
+            {fileName ? `From '${getTruncatedFileName(fileName)}'` : 'Choose file to import data'}
+            <input ref={inputLabelRef} id="file-upload" className='file-uploader-input' accept='application/json' type="file" onChange={(e) => readFile(e)} />
+          </Button>
         </section>
       </Modal.Body>
       <Modal.Footer>
@@ -104,11 +133,14 @@ export const ImportDataModal: React.FC<ImportDataModalProps> = ({ isImportDataMo
             Enter valid Json.
           </Text>
         }
-        <Button auto flat color="error" onClick={onClose}>
-          Close
-        </Button>
-        <Button auto onClick={importData} disabled={!isJsonValid || jsonDataString === ''}>
-          Import
+        <Button auto flat color="error" onClick={onClose}> Close </Button>
+
+        <Button auto onClick={importData} disabled={loading || !isJsonValid || jsonDataString === ''}>
+          {
+            loading
+              ? <Loading type='points' size='sm' />
+              : 'Import'
+          }
         </Button>
       </Modal.Footer>
     </Modal>

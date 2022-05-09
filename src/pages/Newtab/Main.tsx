@@ -2,15 +2,15 @@ import { Input, Loading } from '@nextui-org/react';
 import React, { EffectCallback, useCallback, useEffect, useRef, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid'
 import { useRecoilState, useRecoilValue } from 'recoil';
+import { debounce } from 'lodash';
 // import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.min.css';
+// import 'react-toastify/dist/ReactToastify.min.css';
 
 import { EditorAreaContainer, Maintop, Sidebar, QuickLinks } from './components';
 import { notesState, activeNoteState, sidebarActiveState, binNotesState } from './Store';
 import { Note } from './types';
 import PlaceNoterLogo from '../../assets/img/logo.svg';
 import './Main.scss'
-import { debounce } from 'lodash';
 
 const { storage } = chrome
 

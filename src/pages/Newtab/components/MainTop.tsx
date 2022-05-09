@@ -9,7 +9,7 @@ import { saveAs } from 'file-saver';
 import './css/MainTop.scss'
 import { ImportDataModal } from './data'
 import { activeNoteState, binNotesState, notesState, sidebarActiveState } from '../Store'
-import { Note } from '../types'
+import { Note, QuickLink } from '../types'
 import { useRecoilState, useRecoilValue } from 'recoil'
 
 const { storage } = chrome
@@ -117,20 +117,27 @@ const MainTop = () => {
 
   const exportData = useCallback((notes: Note[], binNotes: Note[]) => {
     interface Data {
-      notes: Note[];
+      dbnotes: Note[]
       binNotes: Note[]
+      quicklinks: QuickLink[]
+      quicklinksorder: string[]
     }
 
     const data: Data = {
-      notes,
-      binNotes
+      dbnotes: notes,
+      binNotes,
+      quicklinks: [],
+      quicklinksorder: []
     }
 
-    const fileToSave = new Blob([JSON.stringify(data)], {
-      type: 'application/json'
-    });
+    storage.local.get(['quicklinks', 'quicklinksorder'], ({ quicklinks, quicklinksorder }) => {
+      data.quicklinks = quicklinks || []
+      data.quicklinksorder = quicklinksorder || []
 
-    saveAs(fileToSave, 'PlaceNoter Data.json');
+      const fileToSave = new Blob([JSON.stringify(data)], { type: 'application/json' })
+
+      saveAs(fileToSave, `PlaceNoter - ${new Date().toLocaleString()}.json`);
+    })
   }, [])
 
   return (
@@ -178,7 +185,7 @@ const MainTop = () => {
         {
           !activeNote?.id &&
           (<>
-            <Tooltip placement='bottomEnd' content={'Import Data from text.'}>
+            <Tooltip placement='bottomEnd' content={'Import Data from a file.'}>
               <Button color="primary" auto ghost size='sm' onClick={() => setShowImportDataModal(true)} className="sidebar-control-button flex" icon={< BiImport />} />
             </Tooltip>
 
