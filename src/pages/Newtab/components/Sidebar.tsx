@@ -1,5 +1,5 @@
-import React, { useCallback, useState } from 'react';
-import { Button, Container, Input, Link, Row, Text, Tooltip } from '@nextui-org/react';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Button, Input, Link, Row, Text, Tooltip } from '@nextui-org/react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { format } from 'date-fns'
 import { v4 as uuidv4 } from 'uuid'
@@ -10,12 +10,13 @@ import { Note } from '../types';
 import './css/Sidebar.scss'
 import { FiTrash2 } from 'react-icons/fi';
 import { RiArrowLeftSLine, RiDeleteBin2Line, RiRecycleLine } from 'react-icons/ri';
+import { useLocalStorage } from 'react-use';
 // import { toast } from 'react-toastify';
 
 const { storage } = chrome
 
 const Sidebar = () => {
-  const sidebarActive = useRecoilValue(sidebarActiveState)
+  const [sidebarActive, setSidebarActive] = useRecoilState(sidebarActiveState)
 
   const [activeNote, setActiveNote] = useRecoilState(activeNoteState)
 
@@ -26,6 +27,20 @@ const Sidebar = () => {
   const [binNotes, setBinNotes] = useRecoilState(binNotesState)
 
   const [isBinActive, setIsBinActive] = useState(false)
+
+  const [isSidebarOpen, setIsSidebarOpen, remove] = useLocalStorage('sidebar-active', 'false');
+
+  useEffect(() => {
+    setTimeout(() => {
+      if (isSidebarOpen === 'true') setSidebarActive(true)
+      else if (isSidebarOpen === 'false') setSidebarActive(false)
+    }, 100);
+  }, [])
+
+  useEffect(() => {
+    if (sidebarActive) setIsSidebarOpen('true')
+    else setIsSidebarOpen('false')
+  }, [sidebarActive])
 
   const returnFormattedDateString = (timestamp: Date) => {
     return format(new Date(timestamp), 'PPpp')
