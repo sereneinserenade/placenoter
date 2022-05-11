@@ -3,8 +3,6 @@ import React, { EffectCallback, useCallback, useEffect, useRef, useState } from 
 import { v4 as uuidv4 } from 'uuid'
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { debounce } from 'lodash';
-// import { ToastContainer } from 'react-toastify';
-// import 'react-toastify/dist/ReactToastify.min.css';
 
 import { EditorAreaContainer, Maintop, Sidebar, QuickLinks } from './components';
 import { notesState, activeNoteState, sidebarActiveState, binNotesState } from './Store';

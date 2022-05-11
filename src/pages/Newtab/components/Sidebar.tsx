@@ -11,7 +11,6 @@ import './css/Sidebar.scss'
 import { FiTrash2 } from 'react-icons/fi';
 import { RiArrowLeftSLine, RiDeleteBin2Line, RiRecycleLine } from 'react-icons/ri';
 import { useLocalStorage } from 'react-use';
-// import { toast } from 'react-toastify';
 
 const { storage } = chrome
 
