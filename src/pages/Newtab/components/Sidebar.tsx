@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Button, Input, Link, Row, Text, Tooltip } from '@nextui-org/react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { Button, Input, Link, Text, Tooltip } from '@nextui-org/react';
+import { useRecoilState } from 'recoil';
 import { format } from 'date-fns'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -30,16 +30,10 @@ const Sidebar = () => {
   const [isSidebarOpen, setIsSidebarOpen, remove] = useLocalStorage('sidebar-active', 'false');
 
   useEffect(() => {
-    setTimeout(() => {
-      if (isSidebarOpen === 'true') setSidebarActive(true)
-      else if (isSidebarOpen === 'false') setSidebarActive(false)
-    }, 100);
+    setTimeout(() => isSidebarOpen && setSidebarActive(!!['false', 'true'].indexOf(isSidebarOpen)), 100)
   }, [])
 
-  useEffect(() => {
-    if (sidebarActive) setIsSidebarOpen('true')
-    else setIsSidebarOpen('false')
-  }, [sidebarActive])
+  useEffect(() => { setIsSidebarOpen(`${Boolean(sidebarActive)}`) }, [sidebarActive])
 
   const returnFormattedDateString = (timestamp: Date) => {
     return format(new Date(timestamp), 'PPpp')
