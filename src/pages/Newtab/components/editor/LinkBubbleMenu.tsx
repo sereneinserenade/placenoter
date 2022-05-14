@@ -1,77 +1,66 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Editor } from '@tiptap/core'
-import { Button, Input, Row, Text, Tooltip } from '@nextui-org/react';
+import { Button, Input, Text, Tooltip } from '@nextui-org/react';
 import { BubbleMenu } from '@tiptap/react';
 import { RiExternalLinkFill } from 'react-icons/ri';
 import { test } from 'linkifyjs'
 
+import { openUrlInNewTab } from '../../utils';
+
 import './LinkBubbleMenu.scss'
+import { useRecoilState } from 'recoil';
+import { currentLinkUrlState } from '../../Store';
 
 type LinkBubbleMenuProps = {
   editor: Editor,
-  currentUrl: string,
   closeLinkModal: (url?: string | undefined) => void
 }
 
-const LinkBubbleMenu = ({ editor, currentUrl, closeLinkModal }: LinkBubbleMenuProps) => {
-  const [url, setUrl] = useState<string>("")
+const LinkBubbleMenu = ({ editor, closeLinkModal }: LinkBubbleMenuProps) => {
+  const [url, setUrl] = useRecoilState(currentLinkUrlState)
 
-  const [isUrlValid, setIsUrlValid] = useState<boolean>(true)
-
-  const showLinkMenu = useRef<boolean>(false)
-
-  const setShowLinkMenu = (val: boolean) => showLinkMenu.current = val
-
-  useEffect(() => {
-    if (currentUrl) setUrl(currentUrl)
-    else setUrl("")
-  }, [currentUrl])
+  const [isUrlValid, setIsUrlValid] = useState<boolean>(false)
 
   const urlPatternValidation = (url: string): boolean => test(url);
 
-  useEffect(() => {
-    setIsUrlValid(urlPatternValidation(url))
-
-    setTimeout(() => setShowLinkMenu(!!url));
-  }, [url])
+  useEffect(() => { setIsUrlValid(urlPatternValidation(url)) }, [url])
 
   const onApply = () => isUrlValid && closeLinkModal(url)
 
-  const shouldShowLinkMenu = useCallback(() => showLinkMenu.current, [])
-
-  function newTab(url: string) {
-    window.open(url, "_blank");
-  }
-
   return (
-    <BubbleMenu shouldShow={shouldShowLinkMenu} editor={editor} className="bubble-menu link-bubble-menu" tippyOptions={{ placement: 'bottom' }}>
-      {currentUrl && <section className='flex link-bubble-inner-section'>
-        <section className='flex input-button-section'>
-          <Tooltip content="Visit link in new tab">
-            <Button size='sm' auto ghost icon={<RiExternalLinkFill />} onClick={() => newTab(currentUrl)} />
-          </Tooltip>
+    <BubbleMenu
+      shouldShow={() => editor.isActive('link')}
+      editor={editor}
+      className="bubble-menu link-bubble-menu flex"
+      tippyOptions={{ placement: 'bottom', duration: 250, animation: 'shift-toward-subtle' }}
+    >
+      {
+        editor.isActive('link') &&
+        (
+          <>
+            <Tooltip content="Visit URL in new tab" placement='left'>
+              <Button css={{ margin: '8px 0 8px 8px' }} size='sm' auto flat icon={<RiExternalLinkFill />} onClick={() => openUrlInNewTab(url)} />
+            </Tooltip>
 
-          <section>
-            <Input
-              // bordered
-              size="sm"
-              placeholder="https://xyz.abc"
-              value={url}
-              onInput={(e) => setUrl((e.target as HTMLInputElement).value.trim())}
-              onKeyPress={(e) => e.key === 'Enter' && onApply()}
-              animated={false}
-            />
-            {
-              !isUrlValid &&
-              <section>
-                <Text color="error" size={12}>
-                  Please enter a valid URL.
-                </Text>
-              </section>
-            }
-          </section>
-        </section>
-      </section>
+            <Tooltip
+              visible={!isUrlValid}
+              content={isUrlValid ? '' : 'URL not valid.'}
+              color='error'
+              placement='right'
+              initialVisible={false}
+            >
+              <Input
+                size="sm"
+                placeholder="https://xyz.abc"
+                value={url}
+                onInput={(e) => setUrl((e.target as HTMLInputElement).value.trim())}
+                onKeyPress={(e) => e.key === 'Enter' && onApply()}
+                animated={false}
+                css={{ margin: '8px 8px 8px 0' }}
+              />
+            </Tooltip>
+          </>
+        )
       }
     </BubbleMenu>
   )

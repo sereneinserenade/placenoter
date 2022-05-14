@@ -5,7 +5,7 @@ import { Node as ProsemirrorNode } from 'prosemirror-model'
 
 declare module '@tiptap/core' {
   interface Commands<ReturnType> {
-    search: {
+    searchAndReplace: {
       /**
        * @description Set search term in extension.
        */
@@ -164,17 +164,18 @@ const replaceAll = (replaceTerm: string, results: Result[], { tr, dispatch }: an
   return true
 }
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-export const SearchNReplace = Extension.create<SearchOptions>({
-  name: 'search',
+export const SearchAndReplace = Extension.create<SearchOptions>({
+  name: 'searchAndReplace',
 
-  defaultOptions: {
-    searchTerm: '',
-    replaceTerm: '',
-    results: [],
-    searchResultClass: 'search-result',
-    caseSensitive: false,
-    disableRegex: false,
+  addOptions() {
+    return {
+      searchTerm: '',
+      replaceTerm: '',
+      results: [],
+      searchResultClass: 'search-result',
+      caseSensitive: false,
+      disableRegex: false,
+    }
   },
 
   addCommands() {
@@ -241,6 +242,7 @@ export const SearchNReplace = Extension.create<SearchOptions>({
 
               return decorationsToReturn
             }
+
             return DecorationSet.empty
           },
         },

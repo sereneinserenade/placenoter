@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { createTheme, NextUIProvider, getDocumentTheme } from '@nextui-org/react';
 import { RecoilRoot, useRecoilState } from 'recoil';
 
+import 'tippy.js/animations/shift-toward-subtle.css';
+
 import Main from './Main'
 // import { darkState } from './Store';
 

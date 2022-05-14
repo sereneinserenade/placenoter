@@ -183,7 +183,7 @@ const Sidebar = () => {
 
       return (
         <>
-          <section className='bin-top-section flex justify-between'>
+          <section className='bin-top-section flex justify-between' aria-label='bin-top-section'>
             <Text
               h3
               css={{
@@ -198,7 +198,7 @@ const Sidebar = () => {
           {
             localBinNotes.length
               ? (
-                <section className='bin-section'>
+                <section className='bin-section' aria-label='bin-section'>
                   {
                     localBinNotes.map((note: Note) => {
                       return (
@@ -207,7 +207,7 @@ const Sidebar = () => {
                           key={note.id}
                           className={`sidebar-note ${note.id === activeNote?.id ? 'active' : ''}`}
                         >
-                          <section className='title-and-action-center flex'>
+                          <section className='title-and-action-center flex' aria-label='title-and-action-center'>
                             {GetNoteTitle(note, true)}
                             <Tooltip
                               placement='top'
@@ -273,7 +273,7 @@ const Sidebar = () => {
           key={note.id}
           className={`sidebar-note ${note.id === activeNote?.id ? 'active' : ''}`}
         >
-          <section className='title-and-action-center flex'>
+          <section className='title-and-action-center flex' aria-label='title-and-action-center'>
             {GetNoteTitle(note)}
             <Tooltip
               placement='right'
@@ -311,7 +311,7 @@ const Sidebar = () => {
 
   return (
     <aside className={`sidebar ${sidebarActive ? 'active' : ''}`}>
-      <section className='sidebar-top flex'>
+      <section className='sidebar-top flex' aria-label='sidebar-top'>
         <Input
           underlined
           fullWidth={true}
@@ -322,11 +322,11 @@ const Sidebar = () => {
         />
       </section>
 
-      <section className='sidebar-notes-list'>
+      <section className='sidebar-notes-list' aria-label='sidebar-notes-list-section'>
         {GimmeNotesToShow()}
       </section>
 
-      <article className='bin-button'>
+      <article className='bin-button' aria-label='bin-button-section'>
         <Tooltip content={isBinActive ? 'Go Back' : 'Go to Recycle Bin'} placement='right'>
           <Button size='sm' auto ghost icon={isBinActive ? <RiArrowLeftSLine /> : <RiDeleteBin2Line />} onClick={() => setIsBinActive(!isBinActive)} />
         </Tooltip>

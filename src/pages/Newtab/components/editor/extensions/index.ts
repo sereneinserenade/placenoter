@@ -1,2 +1,2 @@
-export * from './search'
+export * from './searchAndReplace'
 export * from './customPurposeExtension'

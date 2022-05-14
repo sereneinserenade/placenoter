@@ -3,43 +3,32 @@ import { Plugin, PluginKey, TextSelection } from 'prosemirror-state';
 
 interface CustomPurposeExtensionOptions {
   onLinkShortcutPressed: Function,
+  onLinkClicked: (url: string) => {},
 }
 
 export const CustomPurposeExtension = Extension.create<CustomPurposeExtensionOptions>({
   name: 'customPurposeExtension',
+
   addOptions() {
     return {
       onLinkShortcutPressed: () => {},
+      onLinkClicked: (url: string): any => {},
     }
   },
-  addProseMirrorPlugins() {
+
+  onSelectionUpdate() {
     const editor = this.editor
+    const options = this.options
 
-    const linkFocusSolver = new Plugin({
-      key: new PluginKey('linkFocusSolver'),
-      props: {
-        handleClick({ state: { doc, tr, selection }, dispatch }) {
-          setTimeout(() => {
-            if (editor.isActive('link')) return
+    setTimeout(() => {
+      if (editor.isActive('link')) {
+        const url = editor.getAttributes('link')
 
-            const [$start, $end] = [doc.resolve(selection.from + 1), doc.resolve(selection.to + 1)];
-
-            if ($start.pos !== $end.pos) return
-
-            dispatch(tr.setSelection(new TextSelection($start, $end)));
-
-            const [$newStart, $newEnd] = [doc.resolve(selection.from - 1), doc.resolve(selection.to - 1)];
-
-            dispatch(tr.setSelection(new TextSelection($newStart, $newEnd)));
-          })
-
-          // Keep this `false` otherwise there's weird behavior when a click to content doesn't take cursor to clicked position
-          return false
-        },
+        options.onLinkClicked(url.href)
+      } else {
+        options.onLinkClicked("")
       }
     })
-
-    return [linkFocusSolver]
   },
 
   addKeyboardShortcuts() {

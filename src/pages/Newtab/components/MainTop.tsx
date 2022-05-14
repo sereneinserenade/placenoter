@@ -141,8 +141,8 @@ const MainTop = () => {
   }, [])
 
   return (
-    <section className={`main-top flex`}>
-      <section className='left-controls flex' aria-label='left-controls'>
+    <section className={`main-top flex`} aria-label="main-top-section">
+      <section className='left-controls flex' aria-label='left-controls-section'>
         <Tooltip placement='bottomStart' content={sidebarActive ? 'Close Sidebar' : 'Open Sidebar'}>
           <Button color="primary" auto ghost size='sm' onClick={onSidebarControlButtonClicked} className={`sidebar-control-button flex`} icon={sidebarActive ? <RiMenuFoldFill /> : <RiMenuUnfoldFill />} />
         </Tooltip>
@@ -161,7 +161,7 @@ const MainTop = () => {
         </Tooltip>
       </section>
 
-      <section className='middle-controls'>
+      <section className='middle-controls' aria-label='middle-controls-section'>
         {
           activeNote && binNotes.findIndex(n => n.id === activeNote.id) === -1 &&
           <Input
@@ -175,7 +175,7 @@ const MainTop = () => {
         }
       </section>
 
-      <section className='right-controls flex'>
+      <section className='right-controls flex' aria-label='right-controls-section'>
         {
           // TODO: Give option to share in cloud storage
           activeNote?.id && <Tooltip placement='bottomEnd' content={'Print Document'}>

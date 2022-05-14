@@ -3,34 +3,22 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Editor } from '@tiptap/core';
 import { BubbleMenu as TiptapBubbleMenu } from '@tiptap/react'
 import { Button, Input, Tooltip, Text } from '@nextui-org/react';
-import { useRecoilState, useRecoilValue } from 'recoil'
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
 import { debounce } from 'lodash';
 import { RiSearch2Line, RiArrowDownSLine } from 'react-icons/ri'
 
-import { buttons } from './meta'
-import { activeNoteState, editorSearchState, linkModalState } from '../../Store';
+import { stopPrevent } from '../../utils'
+import { activeNoteState, currentLinkUrlState, editorSearchState, linkModalState } from '../../Store';
+
 import LinkModal from './LinkModal'
-import './Menubar.scss'
 import LinkBubbleMenu from './LinkBubbleMenu';
 import MenubarTableButtons from './MenubarTableButtons';
+
+import { buttons, getButtonKeys } from './meta'
 import { lowlight } from 'lowlight/lib/common.js';
 import { getReverseLangAlias } from './extensions/CodeBlockLowLight';
 
-type MenubarProps = {
-  editor: Editor,
-  isLocalSearchVisible: boolean,
-  onSearchTooltipClose: () => any
-}
-
-
-const stopPrevent = <T extends unknown>(e: T) => {
-  (e as Event).stopPropagation();
-  (e as Event).preventDefault()
-
-  return e
-}
-
-const isMac = navigator.userAgent.toLowerCase().includes('mac')
+import './Menubar.scss'
 
 interface SearchSectionProps {
   editor: Editor,
@@ -81,60 +69,7 @@ const SearchSection = ({ editor, localSearchTerm, setLocalSearchTerm, replaceTer
   </section>
 )
 
-
-const linuxButtonKeys: Record<string, string> = {
-  bold: "ctrl+B",
-  italic: "ctrl+I",
-  underline: "ctrl+U",
-  strike: "ctrl+shift+X",
-  link: "ctrl+k",
-  code: "ctrl+E",
-  alignLeft: "ctrl+shift+L",
-  alignCenter: "ctrl+shift+E",
-  alignRight: "ctrl+shift+R",
-  alignJustify: "ctrl+shift+J",
-  h1: "ctrl+alt+1",
-  h2: "ctrl+alt+2",
-  h3: "ctrl+alt+3",
-  orderedList: "ctrl+shift+7",
-  bulletList: "ctrl+shift+8",
-  taskList: "ctrl+shift+9",
-  //table: isMac?"":"",
-  blockquote: "ctrl+shift+B",
-  codeBlock: "ctrl+alt+C",
-  //horizontalRule: isMac?"":"",
-  //hardBreak: isMac?"":"",
-  undo: "ctrl+Z",
-  redo: "ctrl+shift+z",
-}
-
-const macButtonKeys: Record<string, string> = {
-  bold: "⌘+B",
-  italic: "⌘+I",
-  underline: "⌘+U",
-  strike: "⌘+shift+X",
-  link: "⌘+K",
-  code: "⌘+E",
-  alignLeft: "⌘+shift+L",
-  alignCenter: "⌘+shift+E",
-  alignRight: "⌘+shift+R",
-  alignJustify: "⌘+shift+J",
-  h1: "⌘+⌥+1",
-  h2: "⌘+⌥+2",
-  h3: "⌘+⌥+3",
-  orderedList: "⌘+shift+7",
-  bulletList: "⌘+shift+8",
-  taskList: "⌘+shift+9",
-  //table:isMac?"":"",
-  blockquote: "⌘+shift+B",
-  codeBlock: "⌘+⌥+C",
-  //horizontalRule:isMac?"":"",
-  //hardBreak:isMac?"":"",
-  undo: "⌘+Z",
-  redo: "⌘+shift+Z",
-}
-
-const buttonKeys = isMac ? macButtonKeys : linuxButtonKeys
+const buttonKeys = getButtonKeys()
 
 const GetTooltip = (tooltip: string, name: string) => {
   if (buttonKeys[name]) return <Text> {tooltip} <kbd>({buttonKeys[name]})</kbd></Text>
@@ -156,7 +91,7 @@ const BubbleMenu = ({ editor, isActiveStates, debouncedCalculateIsActiveStates, 
   return TiptapBubbleMenu({
     editor,
     className: `bubble-menu menubar flex ${isActiveStates['codeBlock'] && 'hide'}`,
-    tippyOptions: { placement: 'top' },
+    tippyOptions: { placement: 'top', duration: 250, animation: 'shift-toward-subtle' },
     children: (
       <>
         {
@@ -231,28 +166,28 @@ type TableGridProps = {
   tableGridHeight: number,
   tableGridWidth: number,
   setActiveCell: ({ x, y }: { x: number, y: number }) => void,
-  insertTable: ({ rows, cols, e }: { rows: number, cols: number, e: Event }) => void,
+  insertTable: ({ rows, cols, e }: { rows: number, cols: number, e: React.MouseEvent<HTMLButtonElement, MouseEvent> }) => void,
   activeCell: { x: number, y: number }
 }
 
 const TableGrid = ({ tableGridHeight, tableGridWidth, setActiveCell, insertTable, activeCell }: TableGridProps) => {
   return (
-    <section key={'table-grid'} className='table-grid'>
+    <section key='table-grid' className='table-grid'>
       {
         new Array(tableGridHeight).fill(0).map((h, i) => {
           return (
             <section key={`${i + 1}th_row`} className={`table-grid-row ${i === 0 ? 'first-row' : ''}`}>
               {
                 new Array(tableGridWidth)
-                  .fill(0)
-                  .map((w, j) => (
+                  .fill(true) // filling with `false` because boolean uses less RAM than other dataTypes
+                  .map((_, j) => (
                     <article
                       key={`${j + 1}_${i + 1}_th_cell`}
                       onMouseEnter={() => setActiveCell({ x: j + 1, y: i + 1 })}
                     >
                       <button
                         className={`grid-box ${j + 1 <= activeCell.x && i + 1 <= activeCell.y && 'active'}`}
-                        onClick={(e: any) => insertTable({ rows: i + 1, cols: j + 1, e })}
+                        onClick={(e) => insertTable({ rows: i + 1, cols: j + 1, e })}
                       />
                     </article>
                   ))
@@ -261,17 +196,18 @@ const TableGrid = ({ tableGridHeight, tableGridWidth, setActiveCell, insertTable
           )
         })
       }
-      {
-        <section className='flex justify-center'>
-          <Text>
-            {activeCell.y} Rows x {activeCell.x} Cols
-          </Text>
-        </section>
-      }
+      <section className='flex justify-center'>
+        <Text> {activeCell.y} Rows x {activeCell.x} Cols </Text>
+      </section>
     </section>
   )
 }
 
+type MenubarProps = {
+  editor: Editor,
+  isLocalSearchVisible: boolean,
+  onSearchTooltipClose: () => any
+}
 
 const Menubar = ({ editor, isLocalSearchVisible, onSearchTooltipClose }: MenubarProps) => {
   if (!editor) return null
@@ -283,8 +219,6 @@ const Menubar = ({ editor, isLocalSearchVisible, onSearchTooltipClose }: Menubar
   const [isActiveStates, setIsActiveStates] = useState<Record<string, boolean>>({})
 
   const [linkModalVisible, setLinkModalVisible] = useState<boolean>(false)
-
-  const [currentUrl, setCurrentUrl] = useState<string>("")
 
   const [currentLang, setCurrentLang] = useState<string>("")
 
@@ -316,11 +250,8 @@ const Menubar = ({ editor, isLocalSearchVisible, onSearchTooltipClose }: Menubar
     }
   }
 
-  const insertTable = ({ rows, cols, e }: { rows: number, cols: number, e?: Event }) => {
-    if (e) {
-      e.preventDefault()
-      e.stopPropagation()
-    }
+  const insertTable = ({ rows, cols, e }: { rows: number, cols: number, e?: React.MouseEvent<HTMLButtonElement, MouseEvent> }) => {
+    if (e) stopPrevent(e)
 
     editor.chain().focus().insertTable({ rows, cols, withHeaderRow: true }).run()
   }
@@ -376,7 +307,6 @@ const Menubar = ({ editor, isLocalSearchVisible, onSearchTooltipClose }: Menubar
     editor.on('transaction', ({ editor }) => debouncedCalculateIsActiveStates(editor))
 
     editor.on('selectionUpdate', ({ editor }) => {
-      setCurrentUrl(editor.getAttributes('link').href)
       setCurrentLang(editor.getAttributes('codeBlock').language)
     })
 
@@ -397,7 +327,7 @@ const Menubar = ({ editor, isLocalSearchVisible, onSearchTooltipClose }: Menubar
 
               if (btn.name === 'table') {
                 return (
-                  <section key={'table-key-prop'} className='table-menu-section flex'>
+                  <section key={'table-key-prop'} className='table-menu-section flex' aria-label='table-key-prop'>
                     <Tooltip
                       key={btn.name}
                       placement="bottomStart"
@@ -456,7 +386,6 @@ const Menubar = ({ editor, isLocalSearchVisible, onSearchTooltipClose }: Menubar
 
           {/* Using `SearchSection()` instead of `<SearchSection />` cause the input
             elements were getting unfocused because of rerender when something was typed */}
-
           <Tooltip
             visible={!!globalSearchTerm.length || isLocalSearchVisible}
             trigger='click'
@@ -469,11 +398,11 @@ const Menubar = ({ editor, isLocalSearchVisible, onSearchTooltipClose }: Menubar
             </button>
           </Tooltip>
 
-          <LinkModal visible={linkModalVisible} onClose={closeLinkModal} url={currentUrl} />
+          <LinkModal visible={linkModalVisible} onClose={closeLinkModal} />
 
           {BubbleMenu({ editor, debouncedCalculateIsActiveStates, isActiveStates, openLinkModal })}
 
-          {LinkBubbleMenu({ editor, closeLinkModal, currentUrl })}
+          {LinkBubbleMenu({ editor, closeLinkModal })}
         </>
       }
     </section>

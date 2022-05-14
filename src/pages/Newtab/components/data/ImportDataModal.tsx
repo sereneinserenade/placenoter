@@ -113,19 +113,17 @@ export const ImportDataModal: React.FC<ImportDataModalProps> = ({ isImportDataMo
           Import Data
         </Text>
       </Modal.Header>
-      <Modal.Body>
-        <section className='flex flex-col'>
-          {
-            (binNotes.length || notes.length) ? <Text color="warning" css={{ mb: '1rem' }}>
-              There are {notes.length} Active Notes, and {binNotes.length} Notes in recycle bin. If you import data, all that data will be overridden with new data.
-            </Text> : <></>
-          }
+      <Modal.Body className='flex flex-col' aria-label='modal-body-section'>
+        {
+          (binNotes.length || notes.length) ? <Text color="warning" css={{ mb: '1rem' }}>
+            There are {notes.length} Active Notes, and {binNotes.length} Notes in recycle bin. If you import data, all that data will be overridden with new data.
+          </Text> : <></>
+        }
 
-          <Button auto onClick={() => (inputLabelRef.current as unknown as HTMLInputElement)?.click()}>
-            {fileName ? `From '${getTruncatedFileName(fileName)}'` : 'Choose file to import data'}
-            <input ref={inputLabelRef} id="file-upload" className='file-uploader-input' accept='application/json' type="file" onChange={(e) => readFile(e)} />
-          </Button>
-        </section>
+        <Button auto onClick={() => (inputLabelRef.current as unknown as HTMLInputElement)?.click()}>
+          {fileName ? `From '${getTruncatedFileName(fileName)}'` : 'Choose file to import data'}
+          <input ref={inputLabelRef} id="file-upload" className='file-uploader-input' accept='application/json' type="file" onChange={(e) => readFile(e)} />
+        </Button>
       </Modal.Body>
       <Modal.Footer>
         {

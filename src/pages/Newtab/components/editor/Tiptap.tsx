@@ -12,7 +12,7 @@ import Link from '@tiptap/extension-link';
 
 import './Tiptap.scss'
 import Menubar from './Menubar'
-import { SearchNReplace, CustomPurposeExtension } from './extensions'
+import { SearchAndReplace, CustomPurposeExtension } from './extensions'
 import Table from '@tiptap/extension-table';
 import TableCell from '@tiptap/extension-table-cell';
 import TableHeader from '@tiptap/extension-table-header';
@@ -20,7 +20,7 @@ import TableRow from '@tiptap/extension-table-row';
 import { CodeBlockLowLight } from './extensions/CodeBlockLowLight';
 import { Text } from '@nextui-org/react';
 import { useSetRecoilState } from 'recoil';
-import { linkModalState } from '../../Store';
+import { currentLinkUrlState, linkModalState } from '../../Store';
 
 interface TiptapProps {
   onUpdate: Function
@@ -30,6 +30,8 @@ interface TiptapProps {
 
 const Tiptap = ({ onUpdate, content, isNoteInBin }: TiptapProps) => {
   const setGlobalLinkModalVisibleState = useSetRecoilState(linkModalState)
+
+  const setCurrentLinkUrl = useSetRecoilState(currentLinkUrlState)
 
   const [isLocalSearchVisible, setIsLocalSearchVisible] = useState<boolean>(false)
 
@@ -68,7 +70,7 @@ const Tiptap = ({ onUpdate, content, isNoteInBin }: TiptapProps) => {
         linkOnPaste: true,
         autolink: true,
       }),
-      SearchNReplace,
+      SearchAndReplace,
       Table.configure({ resizable: true }),
       TableRow,
       TableHeader,
@@ -76,7 +78,10 @@ const Tiptap = ({ onUpdate, content, isNoteInBin }: TiptapProps) => {
       CodeBlockLowLight,
 
       // My Extensions
-      CustomPurposeExtension.configure({ onLinkShortcutPressed: () => setGlobalLinkModalVisibleState(true) }),
+      CustomPurposeExtension.configure({
+        onLinkShortcutPressed: () => setGlobalLinkModalVisibleState(true),
+        onLinkClicked: (url) => setCurrentLinkUrl(url) as any
+      }),
     ],
     content: content,
     onUpdate: ({ editor }) => {

@@ -3,24 +3,23 @@ import React, { useEffect, useState } from 'react'
 import { Button, Input, Modal, Text } from '@nextui-org/react'
 import { RiLink } from 'react-icons/ri'
 import { test } from 'linkifyjs'
+import { useRecoilState } from 'recoil'
 
+import { currentLinkUrlState } from '../../Store'
 
 type LinkModalProps = {
   visible: boolean,
   onClose: (url?: string) => void,
-  url?: string
 }
 
-const LinkModal = ({ visible, onClose, url }: LinkModalProps) => {
-  const [link, setLink] = useState<string>("")
+const LinkModal = ({ visible, onClose }: LinkModalProps) => {
+  const [url, setUrl] = useRecoilState(currentLinkUrlState)
 
   const [isLinkValid, setIsLinkValid] = useState<boolean>(true)
 
-  const onApply = () => isLinkValid && onClose(link)
+  const onApply = () => isLinkValid && onClose(url)
 
-  useEffect(() => { url ? setLink(url) : setLink("") }, [visible, url])
-
-  useEffect(() => { link ? setIsLinkValid(urlPatternValidation(link)) : setIsLinkValid(true) }, [link])
+  useEffect(() => { url ? setIsLinkValid(urlPatternValidation(url)) : setIsLinkValid(true) }, [url])
 
   const urlPatternValidation = (url: string): boolean => test(url);
 
@@ -40,8 +39,8 @@ const LinkModal = ({ visible, onClose, url }: LinkModalProps) => {
           size="lg"
           placeholder="https://google.com"
           contentLeft={<RiLink />}
-          value={link}
-          onInput={(e) => setLink((e.target as HTMLInputElement).value.trim())}
+          value={url}
+          onInput={(e) => setUrl((e.target as HTMLInputElement).value.trim())}
           onKeyPress={(e) => e.key === 'Enter' && onApply()}
           autoFocus
         />

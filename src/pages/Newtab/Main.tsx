@@ -164,20 +164,20 @@ function Main() {
   }
 
   return (
-    <main className="placenoter">
+    <main className="placenoter" aria-label='main-section'>
       <Sidebar />
 
-      <section className={`note-content h-full ${!sidebarActive ? 'full' : ''}`}>
+      <section className={`note-content h-full ${!sidebarActive ? 'full' : ''}`} aria-label='note-content-section'>
         <Maintop />
 
         {
           activeNote?.id ?
             (
-              <main className='editor-area'>
+              <section className='editor-area' aria-label='editor-area-container'>
                 <EditorAreaContainer />
-              </main>
+              </section>
             ) : (
-              <main className='no-note-selected flex flex-col h-full'>
+              <section className='no-note-selected flex flex-col h-full' aria-label='home-page-section'>
                 <img className='logo' src={PlaceNoterLogo} alt="PlaceNoterLogo" />
 
                 <Input
@@ -193,7 +193,7 @@ function Main() {
                 />
 
                 <QuickLinks />
-              </main>
+              </section>
             )
         }
       </section>

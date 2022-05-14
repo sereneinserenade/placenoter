@@ -1,12 +1,6 @@
 .link-bubble-menu {
-  padding: 0;
-
-  .link-bubble-inner-section {
-    padding: 0.65rem;
-    flex-direction: column;
-
-    .input-button-section {
-      gap: 0.5rem;
-    }
-  }
+  padding: 0 !important;
+  margin: 0 !important;
+  gap: 6px;
+  transition: all 0.25s ease-in-out;
 }

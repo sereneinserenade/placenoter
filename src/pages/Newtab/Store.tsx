@@ -32,3 +32,8 @@ export const linkModalState = atom<boolean>({
   key: 'linkModalState',
   default: false
 })
+
+export const currentLinkUrlState = atom<string>({
+  key: 'currentLinkUrlState',
+  default: ''
+})
