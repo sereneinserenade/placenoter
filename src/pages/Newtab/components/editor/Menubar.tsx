@@ -3,20 +3,18 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Editor } from '@tiptap/core';
 import { BubbleMenu as TiptapBubbleMenu } from '@tiptap/react'
 import { Button, Input, Tooltip, Text } from '@nextui-org/react';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
+import { useRecoilState, useRecoilValue } from 'recoil'
 import { debounce } from 'lodash';
 import { RiSearch2Line, RiArrowDownSLine } from 'react-icons/ri'
 
 import { stopPrevent } from '../../utils'
-import { activeNoteState, currentLinkUrlState, editorSearchState, linkModalState } from '../../Store';
+import { activeNoteState, editorSearchState, linkModalState } from '../../Store';
 
 import LinkModal from './LinkModal'
 import LinkBubbleMenu from './LinkBubbleMenu';
 import MenubarTableButtons from './MenubarTableButtons';
 
 import { buttons, getButtonKeys } from './meta'
-import { lowlight } from 'lowlight/lib/common.js';
-import { getReverseLangAlias } from './extensions/CodeBlockLowLight';
 
 import './Menubar.scss'
 
@@ -114,54 +112,6 @@ const BubbleMenu = ({ editor, isActiveStates, debouncedCalculateIsActiveStates, 
   })
 }
 
-
-
-type CodeBlockLanguageSelectorProps = {
-  editor: Editor,
-  currentLang: string,
-  setCurrentLang: (val: string) => void
-}
-
-const CodeBlockLanguageSelector = ({ editor, currentLang, setCurrentLang }: CodeBlockLanguageSelectorProps) => {
-  const reverseLangAlias = useMemo(getReverseLangAlias, [])
-
-  const langs = lowlight.listLanguages() || []
-
-  langs.unshift('')
-
-  const [val, setVal] = useState<string>('')
-
-  useEffect(() => { setVal(reverseLangAlias[currentLang] || currentLang) }, [currentLang])
-
-
-  const updateVal = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const { value } = e.target
-
-    editor.chain().updateAttributes('codeBlock', { language: value }).focus().run()
-
-    setTimeout(() => setCurrentLang(editor.getAttributes('codeBlock').language));
-  }
-
-  return (
-    <section className='code-block-language-selector-section'>
-      {
-        langs.length && editor.isActive('codeBlock')
-          ? (
-            <>
-              <Text weight={'medium'} size={'1.2em'} margin={'0 0 8px 0'}>Select Language: </Text>
-
-              <select value={val} name="language-selector" id="language-selector" onChange={(e) => updateVal(e)}>
-                {langs.map((v: string) => (<option key={`${v}_option`} value={v}> {v.split("").map((a, i) => !i ? a.toUpperCase() : a).join("") || 'Choose Language'} </option>))}
-              </select>
-            </>
-          )
-          : (<Text color={'info'} small> Not inside a code block. </Text>)
-      }
-    </section>
-  )
-}
-
-
 type TableGridProps = {
   tableGridHeight: number,
   tableGridWidth: number,
@@ -219,8 +169,6 @@ const Menubar = ({ editor, isLocalSearchVisible, onSearchTooltipClose }: Menubar
   const [isActiveStates, setIsActiveStates] = useState<Record<string, boolean>>({})
 
   const [linkModalVisible, setLinkModalVisible] = useState<boolean>(false)
-
-  const [currentLang, setCurrentLang] = useState<string>("")
 
   const [localSearchTerm, setLocalSearchTerm] = useState<string>("")
 
@@ -306,10 +254,6 @@ const Menubar = ({ editor, isLocalSearchVisible, onSearchTooltipClose }: Menubar
 
     editor.on('transaction', ({ editor }) => debouncedCalculateIsActiveStates(editor))
 
-    editor.on('selectionUpdate', ({ editor }) => {
-      setCurrentLang(editor.getAttributes('codeBlock').language)
-    })
-
     calculateIsActiveStates(editor)
   }
 
@@ -355,18 +299,12 @@ const Menubar = ({ editor, isLocalSearchVisible, onSearchTooltipClose }: Menubar
               if (btn.name === 'codeBlock') {
                 return (
                   <Tooltip trigger='hover' key={btn.name} placement='top' content={btn.label ? GetTooltip(btn.label, btn.name) : btn.label}>
-                    <Tooltip
-                      trigger='hover'
-                      content={CodeBlockLanguageSelector({ editor, currentLang, setCurrentLang })}
-                      placement={'bottom'}
+                    <button
+                      className={`menubar-button flex ${isActiveStates[btn.name] ? 'active' : ''}`}
+                      onClick={() => btn.action?.(editor) && debouncedCalculateIsActiveStates(editor)}
                     >
-                      <button
-                        className={`menubar-button flex ${isActiveStates[btn.name] ? 'active' : ''}`}
-                        onClick={() => btn.action && btn.action(editor) && debouncedCalculateIsActiveStates(editor)}
-                      >
-                        {btn.icon && <btn.icon />}
-                      </button>
-                    </Tooltip>
+                      {btn.icon && <btn.icon />}
+                    </button>
                   </Tooltip>
                 )
               }

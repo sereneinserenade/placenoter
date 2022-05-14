@@ -1,0 +1,17 @@
+.code-block {
+  position: relative;
+
+  select {
+    appearance: none;
+    background-color: var(--nextui-colors-background);
+    border-radius: var(--nextui-radii-sm);
+    padding-left: 10px;
+    justify-content: center;
+    position: absolute;
+    right: 1rem;
+    top: 8px;
+    z-index: 100;
+    transform: translateY(-100%);
+    width: fit-content;
+  }
+}

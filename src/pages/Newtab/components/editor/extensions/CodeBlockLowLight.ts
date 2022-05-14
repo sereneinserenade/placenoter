@@ -6,6 +6,9 @@ import { findChildren } from '@tiptap/core'
 import { lowlight } from 'lowlight/lib/common.js'
 
 import { Node, textblockTypeInputRule, mergeAttributes } from '@tiptap/core'
+import { ReactNodeViewRenderer } from '@tiptap/react'
+
+import CodeBlock from './CodeBlockComponents/CodeBlock'
 
 const langAliases: Record<string, string | string[]> = {
   arduino: "ard",
@@ -248,10 +251,6 @@ export const CodeBlockLowLight = Node.create<CodeBlockOptions>({
   },
 
   renderHTML({ node, HTMLAttributes }) {
-    const mainLang = reverseLangAliases[node.attrs.language]
-
-    const langToShow = node.attrs.language ? node.attrs.language + " " + `${mainLang ? `- ${mainLang}` : ""}`.trim() : 'auto'
-
     return [
       'pre',
       mergeAttributes(this.options.HTMLAttributes, HTMLAttributes),
@@ -261,7 +260,6 @@ export const CodeBlockLowLight = Node.create<CodeBlockOptions>({
           class: node.attrs.language
             ? this.options.languageClassPrefix + node.attrs.language
             : null,
-          'data-language': langToShow
         },
         0,
       ],
@@ -454,4 +452,8 @@ export const CodeBlockLowLight = Node.create<CodeBlockOptions>({
       }),
     ]
   },
+
+  addNodeView() {
+    return ReactNodeViewRenderer(CodeBlock)
+  }
 })
