@@ -1,61 +1,50 @@
 import { Extension } from '@tiptap/react'
-import { EditorView } from 'prosemirror-view';
 import { Plugin, PluginKey, TextSelection } from 'prosemirror-state';
 
 interface CustomPurposeExtensionOptions {
-  onLinkShortcutEntered: Function,
+  onLinkShortcutPressed: Function,
 }
 
 export const CustomPurposeExtension = Extension.create<CustomPurposeExtensionOptions>({
   name: 'customPurposeExtension',
   addOptions() {
     return {
-      onLinkShortcutEntered: () => {},
+      onLinkShortcutPressed: () => {},
     }
   },
   addProseMirrorPlugins() {
-    let theView: EditorView;
+    const editor = this.editor
 
-    const { editor } = this
-
-    const updaterPlugin = new Plugin({
-      key: new PluginKey('linkFocusSolverPlugin'),
-      view: (view) => {
-        return {
-          update(view) {
-            theView = view
-          }
-        }
-      },
+    const linkFocusSolver = new Plugin({
+      key: new PluginKey('linkFocusSolver'),
       props: {
-        handleClick(view, pos) {
+        handleClick({ state: { doc, tr, selection }, dispatch }) {
           setTimeout(() => {
-            if (!editor.isActive('link')) return
+            if (editor.isActive('link')) return
 
-            const { doc, tr } = view.state;
+            const [$start, $end] = [doc.resolve(selection.from + 1), doc.resolve(selection.to + 1)];
 
-            const [$start, $end] = [doc.resolve(view.state.selection.from + 1), doc.resolve(view.state.selection.to + 1)];
+            if ($start.pos !== $end.pos) return
 
-            if ($start.pos !== $end.pos) return true
+            dispatch(tr.setSelection(new TextSelection($start, $end)));
 
-            view.dispatch(tr.setSelection(new TextSelection($start, $end)));
+            const [$newStart, $newEnd] = [doc.resolve(selection.from - 1), doc.resolve(selection.to - 1)];
 
-            const [$newStart, $newEnd] = [doc.resolve(view.state.selection.from - 1), doc.resolve(view.state.selection.to - 1)];
-
-            view.dispatch(tr.setSelection(new TextSelection($newStart, $newEnd)));
+            dispatch(tr.setSelection(new TextSelection($newStart, $newEnd)));
           })
 
-          return true
+          // Keep this `false` otherwise there's weird behavior when a click to content doesn't take cursor to clicked position
+          return false
         },
       }
     })
 
-    return [updaterPlugin]
+    return [linkFocusSolver]
   },
 
   addKeyboardShortcuts() {
     return {
-      'Mod-k': () => this.options.onLinkShortcutEntered(),
+      'Mod-k': ({ editor: { state: { selection: { from, to } } } }) => from !== to && this.options.onLinkShortcutPressed()
     }
   },
 })

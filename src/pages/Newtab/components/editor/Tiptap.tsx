@@ -56,7 +56,7 @@ const Tiptap = ({ onUpdate, content, isNoteInBin }: TiptapProps) => {
 
   const editor = useEditor({
     extensions: [
-      StarterKit.configure({ codeBlock: false, }),
+      StarterKit.configure({ codeBlock: false }),
       Placeholder.configure({ placeholder: 'Type here...' }),
       Underline,
       TaskList,
@@ -75,7 +75,8 @@ const Tiptap = ({ onUpdate, content, isNoteInBin }: TiptapProps) => {
       TableCell,
       CodeBlockLowLight,
 
-      CustomPurposeExtension.configure({ onLinkShortcutEntered: () => setGlobalLinkModalVisibleState(true) }),
+      // My Extensions
+      CustomPurposeExtension.configure({ onLinkShortcutPressed: () => setGlobalLinkModalVisibleState(true) }),
     ],
     content: content,
     onUpdate: ({ editor }) => {

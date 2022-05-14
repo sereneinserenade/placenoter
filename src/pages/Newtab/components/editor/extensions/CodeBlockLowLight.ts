@@ -27,7 +27,7 @@ for (const [lang, alias] of Object.entries(langAliases)) {
   else reverseLangAliases[alias] = lang
 }
 
-export const gimmeReverseLangAlias = () => reverseLangAliases
+export const getReverseLangAlias = () => reverseLangAliases
 
 function parseNodes(nodes: any[], className: string[] = []): { text: string, classes: string[] }[] {
   return nodes
