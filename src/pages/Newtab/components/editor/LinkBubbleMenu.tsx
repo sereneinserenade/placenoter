@@ -13,10 +13,10 @@ import { currentLinkUrlState } from '../../Store';
 
 type LinkBubbleMenuProps = {
   editor: Editor,
-  closeLinkModal: (url?: string | undefined) => void
+  closeLinkModalAndUpdateLink: (url?: string | undefined) => void
 }
 
-const LinkBubbleMenu = ({ editor, closeLinkModal }: LinkBubbleMenuProps) => {
+const LinkBubbleMenu = ({ editor, closeLinkModalAndUpdateLink }: LinkBubbleMenuProps) => {
   const [url, setUrl] = useRecoilState(currentLinkUrlState)
 
   const [isUrlValid, setIsUrlValid] = useState<boolean>(false)
@@ -25,7 +25,7 @@ const LinkBubbleMenu = ({ editor, closeLinkModal }: LinkBubbleMenuProps) => {
 
   useEffect(() => { setIsUrlValid(urlPatternValidation(url)) }, [url])
 
-  const onApply = () => isUrlValid && closeLinkModal(url)
+  const onApply = () => isUrlValid && closeLinkModalAndUpdateLink(url)
 
   return (
     <BubbleMenu

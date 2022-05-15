@@ -12,7 +12,7 @@ import Link from '@tiptap/extension-link';
 
 import './Tiptap.scss'
 import Menubar from './Menubar'
-import { SearchAndReplace, CustomPurposeExtension } from './extensions'
+import { SearchAndReplace } from './extensions'
 import Table from '@tiptap/extension-table';
 import TableCell from '@tiptap/extension-table-cell';
 import TableHeader from '@tiptap/extension-table-header';
@@ -43,17 +43,12 @@ const Tiptap = ({ onUpdate, content, isNoteInBin }: TiptapProps) => {
     if (searchInputEl) searchInputEl.focus()
   }
 
-  const onModFPressed = (e: KeyboardEvent) => {
-    const isModF = e.code === 'KeyF' && e.metaKey
-
-    if (!isModF) return
-
-    e.stopPropagation()
-    e.preventDefault()
-
+  const onModFPressed = () => {
     setIsLocalSearchVisible(true)
 
     focusSearchInput()
+
+    return true
   }
 
   const editor = useEditor({
@@ -65,54 +60,48 @@ const Tiptap = ({ onUpdate, content, isNoteInBin }: TiptapProps) => {
       TaskItem.configure({ nested: true }),
       CharacterCount,
       TextAlign.configure({ types: ['heading', 'paragraph'], }),
-      Link.configure({
-        openOnClick: false,
-        linkOnPaste: true,
-        autolink: true,
-      }),
-      SearchAndReplace,
       Table.configure({ resizable: true }),
       TableRow,
       TableHeader,
       TableCell,
-      CodeBlockLowLight,
 
-      // My Extensions
-      CustomPurposeExtension.configure({
-        onLinkShortcutPressed: () => setGlobalLinkModalVisibleState(true),
-        onLinkClicked: (url) => setCurrentLinkUrl(url) as any
+      // Custom/Extended extensions
+      CodeBlockLowLight,
+      SearchAndReplace.extend({
+        addKeyboardShortcuts() {
+          return {
+            'Mod-f': onModFPressed
+          }
+        }
+      }),
+      Link.extend({
+        addKeyboardShortcuts() {
+          return {
+            'Mod-k': ({ editor: { state: { selection: { from, to } } } }) => {
+              if (from !== to) {
+                setGlobalLinkModalVisibleState(true)
+                return true
+              }
+
+              return false
+            },
+          }
+        }
+      }).configure({
+        openOnClick: false,
+        linkOnPaste: true,
+        autolink: true,
       }),
     ],
     content: content,
-    onUpdate: ({ editor }) => {
-      onUpdate(editor.getHTML(), editor.getText())
-    },
-    onCreate: ({ editor }) => {
-      // const editorArea = document.querySelector('.editor-area');
-
-      // if (!editorArea) return
-
-      // (editorArea as HTMLDivElement).addEventListener('click', () => editor?.commands.focus());
-
-      const prosemirror = document.querySelector('.ProseMirror') as HTMLDivElement
-
-      prosemirror.addEventListener('keydown', onModFPressed);
-    },
-    onDestroy: () => {
-      // const editorArea = document.querySelector('.editor-area');
-
-      // if (!editorArea) return
-
-      // (editorArea as HTMLDivElement).removeEventListener('click', () => editor?.commands.focus());
-
-      const prosemirror = document.querySelector('.ProseMirror') as HTMLDivElement
-
-      prosemirror?.removeEventListener('keydown', onModFPressed);
+    onUpdate: ({ editor }) => onUpdate(editor.getHTML(), editor.getText()),
+    onSelectionUpdate: ({ editor }) => {
+      setTimeout(() => { setCurrentLinkUrl(editor.getAttributes('link')?.href || "") })
     },
     autofocus: false,
     editorProps: {
       attributes: {
-        spellcheck: 'false'
+        spellcheck: 'true'
       }
     },
   })

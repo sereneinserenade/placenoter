@@ -22,6 +22,7 @@ const linuxButtonKeys: Record<string, string> = {
   //hardBreak: isMac?"":"",
   undo: "ctrl+Z",
   redo: "ctrl+shift+z",
+  search: "ctrl+F"
 }
 
 const macButtonKeys: Record<string, string> = {
@@ -48,6 +49,7 @@ const macButtonKeys: Record<string, string> = {
   //hardBreak:isMac?"":"",
   undo: "⌘+Z",
   redo: "⌘+shift+Z",
+  search: "⌘+F"
 }
 
 export const getButtonKeys = () => {

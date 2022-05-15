@@ -26,7 +26,7 @@ interface SearchSectionProps {
   setReplaceTerm: (val: string) => void
 }
 
-const SearchSection = ({ editor, localSearchTerm, setLocalSearchTerm, replaceTerm, setReplaceTerm }: SearchSectionProps) => (
+const SearchSection = ({ editor, localSearchTerm, setLocalSearchTerm, replaceTerm, setReplaceTerm, }: SearchSectionProps) => (
   <section className='search-and-replace-section flex'>
     <section className='inputs-section flex'>
       <Input
@@ -34,6 +34,7 @@ const SearchSection = ({ editor, localSearchTerm, setLocalSearchTerm, replaceTer
         size="sm"
         value={localSearchTerm}
         onInput={e => stopPrevent(e) && setLocalSearchTerm((e.target as HTMLInputElement).value)}
+        onKeyDown={e => e.code === 'Escape' && editor.commands.focus()}
         id="search-input"
         animated={false}
         shadow={false}
@@ -43,7 +44,7 @@ const SearchSection = ({ editor, localSearchTerm, setLocalSearchTerm, replaceTer
         size="sm"
         value={replaceTerm}
         onInput={e => stopPrevent(e) && setReplaceTerm((e.target as HTMLInputElement).value)}
-        onKeyPress={e => e.key === 'Enter' && editor.commands.replace()}
+        onKeyDown={e => (e.key === 'Enter' && editor.commands.replace()) || (e.code === 'Escape' && editor.commands.focus())}
         animated={false}
         shadow={false}
       />
@@ -215,7 +216,7 @@ const Menubar = ({ editor, isLocalSearchVisible, onSearchTooltipClose }: Menubar
 
   const openLinkModal = () => setLinkModalVisible(true)
 
-  const closeLinkModal = (url?: string) => {
+  const closeLinkModalAndUpdateLink = (url?: string) => {
     setLinkModalVisible(false)
     setGlobalLinkModalVisibleState(false)
 
@@ -324,23 +325,25 @@ const Menubar = ({ editor, isLocalSearchVisible, onSearchTooltipClose }: Menubar
 
           {/* Using `SearchSection()` instead of `<SearchSection />` cause the input
             elements were getting unfocused because of rerender when something was typed */}
-          <Tooltip
-            visible={!!globalSearchTerm.length || isLocalSearchVisible}
-            trigger='click'
-            placement='bottom'
-            content={SearchSection({ editor, localSearchTerm, replaceTerm, setLocalSearchTerm, setReplaceTerm })}
-            onVisibleChange={(val) => val ? null : onSearchTooltipClose()}
-          >
-            <button className="menubar-button flex" >
-              <RiSearch2Line />
-            </button>
+          <Tooltip placement='top' content={GetTooltip('Search And Replace', 'search')}>
+            <Tooltip
+              visible={!!globalSearchTerm.length || isLocalSearchVisible}
+              trigger='click'
+              placement='bottom'
+              content={SearchSection({ editor, localSearchTerm, replaceTerm, setLocalSearchTerm, setReplaceTerm })}
+              onVisibleChange={(val) => !val && onSearchTooltipClose()}
+            >
+              <button className="menubar-button flex">
+                <RiSearch2Line />
+              </button>
+            </Tooltip>
           </Tooltip>
 
-          <LinkModal visible={linkModalVisible} onClose={closeLinkModal} />
+          <LinkModal visible={linkModalVisible} onClose={closeLinkModalAndUpdateLink} />
 
           {BubbleMenu({ editor, debouncedCalculateIsActiveStates, isActiveStates, openLinkModal })}
 
-          {LinkBubbleMenu({ editor, closeLinkModal })}
+          {LinkBubbleMenu({ editor, closeLinkModalAndUpdateLink })}
         </>
       }
     </section>
