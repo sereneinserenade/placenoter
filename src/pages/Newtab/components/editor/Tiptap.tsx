@@ -55,7 +55,9 @@ const Tiptap = ({ onUpdate, content, isNoteInBin }: TiptapProps) => {
   const editor = useEditor({
     extensions: [
       StarterKit.configure({ codeBlock: false }),
-      Placeholder.configure({ placeholder: 'Type here...' }),
+      Placeholder.configure({
+        placeholder: "Type '/' for commands…"
+      }),
       Underline,
       TaskList,
       TaskItem.configure({ nested: true }),
