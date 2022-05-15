@@ -13,7 +13,7 @@ import Typography from '@tiptap/extension-typography';
 
 import './Tiptap.scss'
 import Menubar from './Menubar'
-import { SearchAndReplace, SmilieReplacer } from './extensions'
+import { suggestions, Commands, SearchAndReplace, SmilieReplacer } from './extensions'
 import Table from '@tiptap/extension-table';
 import TableCell from '@tiptap/extension-table-cell';
 import TableHeader from '@tiptap/extension-table-header';
@@ -94,7 +94,8 @@ const Tiptap = ({ onUpdate, content, isNoteInBin }: TiptapProps) => {
         linkOnPaste: true,
         autolink: true,
       }),
-      SmilieReplacer
+      SmilieReplacer,
+      Commands.configure({ suggestions })
     ],
     content: content,
     onUpdate: ({ editor }) => onUpdate(editor.getHTML(), editor.getText()),

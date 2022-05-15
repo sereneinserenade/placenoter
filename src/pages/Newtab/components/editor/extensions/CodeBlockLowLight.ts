@@ -42,9 +42,7 @@ function parseNodes(nodes: any[], className: string[] = []): { text: string, cla
           : [],
       ]
 
-      if (node.children) {
-        return parseNodes(node.children, classes)
-      }
+      if (node.children) return parseNodes(node.children, classes)
 
       return {
         text: node.value,

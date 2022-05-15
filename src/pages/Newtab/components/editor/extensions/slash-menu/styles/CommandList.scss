@@ -1,0 +1,29 @@
+.items {
+  position: relative;
+  border-radius: var(--nextui-radii-sm);
+  background: var(--nextui-colors-background);
+  color: var(--nextui-colors-text);
+  box-shadow: var(--nextui-shadows-md);
+  padding: 6px;
+  box-sizing: border-box;
+}
+
+.item {
+  width: 100%;
+  border-radius: 0.4rem;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  box-sizing: border-box;
+  justify-content: space-between;
+
+  svg {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  &.is-selected {
+    background-color: var(--nextui-colors-selection);
+  }
+}
