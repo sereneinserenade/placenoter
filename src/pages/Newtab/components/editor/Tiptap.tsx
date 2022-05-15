@@ -9,10 +9,11 @@ import TaskList from '@tiptap/extension-task-list';
 import CharacterCount from '@tiptap/extension-character-count';
 import TextAlign from '@tiptap/extension-text-align';
 import Link from '@tiptap/extension-link';
+import Typography from '@tiptap/extension-typography';
 
 import './Tiptap.scss'
 import Menubar from './Menubar'
-import { SearchAndReplace } from './extensions'
+import { SearchAndReplace, SmilieReplacer } from './extensions'
 import Table from '@tiptap/extension-table';
 import TableCell from '@tiptap/extension-table-cell';
 import TableHeader from '@tiptap/extension-table-header';
@@ -64,6 +65,7 @@ const Tiptap = ({ onUpdate, content, isNoteInBin }: TiptapProps) => {
       TableRow,
       TableHeader,
       TableCell,
+      Typography,
 
       // Custom/Extended extensions
       CodeBlockLowLight,
@@ -92,6 +94,7 @@ const Tiptap = ({ onUpdate, content, isNoteInBin }: TiptapProps) => {
         linkOnPaste: true,
         autolink: true,
       }),
+      SmilieReplacer
     ],
     content: content,
     onUpdate: ({ editor }) => onUpdate(editor.getHTML(), editor.getText()),
