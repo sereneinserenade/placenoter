@@ -88,6 +88,45 @@
     margin: 2rem 0;
   }
 
+  // From https://moderncss.dev/pure-css-custom-checkbox-style/
+  input[type="checkbox"] {
+    -webkit-appearance: none;
+    appearance: none;
+    background-color: #fff;
+    margin: 0;
+    font: inherit;
+    color: currentColor;
+    border: 0.15em solid currentColor;
+    border-radius: 0.15em;
+    display: grid;
+    place-content: center;
+    cursor: pointer;
+    transform: translateY(5px);
+
+    &:disabled {
+      --form-control-disabled: #959495;
+      --form-control-color: var(--form-control-disabled);
+      color: var(--form-control-disabled);
+      cursor: not-allowed;
+    }
+
+    &:checked::before {
+      transform: scale(1);
+    }
+
+    &::before {
+      content: "";
+      width: 0.65em;
+      height: 0.65em;
+      transform: scale(0);
+      transition: 120ms transform ease-in-out;
+      box-shadow: inset 1em 1em var(--form-control-color);
+      background-color: CanvasText;
+      transform-origin: bottom left;
+      clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+    }
+  }
+
   .search-result {
     background: rgba(255, 217, 0, 0.75);
   }
