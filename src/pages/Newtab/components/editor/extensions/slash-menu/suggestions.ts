@@ -86,6 +86,32 @@ const SlashMenuItems = [
     icon: RiListCheck2,
   },
   {
+    title: 'Blockquote',
+    command: ({ editor, range }) => {
+      editor
+        .chain()
+        .focus()
+        .deleteRange(range)
+        .setBlockquote()
+        .run()
+    },
+    icon: RiDoubleQuotesL,
+    shortcut: '>'
+  },
+  {
+    title: 'Code Block',
+    command: ({ editor, range }) => {
+      editor
+        .chain()
+        .focus()
+        .deleteRange(range)
+        .setCodeBlock({ language: 'auto' })
+        .run()
+    },
+    icon: RiCodeBoxLine,
+    shortcut: '```'
+  },
+  {
     title: 'Bold',
     command: ({ editor, range }) => {
       editor
@@ -149,32 +175,6 @@ const SlashMenuItems = [
     icon: RiCodeSSlashLine,
     shortcut: '`i`'
   },
-  {
-    title: 'Code Block',
-    command: ({ editor, range }) => {
-      editor
-        .chain()
-        .focus()
-        .deleteRange(range)
-        .setCodeBlock({ language: 'auto' })
-        .run()
-    },
-    icon: RiCodeBoxLine,
-    shortcut: '```'
-  },
-  {
-    title: 'Blockquote',
-    command: ({ editor, range }) => {
-      editor
-        .chain()
-        .focus()
-        .deleteRange(range)
-        .setBlockquote()
-        .run()
-    },
-    icon: RiDoubleQuotesL,
-    shortcut: '>'
-  },
 ]
 
 export const suggestions = {
@@ -215,6 +215,8 @@ export const suggestions = {
           interactive: true,
           trigger: 'manual',
           placement: 'bottom-start',
+          animation: 'shift-toward-subtle',
+          duration: 250
         })
       },
 
