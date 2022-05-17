@@ -57,7 +57,7 @@ export const CommandList: React.FC<CommandListProps> = ({ items, command, event 
   }
 
   return (
-    <div className="items">
+    <div className="items hide-scrollbar">
       {
         items.length
           ? (
@@ -69,6 +69,7 @@ export const CommandList: React.FC<CommandListProps> = ({ items, command, event 
                       className={`item flex ${index === selectedIndex ? 'is-selected' : ''}`}
                       key={index}
                       onClick={() => selectItem(index)}
+                      onMouseEnter={() => setSelectedIndex(index)}
                     >
                       <span className='flex align-center gap-8px'>
                         {item.icon()} <span dangerouslySetInnerHTML={{ __html: item.highlightedTitle || item.title }} />

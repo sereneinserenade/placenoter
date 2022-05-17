@@ -102,6 +102,7 @@
     place-content: center;
     cursor: pointer;
     transform: translateY(5px);
+    transition: transform 0.2s ease-in-out;
 
     &:disabled {
       --form-control-disabled: #959495;
@@ -112,6 +113,12 @@
 
     &:checked::before {
       transform: scale(1);
+    }
+
+    &:focus {
+      transform: scale(1.1) translateY(5px);
+      outline: 2px solid currentColor;
+      outline-offset: unquote($string: "max(2px, 0.15em)");
     }
 
     &::before {
@@ -420,6 +427,21 @@
         background-color: #78191b;
       }
     }
+
+    // From https://moderncss.dev/pure-css-custom-checkbox-style/
+    input[type="checkbox"] {
+      background-color: #000;
+
+      &:focus {
+        outline: 2px solid #fff;
+        outline-offset: unquote($string: "max(2px, 0.15em)");
+      }
+
+      &::before {
+        background-color: #fff;
+      }
+    }
+
   }
 
   hr {
@@ -430,6 +452,7 @@
 @media print {
   body {
     -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
 
   .ProseMirror {

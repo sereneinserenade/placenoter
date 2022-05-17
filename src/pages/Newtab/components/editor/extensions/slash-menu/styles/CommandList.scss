@@ -6,24 +6,27 @@
   box-shadow: var(--nextui-shadows-md);
   padding: 6px;
   box-sizing: border-box;
-}
+  max-height: 14em;
+  overflow-y: auto;
 
-.item {
-  width: 100%;
-  border-radius: 0.4rem;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 8px;
-  box-sizing: border-box;
-  justify-content: space-between;
-
-  svg {
-    display: inline-flex;
-    justify-content: center;
+  .item {
+    width: 100%;
+    border-radius: 0.4rem;
     align-items: center;
-  }
+    gap: 8px;
+    padding: 6px 8px;
+    box-sizing: border-box;
+    justify-content: space-between;
+    cursor: pointer;
 
-  &.is-selected {
-    background-color: var(--nextui-colors-selection);
+    svg {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    &.is-selected {
+      background-color: var(--nextui-colors-selection);
+    }
   }
 }
