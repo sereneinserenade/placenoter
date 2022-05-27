@@ -25,13 +25,7 @@
     overflow-y: auto;
 
     .bin-top-section {
-      width: 90%;
-    }
-
-    .bin-section {
-      .sidebar-note:first-of-type {
-        border-top: 1px solid rgba($color: #000000, $alpha: 0.15);
-      }
+      border-bottom: 1px solid var(--nextui-colors-text);
     }
   }
 
@@ -50,14 +44,6 @@
 .dark-theme {
   .sidebar {
     border-right: 1px solid gray;
-
-    .sidebar-notes-list {
-      .bin-section {
-        .sidebar-note:first-of-type {
-          border-top: 1px solid gray;
-        }
-      }
-    }
   }
 }
 

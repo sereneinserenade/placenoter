@@ -197,49 +197,18 @@ const Sidebar = () => {
                   {
                     localBinNotes.map((note: Note) => {
                       return (
-                        <article
+                        <NotePreview
+                          activeNote={activeNote}
+                          initiateMoveToBin={initiateMoveToBin}
+                          isBin={true}
+                          note={note}
                           onClick={() => changeActiveNoteTo(note)}
+                          returnFormattedDateString={returnFormattedDateString}
+                          setNoteTitle={setNoteTitle}
                           key={note.id}
-                          className={`sidebar-note ${note.id === activeNote?.id ? 'active' : ''}`}
-                        >
-                          <section className='title-and-action-center flex' aria-label='title-and-action-center'>
-                            {GetNoteTitle(note, true)}
-                            <Tooltip
-                              placement='top'
-                              content={'Recycle'}
-                            >
-                              <Button
-                                color="primary"
-                                auto
-                                ghost
-                                size='sm'
-                                onClick={(e) => initiateRecycleNote(e, note)}
-                                icon={<RiRecycleLine />}
-                              />
-                            </Tooltip>
-                            <Tooltip
-                              placement='right'
-                              content={'Delete Permanently'}
-                            >
-                              <Button
-                                color="error"
-                                auto
-                                ghost
-                                size='sm'
-                                onClick={(e) => initiateDeletePermanently(e, note)}
-                                icon={<FiTrash2 />}
-                              />
-                            </Tooltip>
-                          </section>
-                          {
-                            note.textContent.trim().length
-                              ? <Text> {note.textContent.length >= 40 ? note.textContent.substring(0, 40).trim() + '...' : note.textContent} </Text>
-                              : <Text color="gray"> {'No content...'} </Text>
-                          }
-                          <Text size={12}>
-                            {returnFormattedDateString(new Date(note.timestamp))}
-                          </Text>
-                        </article>
+                          initiateRecycleNote={initiateRecycleNote}
+                          initiateDeletePermanently={initiateDeletePermanently}
+                        />
                       )
                     })
                   }

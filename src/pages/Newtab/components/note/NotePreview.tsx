@@ -6,6 +6,7 @@ import { Note } from '../../types';
 import './styles/NotePreview.scss'
 import { FiCheck, FiEdit2, FiTrash2 } from 'react-icons/fi';
 import { stopPrevent } from '../../utils';
+import { RiRecycleLine } from 'react-icons/ri';
 
 interface NotePreviewProps {
   onClick: Function,
@@ -15,6 +16,9 @@ interface NotePreviewProps {
   returnFormattedDateString: Function
   setNoteTitle: Function
   isBin: boolean
+
+  initiateRecycleNote?: Function
+  initiateDeletePermanently?: Function
 }
 
 const GetNoteTitle = (note: Note, isInBin = false, setNoteTitle: Function) => {
@@ -37,12 +41,17 @@ const GetNoteTitle = (note: Note, isInBin = false, setNoteTitle: Function) => {
 
   return (
     <span className='title-editor-container flex'>
-      <span className='control-buttons'>
-        {isEditable
-          ? <Tooltip placement='topStart' content={<Text> Save Title <kbd>Enter</kbd></Text>}><FiCheck onClick={(e) => stopPrevent(e) && onInput()} /> </Tooltip>
-          : <Tooltip placement='topStart' content={'Edit Title'}><FiEdit2 onClick={(e) => stopPrevent(e) && onEditStart()} /> </Tooltip>
-        }
-      </span>
+      {
+        !isInBin
+        && (
+          <span className='control-buttons'>
+            {isEditable
+              ? <Tooltip placement='topStart' content={<Text> Save Title <kbd>Enter</kbd></Text>}><FiCheck onClick={(e) => stopPrevent(e) && onInput()} /> </Tooltip>
+              : <Tooltip placement='topStart' content={'Edit Title'}><FiEdit2 onClick={(e) => stopPrevent(e) && onEditStart()} /> </Tooltip>
+            }
+          </span>
+        )
+      }
 
       <input
         placeholder='Add Title...'
@@ -50,7 +59,7 @@ const GetNoteTitle = (note: Note, isInBin = false, setNoteTitle: Function) => {
         onClick={e => e.stopPropagation()}
         value={name}
         onInput={e => setName((e.target as any).value)}
-        disabled={isInBin || !isEditable}
+        disabled={!isEditable}
         onKeyPress={(e) => e.code === 'Enter' && onInput()}
         ref={inputRef}
       />
@@ -65,7 +74,9 @@ export const NotePreview: React.FC<NotePreviewProps> = ({
   initiateMoveToBin,
   returnFormattedDateString,
   setNoteTitle,
-  isBin
+  isBin,
+  initiateRecycleNote,
+  initiateDeletePermanently
 }) => {
   return (
     <article
@@ -77,6 +88,24 @@ export const NotePreview: React.FC<NotePreviewProps> = ({
         {GetNoteTitle(note, isBin, setNoteTitle)}
         <Text size={12}> {returnFormattedDateString(new Date(note.timestamp))} </Text>
       </section>
+
+      {
+        isBin && (
+          <Tooltip
+            placement='top'
+            content={'Recycle'}>
+            <Button
+              color="primary"
+              auto
+              ghost
+              size='sm'
+              onClick={(e) => initiateRecycleNote?.(e, note)}
+              icon={<RiRecycleLine />}
+            />
+          </Tooltip>
+        )
+      }
+
       <Tooltip
         placement='right'
         content={'Move to Bin'}
@@ -86,7 +115,7 @@ export const NotePreview: React.FC<NotePreviewProps> = ({
           auto
           ghost
           size='sm'
-          onClick={(e) => initiateMoveToBin(e, note)}
+          onClick={(e) => isBin ? initiateDeletePermanently?.(e, note) : initiateMoveToBin(e, note)}
           icon={<FiTrash2 />}
         />
       </Tooltip>
