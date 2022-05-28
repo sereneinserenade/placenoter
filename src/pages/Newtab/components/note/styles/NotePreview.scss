@@ -10,7 +10,7 @@
     transition: none;
 
     .control-buttons {
-      display: flex !important;
+      max-width: 50px !important;
     }
   }
 
@@ -40,9 +40,12 @@
       }
 
       .control-buttons {
-        display: none;
         margin-right: 2px;
         transform: translateY(8px);
+        overflow: hidden;
+        display: inline-flex;
+        transition: all 0.2s ease-in-out;
+        max-width: 0;
       }
     }
   }
