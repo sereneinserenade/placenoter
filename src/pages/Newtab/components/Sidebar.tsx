@@ -11,6 +11,7 @@ import './css/Sidebar.scss'
 import { FiTrash2 } from 'react-icons/fi';
 import { RiArrowLeftSLine, RiDeleteBin2Line, RiRecycleLine } from 'react-icons/ri';
 import { useLocalStorage } from 'react-use';
+import { NotePreview } from './note/NotePreview';
 
 const { storage } = chrome
 
@@ -90,18 +91,12 @@ const Sidebar = () => {
     if (isInBin) setBinNotes(localNotes)
     else setNotes(localNotes)
 
-    if (note.id === activeNote?.id) setActiveNote(JSON.parse(JSON.stringify(newNote)))
+    if (note.id === activeNote?.id) {
+      setActiveNote(undefined)
+
+      setTimeout(() => setActiveNote(JSON.parse(JSON.stringify(newNote))))
+    }
   }
-
-  const GetNoteTitle = (note: Note, isInBin: boolean = false) => (<input
-    placeholder='Add Title...'
-    className='title-editor-input'
-    onClick={e => e.stopPropagation()}
-    value={note.title}
-    onInput={e => setNoteTitle(note, (e as any).target.value, isInBin)}
-    disabled={isInBin}
-  />)
-
 
   const deleteNote = (id: string, source: 'normal' | 'bin' = 'normal') => {
     const isBin = source === 'bin'
@@ -202,47 +197,18 @@ const Sidebar = () => {
                   {
                     localBinNotes.map((note: Note) => {
                       return (
-                        <article
+                        <NotePreview
+                          activeNote={activeNote}
+                          initiateMoveToBin={initiateMoveToBin}
+                          isBin={true}
+                          note={note}
                           onClick={() => changeActiveNoteTo(note)}
+                          returnFormattedDateString={returnFormattedDateString}
+                          setNoteTitle={setNoteTitle}
                           key={note.id}
-                          className={`sidebar-note ${note.id === activeNote?.id ? 'active' : ''}`}
-                        >
-                          <section className='title-and-action-center flex' aria-label='title-and-action-center'>
-                            {GetNoteTitle(note, true)}
-                            <Tooltip
-                              placement='top'
-                              content={'Recycle'}
-                            >
-                              <Button
-                                color="primary"
-                                auto
-                                ghost
-                                size='sm'
-                                onClick={(e) => initiateRecycleNote(e, note)}
-                                icon={<RiRecycleLine />}
-                              />
-                            </Tooltip>
-                            <Tooltip
-                              placement='right'
-                              content={'Delete Permanently'}
-                            >
-                              <Button
-                                color="error"
-                                auto
-                                ghost
-                                size='sm'
-                                onClick={(e) => initiateDeletePermanently(e, note)}
-                                icon={<FiTrash2 />}
-                              />
-                            </Tooltip>
-                          </section>
-                          {
-                            note.textContent.trim().length
-                              ? <Text> {note.textContent.length >= 40 ? note.textContent.substring(0, 40).trim() + '...' : note.textContent} </Text>
-                              : <Text color="gray"> {'No content...'} </Text>
-                          }
-                          <Text size={12}> {returnFormattedDateString(new Date(note.timestamp))} </Text>
-                        </article>
+                          initiateRecycleNote={initiateRecycleNote}
+                          initiateDeletePermanently={initiateDeletePermanently}
+                        />
                       )
                     })
                   }
@@ -268,35 +234,16 @@ const Sidebar = () => {
 
     return (
       !!localNotes.length
-        ? (localNotes.map((note: Note) => (<article
+        ? (localNotes.map((note: Note) => (<NotePreview
+          activeNote={activeNote}
+          initiateMoveToBin={initiateMoveToBin}
+          isBin={false}
+          note={note}
           onClick={() => changeActiveNoteTo(note)}
+          returnFormattedDateString={returnFormattedDateString}
+          setNoteTitle={setNoteTitle}
           key={note.id}
-          className={`sidebar-note ${note.id === activeNote?.id ? 'active' : ''}`}
-        >
-          <section className='title-and-action-center flex' aria-label='title-and-action-center'>
-            {GetNoteTitle(note)}
-            <Tooltip
-              placement='right'
-              content={'Move to Bin'}
-            >
-              <Button
-                color="error"
-                auto
-                ghost
-                size='sm'
-                onClick={(e) => initiateMoveToBin(e, note)}
-                icon={<FiTrash2 />}
-              />
-            </Tooltip>
-          </section>
-          {
-            note.textContent.trim().length
-              ? <Text> {note.textContent.length >= 40 ? note.textContent.substring(0, 40).trim() + '...' : note.textContent} </Text>
-              : <Text color="gray"> {'No content...'} </Text>
-          }
-          <Text size={12}> {returnFormattedDateString(new Date(note.timestamp))} </Text>
-        </article>
-        )))
+        />)))
         : (
           <Text css={{
             fontWeight: 400,

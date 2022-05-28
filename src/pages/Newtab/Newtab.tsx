@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { createTheme, NextUIProvider, getDocumentTheme } from '@nextui-org/react';
-import { RecoilRoot, useRecoilState } from 'recoil';
+import { RecoilRoot } from 'recoil';
 
 import 'tippy.js/animations/shift-toward-subtle.css';
 
@@ -18,8 +18,8 @@ const Newtab = () => {
     type: 'dark',
     theme: {
       colors: {
-        primary: '#3D9CF7',
-        link: '#3D9CF7',
+        // primary: '#3D9CF7',
+        // link: '#3D9CF7',
       }
     }
   })

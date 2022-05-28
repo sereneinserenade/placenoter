@@ -1,0 +1,56 @@
+.sidebar-note {
+  padding: 10px;
+  cursor: pointer;
+  border-radius: var(--nextui-radii-md);
+  margin: 8px;
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    transition: none;
+    background-color: var(--nextui-colors-primaryLight);
+
+    .control-buttons {
+      max-width: 50px !important;
+    }
+  }
+
+  &.active {
+    transition: all 0.2s ease-in-out;
+    background-color: var(--nextui-colors-primaryLightHover);
+  }
+
+  .title-and-action-center {
+    justify-content: space-between;
+    flex-direction: column;
+
+    .title-editor-container {
+      .title-editor-input {
+        background: none;
+        outline: none;
+        padding: none;
+        font-size: 1.2em;
+        border: none;
+        border-bottom: 1px dashed var(--nextui-colors-text);
+        cursor: text;
+
+        &:disabled {
+          border: none;
+          cursor: pointer;
+        }
+
+        &::selection {
+          background-color: var(--nextui-colors-purple400);
+        }
+      }
+
+      .control-buttons {
+        margin-right: 2px;
+        transform: translateY(8px);
+        overflow: hidden;
+        display: inline-flex;
+        transition: all 0.2s ease-in-out;
+        max-width: 0;
+      }
+    }
+  }
+}

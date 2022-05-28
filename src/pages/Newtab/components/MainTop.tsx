@@ -58,12 +58,6 @@ const MainTop = () => {
 
   const onSidebarControlButtonClicked = (): void => setSidebarActive(!sidebarActive)
 
-  const changeTitle = (e: React.FormEvent<FormElement>) => {
-    const obj: Partial<Note> = { title: (e.target as any).value }
-
-    setActiveNote({ ...activeNote, ...obj } as Note)
-  }
-
   const deleteActiveNote = () => {
     const localNotes: Note[] = JSON.parse(JSON.stringify(notes))
 
@@ -159,20 +153,6 @@ const MainTop = () => {
             icon={< RiAddLine />}
           />
         </Tooltip>
-      </section>
-
-      <section className='middle-controls' aria-label='middle-controls-section'>
-        {
-          activeNote && binNotes.findIndex(n => n.id === activeNote.id) === -1 &&
-          <Input
-            underlined
-            placeholder="Title..."
-            onInput={(e) => updateTitle(e)}
-            value={`${activeNote?.title}`}
-            className="title-input"
-            onBlur={refreshNote} // TODO: make this logic better
-          />
-        }
       </section>
 
       <section className='right-controls flex' aria-label='right-controls-section'>
