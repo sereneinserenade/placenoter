@@ -6,8 +6,8 @@
   transition: all 0.2s ease-in-out;
 
   &:hover {
-    background: rgba($color: gray, $alpha: 0.1);
     transition: none;
+    background-color: var(--nextui-colors-primaryLight);
 
     .control-buttons {
       max-width: 50px !important;
@@ -16,7 +16,7 @@
 
   &.active {
     transition: all 0.2s ease-in-out;
-    background: rgba($color: gray, $alpha: 0.2);
+    background-color: var(--nextui-colors-primaryLightHover);
   }
 
   .title-and-action-center {
@@ -47,18 +47,6 @@
         transition: all 0.2s ease-in-out;
         max-width: 0;
       }
-    }
-  }
-}
-
-.dark-theme {
-  .sidebar-note {
-    &:hover {
-      background: rgba($color: white, $alpha: 0.1);
-    }
-
-    &.active {
-      background: rgba($color: white, $alpha: 0.2);
     }
   }
 }
