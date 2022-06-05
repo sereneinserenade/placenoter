@@ -3,17 +3,14 @@ import { Button, Input, Link, Text, Tooltip } from '@nextui-org/react';
 import { useRecoilState } from 'recoil';
 import { format } from 'date-fns'
 import { v4 as uuidv4 } from 'uuid'
+import { RiArrowLeftSLine, RiDeleteBin2Line } from 'react-icons/ri';
+import { useLocalStorage } from 'react-use';
 
 import { sidebarActiveState, activeNoteState, notesState, editorSearchState, binNotesState } from '../Store'
 import { Note } from '../types';
 
 import './css/Sidebar.scss'
-import { FiTrash2 } from 'react-icons/fi';
-import { RiArrowLeftSLine, RiDeleteBin2Line, RiRecycleLine } from 'react-icons/ri';
-import { useLocalStorage } from 'react-use';
 import { NotePreview } from './note/NotePreview';
-
-const { storage } = chrome
 
 const Sidebar = () => {
   const [sidebarActive, setSidebarActive] = useRecoilState(sidebarActiveState)
@@ -36,9 +33,7 @@ const Sidebar = () => {
 
   useEffect(() => { setIsSidebarOpen(`${Boolean(sidebarActive)}`) }, [sidebarActive])
 
-  const returnFormattedDateString = (timestamp: Date) => {
-    return format(new Date(timestamp), 'PPpp')
-  }
+  const returnFormattedDateString = (timestamp: Date) => format(new Date(timestamp), 'PPpp')
 
   const checkIfAnEmptyNoteExists = (): Note | undefined => {
     return notes.find((n) => n.title.trim() === "" && n.textContent.trim() === "")
@@ -46,6 +41,7 @@ const Sidebar = () => {
 
   const createNewNoteAndSetItAsActiveNote = () => {
     const emptyNoteInNotesList = checkIfAnEmptyNoteExists()
+
     if (emptyNoteInNotesList) {
       setActiveNote(undefined)
       setTimeout(() => setActiveNote(emptyNoteInNotesList))
@@ -91,11 +87,11 @@ const Sidebar = () => {
     if (isInBin) setBinNotes(localNotes)
     else setNotes(localNotes)
 
-    if (note.id === activeNote?.id) {
-      setActiveNote(undefined)
+    if (note.id !== activeNote?.id) return
 
-      setTimeout(() => setActiveNote(JSON.parse(JSON.stringify(newNote))))
-    }
+    setActiveNote(undefined)
+
+    setTimeout(() => setActiveNote(JSON.parse(JSON.stringify(newNote))))
   }
 
   const deleteNote = (id: string, source: 'normal' | 'bin' = 'normal') => {
@@ -260,10 +256,10 @@ const Sidebar = () => {
     <aside className={`sidebar ${sidebarActive ? 'active' : ''}`}>
       <section className='sidebar-top flex' aria-label='sidebar-top'>
         <Input
-          underlined
           fullWidth={true}
-          placeholder='Search notes...'
+          placeholder='Search all notes...'
           type="search"
+          bordered
           value={globalSearchTerm}
           onInput={e => setGlobalSearchTerm((e.target as HTMLInputElement).value)}
         />

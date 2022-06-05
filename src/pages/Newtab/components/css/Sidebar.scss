@@ -1,22 +1,23 @@
 .sidebar {
   height: 100vh;
   box-sizing: border-box;
-  border-right: 1px solid rgba($color: black, $alpha: 0.2);
   margin-left: -25%;
   width: 25%;
   transition: all 0.25s;
   overflow: hidden;
   position: relative;
+  border-top-right-radius: var(--nextui-radii-md);
+  border-bottom-right-radius: var(--nextui-radii-md);
 
   &.active {
     margin-left: 0;
+    box-shadow: var(--nextui-shadows-md);
   }
 
   &-top {
     justify-content: center;
     align-items: center;
-    padding: 8px;
-    border-bottom: 1px solid gray;
+    padding: 10px;
     height: 8vh;
   }
 
