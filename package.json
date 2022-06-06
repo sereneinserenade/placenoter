@@ -1,6 +1,6 @@
 {
   "name": "placenoter",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "description": "New tab replaced by note taking app.",
   "license": "MIT",
   "repository": {
@@ -21,7 +21,7 @@
     "@dnd-kit/core": "^5.0.3",
     "@dnd-kit/sortable": "^6.0.1",
     "@hot-loader/react-dom": "^17.0.1",
-    "@nextui-org/react": "^1.0.0-beta.7",
+    "@nextui-org/react": "^1.0.0-beta.8",
     "@tiptap/extension-character-count": "^2.0.0-beta.26",
     "@tiptap/extension-link": "^2.0.0-beta.37",
     "@tiptap/extension-placeholder": "^2.0.0-beta.48",
