@@ -27,6 +27,7 @@ import { test } from 'linkifyjs'
 
 import './css/QuickLinks.scss'
 import { QuickLink } from '../types';
+import { stopPrevent } from '../utils';
 
 const urlPatternValidation = (url: string): boolean => test(url);
 
@@ -217,8 +218,7 @@ const QuickLinks: React.FC<QuickLinksProps> = () => {
   }
 
   const handleRemove = (e: React.MouseEvent<HTMLSpanElement, MouseEvent>, id: string) => {
-    e.stopPropagation()
-    e.preventDefault()
+    if (e) stopPrevent(e)
 
     setLocalQuickLinksOrder((ids) => ids.filter((item) => item !== id))
 
@@ -229,8 +229,7 @@ const QuickLinks: React.FC<QuickLinksProps> = () => {
   }
 
   const handleEdit = (e: React.MouseEvent<HTMLSpanElement, MouseEvent>, id: string) => {
-    e.stopPropagation()
-    e.preventDefault()
+    if (e) stopPrevent(e)
 
     const quickLinkToEdit = localQuickLinks[id]
 
@@ -247,8 +246,7 @@ const QuickLinks: React.FC<QuickLinksProps> = () => {
   }
 
   const handleLinkClicked = (e: React.MouseEvent<HTMLElement, MouseEvent>, { id, url }: { id: string, url: string }) => {
-    e.stopPropagation()
-    e.preventDefault()
+    if (e) stopPrevent(e)
 
     if (isItemBeingDragged) return
 

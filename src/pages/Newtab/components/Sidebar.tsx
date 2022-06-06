@@ -11,6 +11,9 @@ import { Note } from '../types';
 
 import './css/Sidebar.scss'
 import { NotePreview } from './note/NotePreview';
+import { stopPrevent } from '../utils';
+
+const { storage } = chrome
 
 const Sidebar = () => {
   const [sidebarActive, setSidebarActive] = useRecoilState(sidebarActiveState)
@@ -24,6 +27,10 @@ const Sidebar = () => {
   const [binNotes, setBinNotes] = useRecoilState(binNotesState)
 
   const [isBinActive, setIsBinActive] = useState(false)
+
+  const [pinnedNoteIds, setPinnedNoteIds] = useState<string[]>([])
+
+  const [pinnedNoteIdsFetchedFromStorage, setPinnedNoteIdsFetchedFromStorage] = useState(false)
 
   const [isSidebarOpen, setIsSidebarOpen, remove] = useLocalStorage('sidebar-active', 'false');
 
@@ -73,26 +80,28 @@ const Sidebar = () => {
     setTimeout(() => setActiveNote(note))
   }
 
-  const setNoteTitle = (note: Note, newTitle: string, isInBin: boolean = false) => {
-    const { id } = note
+  const updateNote = (updatedNote: Note) => {
+    const { id } = updatedNote
+
+    const isInBin = binNotes.find(({ id: bnId }) => bnId === id)
 
     const localNotes: Note[] = isInBin ? JSON.parse(JSON.stringify(binNotes)) : JSON.parse(JSON.stringify(notes))
 
     const index = localNotes.findIndex(n => n.id === id)
 
-    const newNote = { ...note, title: newTitle }
-
-    localNotes[index] = JSON.parse(JSON.stringify(newNote))
+    localNotes[index] = JSON.parse(JSON.stringify(updatedNote))
 
     if (isInBin) setBinNotes(localNotes)
     else setNotes(localNotes)
 
-    if (note.id !== activeNote?.id) return
+    if (updatedNote.id !== activeNote?.id) return
 
     setActiveNote(undefined)
 
-    setTimeout(() => setActiveNote(JSON.parse(JSON.stringify(newNote))))
+    setTimeout(() => setActiveNote(JSON.parse(JSON.stringify(updatedNote))))
   }
+
+  const setNoteTitle = (note: Note, newTitle: string) => updateNote({ ...note, title: newTitle })
 
   const deleteNote = (id: string, source: 'normal' | 'bin' = 'normal') => {
     const isBin = source === 'bin'
@@ -125,10 +134,7 @@ const Sidebar = () => {
   }
 
   const initiateMoveToBin = (e: any, note: Note) => {
-    if (e) {
-      (e as MouseEvent).stopPropagation();
-      (e as MouseEvent).preventDefault()
-    }
+    if (e) stopPrevent(e)
 
     moveNoteToBin(note)
   }
@@ -140,19 +146,13 @@ const Sidebar = () => {
   }
 
   const initiateRecycleNote = (e: any, note: Note) => {
-    if (e) {
-      (e as MouseEvent).stopPropagation();
-      (e as MouseEvent).preventDefault()
-    }
+    if (e) stopPrevent(e)
 
     recycleNote(note)
   }
 
   const initiateDeletePermanently = (e: any, note: Note) => {
-    if (e) {
-      (e as MouseEvent).stopPropagation();
-      (e as MouseEvent).preventDefault()
-    }
+    if (e) stopPrevent(e)
 
     deleteNote(note.id, 'bin')
   }
@@ -163,6 +163,29 @@ const Sidebar = () => {
         return title.toLowerCase().includes(searchTerm) || textContent.replaceAll('\n\n', ' ').toLowerCase().includes(searchTerm)
       })
   }, [])
+
+  useEffect(() => {
+    storage.local.get('pinnedNoteIds', ({ pinnedNoteIds }) => {
+      if (pinnedNoteIds) setPinnedNoteIds(pinnedNoteIds)
+      else setPinnedNoteIds([])
+
+      setPinnedNoteIdsFetchedFromStorage(true)
+    })
+  }, [])
+
+  useEffect(() => { pinnedNoteIdsFetchedFromStorage && storage.local.set({ pinnedNoteIds }) }, [pinnedNoteIds])
+
+  const togglePin = (note: Note) => {
+    const pinIndex = pinnedNoteIds.indexOf(note.id)
+    const isPinned = pinIndex !== -1
+
+    const localPinnedNoteIds = [...pinnedNoteIds]
+
+    if (isPinned) localPinnedNoteIds.splice(pinIndex, 1)
+    else localPinnedNoteIds.unshift(note.id)
+
+    setPinnedNoteIds(localPinnedNoteIds)
+  }
 
   const GimmeNotesToShow = () => {
     let lowerCaseSearchTerm = globalSearchTerm.toLowerCase().trim()
@@ -204,6 +227,7 @@ const Sidebar = () => {
                           key={note.id}
                           initiateRecycleNote={initiateRecycleNote}
                           initiateDeletePermanently={initiateDeletePermanently}
+                          isPinned={false}
                         />
                       )
                     })
@@ -224,7 +248,13 @@ const Sidebar = () => {
       )
     }
 
-    let localNotes: Note[] = notes
+    const pinnedNotes = pinnedNoteIds
+      .map((id) => notes.find(({ id: noteId }) => id === noteId) as Note)
+      .filter(Boolean)
+
+    const notPinnedNotes = notes.filter(({ id }) => !pinnedNoteIds.includes(id))
+
+    let localNotes = [...pinnedNotes, ...notPinnedNotes]
 
     if (lowerCaseSearchTerm) localNotes = filterNotes(localNotes, lowerCaseSearchTerm)
 
@@ -239,6 +269,8 @@ const Sidebar = () => {
           returnFormattedDateString={returnFormattedDateString}
           setNoteTitle={setNoteTitle}
           key={note.id}
+          togglePin={togglePin}
+          isPinned={pinnedNoteIds.includes(note.id)}
         />)))
         : (
           <Text css={{
@@ -257,7 +289,7 @@ const Sidebar = () => {
       <section className='sidebar-top flex' aria-label='sidebar-top'>
         <Input
           fullWidth={true}
-          placeholder='Search all notes...'
+          placeholder='Search in all notes...'
           type="search"
           bordered
           value={globalSearchTerm}

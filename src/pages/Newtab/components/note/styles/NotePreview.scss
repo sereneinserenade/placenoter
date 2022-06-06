@@ -11,6 +11,11 @@
 
     .control-buttons {
       max-width: 50px !important;
+      margin-right: 2px;
+    }
+
+    .right-control-buttons {
+      display: flex;
     }
   }
 
@@ -27,11 +32,11 @@
       .title-editor-input {
         background: none;
         outline: none;
-        padding: none;
-        font-size: 1.2em;
+        padding: 0;
+        margin: 0;
+        font-size: 1.1em;
         border: none;
         border-bottom: 1px dashed var(--nextui-colors-text);
-        cursor: text;
 
         &:disabled {
           border: none;
@@ -44,13 +49,16 @@
       }
 
       .control-buttons {
-        margin-right: 2px;
-        transform: translateY(8px);
+        transform: translateY(6px);
         overflow: hidden;
         display: inline-flex;
         transition: all 0.2s ease-in-out;
         max-width: 0;
       }
     }
+  }
+
+  .right-control-buttons {
+    display: none;
   }
 }
