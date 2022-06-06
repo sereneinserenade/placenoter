@@ -150,13 +150,6 @@ function Main() {
 
   useMountEffect(() => { setTimeout(focusSearchInput, 500) })
 
-  const onCreateNewNoteClicked = (e: React.MouseEvent<unknown, MouseEvent>) => {
-    e.preventDefault()
-    e.stopPropagation()
-
-    createNewNoteAndSetItAsActiveNote()
-  }
-
   const searchInternet = (text: string) => {
     setLoading(true)
 

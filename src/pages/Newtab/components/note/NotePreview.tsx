@@ -6,7 +6,7 @@ import { Note } from '../../types';
 import './styles/NotePreview.scss'
 import { FiCheck, FiEdit2, FiTrash2 } from 'react-icons/fi';
 import { stopPrevent } from '../../utils';
-import { RiRecycleLine } from 'react-icons/ri';
+import { RiPushpin2Fill, RiPushpin2Line, RiRecycleLine } from 'react-icons/ri';
 
 interface NotePreviewProps {
   onClick: Function,
@@ -19,6 +19,9 @@ interface NotePreviewProps {
 
   initiateRecycleNote?: Function
   initiateDeletePermanently?: Function
+
+  togglePin?: Function
+  isPinned: boolean
 }
 
 const GetNoteTitle = (note: Note, isInBin = false, setNoteTitle: Function) => {
@@ -29,9 +32,9 @@ const GetNoteTitle = (note: Note, isInBin = false, setNoteTitle: Function) => {
   const inputRef = useRef(null)
 
   const onInput = useCallback(() => {
-    setNoteTitle(note, name, isInBin)
+    setNoteTitle(note, name)
     setIsEditable(false)
-  }, [name, note, isInBin])
+  }, [name, note])
 
   const onEditStart = useCallback(() => {
     setIsEditable(true);
@@ -75,8 +78,12 @@ export const NotePreview: React.FC<NotePreviewProps> = ({
   returnFormattedDateString,
   setNoteTitle,
   isBin,
+
   initiateRecycleNote,
-  initiateDeletePermanently
+  initiateDeletePermanently,
+
+  togglePin,
+  isPinned
 }) => {
   return (
     <article
@@ -89,36 +96,51 @@ export const NotePreview: React.FC<NotePreviewProps> = ({
         <Text size={12}> {returnFormattedDateString(new Date(note.timestamp))} </Text>
       </section>
 
-      {
-        isBin && (
-          <Tooltip
-            placement='top'
-            content={'Recycle'}>
-            <Button
-              color="primary"
-              auto
-              ghost
-              size='sm'
-              onClick={(e) => initiateRecycleNote?.(e, note)}
-              icon={<RiRecycleLine />}
-            />
-          </Tooltip>
-        )
-      }
+      <section className='right-control-buttons flex gap-8px' aria-label='right-control-buttons'>
+        {
+          isBin
+            ? (
+              <Tooltip
+                placement='top'
+                content={'Recycle'}>
+                <Button
+                  color="primary"
+                  auto
+                  ghost
+                  size='sm'
+                  onClick={(e) => initiateRecycleNote?.(e, note)}
+                  icon={<RiRecycleLine />}
+                />
+              </Tooltip>
+            ) : <Tooltip
+              placement='top'
+              content={isPinned ? 'Unpin' : 'Pin'}
+            >
+              <Button
+                auto
+                ghost
+                size='sm'
+                onClick={(e) => stopPrevent(e) && togglePin?.(note)}
+                icon={isPinned ? <RiPushpin2Fill /> : <RiPushpin2Line />}
+              />
+            </Tooltip>
+        }
 
-      <Tooltip
-        placement='right'
-        content={'Move to Bin'}
-      >
-        <Button
-          color="error"
-          auto
-          ghost
-          size='sm'
-          onClick={(e) => isBin ? initiateDeletePermanently?.(e, note) : initiateMoveToBin(e, note)}
-          icon={<FiTrash2 />}
-        />
-      </Tooltip>
+
+        <Tooltip
+          placement='right'
+          content={isBin ? 'Delete Permanently' : 'Move to Bin'}
+        >
+          <Button
+            color="error"
+            auto
+            ghost
+            size='sm'
+            onClick={(e) => isBin ? initiateDeletePermanently?.(e, note) : initiateMoveToBin(e, note)}
+            icon={<FiTrash2 />}
+          />
+        </Tooltip>
+      </section>
     </article>
   )
 }

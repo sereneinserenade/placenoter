@@ -25,7 +25,7 @@ const MainTop = () => {
 
   const binNotes = useRecoilValue(binNotesState)
 
-  const { type, isDark } = useTheme();
+  const { isDark } = useTheme();
 
   const checkIfAnEmptyNoteExists = (): Note | undefined => {
     return notes.find((n) => n.title.trim() === "" && n.textContent.trim() === "")
@@ -58,24 +58,6 @@ const MainTop = () => {
 
   const onSidebarControlButtonClicked = (): void => setSidebarActive(!sidebarActive)
 
-  const deleteActiveNote = () => {
-    const localNotes: Note[] = JSON.parse(JSON.stringify(notes))
-
-    if (!activeNote) return
-
-    const { id } = activeNote
-
-    const index = localNotes.findIndex((n) => n.id === id)
-
-    localNotes.splice(index, 1)
-
-    setNotes(JSON.parse(JSON.stringify(localNotes)))
-
-    setActiveNote(undefined)
-  }
-
-  const updateTitle = (e: React.FormEvent<FormElement>) => (activeNote) && setActiveNote({ ...activeNote, title: `${(e.target as any).value}` })
-
   const goHome = () => {
     setActiveNote(undefined)
   }
@@ -86,14 +68,6 @@ const MainTop = () => {
     changeTheme(nextTheme);
 
     window.localStorage.setItem('data-theme', nextTheme); // I think local storage is good enough for this
-  }
-
-  const refreshNote = () => {
-    const note = JSON.parse(JSON.stringify(activeNote))
-
-    setActiveNote(undefined)
-
-    setTimeout(() => setActiveNote(note))
   }
 
   const printEditorContent = () => {
@@ -176,7 +150,6 @@ const MainTop = () => {
             <ImportDataModal onClose={() => setShowImportDataModal(false)} isImportDataModelOpen={showImportDataModal} />
           </>)
         }
-
 
         <span className='theme-button flex' onClick={onThemeChange} title={isDark ? 'Light Theme' : 'Dark Theme'}>
           {isDark ? <RiSunFill /> : <RiMoonFill />}
