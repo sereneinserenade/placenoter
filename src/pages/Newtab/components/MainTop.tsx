@@ -1,16 +1,18 @@
 import React, { useCallback, useState } from 'react'
-import { Button, Tooltip, FormElement, Input, useTheme, changeTheme, Switch } from '@nextui-org/react'
-import { RiAddLine, RiMenuFoldFill, RiMenuUnfoldFill, RiMoonFill, RiPrinterLine, RiSunFill } from 'react-icons/ri'
-import { FiHome } from 'react-icons/fi'
-import { BiImport, BiExport } from 'react-icons/bi'
-import { v4 as uuidv4 } from 'uuid'
-import { saveAs } from 'file-saver';
 
-import './css/MainTop.scss'
-import { ImportDataModal } from './data'
+import { Button, changeTheme, Tooltip, useTheme } from '@nextui-org/react'
+import { saveAs } from 'file-saver'
+import { BiExport, BiImport } from 'react-icons/bi'
+import { FiHome } from 'react-icons/fi'
+import { RiAddLine, RiMenuFoldFill, RiMenuUnfoldFill, RiMoonFill, RiPrinterLine, RiSunFill } from 'react-icons/ri'
+import { useRecoilState, useRecoilValue } from 'recoil'
+import { v4 as uuidv4 } from 'uuid'
+
 import { activeNoteState, binNotesState, notesState, sidebarActiveState } from '../Store'
 import { Note, QuickLink } from '../types'
-import { useRecoilState, useRecoilValue } from 'recoil'
+import { ImportDataModal } from './data'
+
+import './css/MainTop.scss'
 
 const { storage } = chrome
 
@@ -89,18 +91,21 @@ const MainTop = () => {
       binNotes: Note[]
       quicklinks: QuickLink[]
       quicklinksorder: string[]
+      pinnedNoteIds: string[]
     }
 
     const data: Data = {
       dbnotes: notes,
       binNotes,
       quicklinks: [],
-      quicklinksorder: []
+      quicklinksorder: [],
+      pinnedNoteIds: [],
     }
 
-    storage.local.get(['quicklinks', 'quicklinksorder'], ({ quicklinks, quicklinksorder }) => {
+    storage.local.get(['quicklinks', 'quicklinksorder', 'pinnedNoteIds'], ({ quicklinks, quicklinksorder, pinnedNoteIds }) => {
       data.quicklinks = quicklinks || []
       data.quicklinksorder = quicklinksorder || []
+      data.pinnedNoteIds = pinnedNoteIds
 
       const fileToSave = new Blob([JSON.stringify(data)], { type: 'application/json' })
 

@@ -1,12 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-import { Modal, Text, Button, Loading } from '@nextui-org/react';
-import { useRecoilValue } from 'recoil';
+import { Button, Loading, Modal, Text } from '@nextui-org/react';
 import { isPlainObject } from 'lodash';
+import { useRecoilValue } from 'recoil';
 
-import { Note, QuickLink } from '../../types';
 import { binNotesState, notesState } from '../../Store';
-import './css/ImportDataModel.scss'
+import { Note, QuickLink } from '../../types';
+
+import './css/ImportDataModel.scss';
 
 interface ImportDataModalProps {
   isImportDataModelOpen: boolean
@@ -18,6 +19,7 @@ interface Data {
   binNotes: Note[]
   quicklinks: QuickLink[]
   quicklinksorder: string[]
+  pinnedNoteIds: string[]
 }
 
 const { storage } = chrome
@@ -43,12 +45,30 @@ export const ImportDataModal: React.FC<ImportDataModalProps> = ({ isImportDataMo
 
     try {
       const json: Data = JSON.parse(jsonDataString)
-      const { dbnotes, binNotes, quicklinks, quicklinksorder } = json
+      const { dbnotes, binNotes, quicklinks, quicklinksorder, pinnedNoteIds } = json
 
-      const [isNotesValid, isBinNotesValid, isQuicklinksValid, isQuicklinksOrderValid] = [Array.isArray(dbnotes), Array.isArray(binNotes), isPlainObject(quicklinks), Array.isArray(quicklinksorder)]
+      const [
+        isNotesValid,
+        isBinNotesValid,
+        isQuicklinksValid,
+        isQuicklinksOrderValid,
+        isPinnedNoteIdsValid
+      ] = [
+          Array.isArray(dbnotes),
+          Array.isArray(binNotes),
+          isPlainObject(quicklinks),
+          Array.isArray(quicklinksorder),
+          Array.isArray(pinnedNoteIds || [])
+        ]
 
-      if (!isNotesValid || !isBinNotesValid || !isQuicklinksOrderValid || !isQuicklinksValid) {
-        const err = `${!isNotesValid ? 'notes, ' : ""}${!isBinNotesValid ? 'binNotes, ' : ""}${!isQuicklinksValid ? 'quicklinks, ' : ""}${!isQuicklinksOrderValid ? 'quicklinksorder' : ""} not valid.`
+      if (
+        !isNotesValid
+        || !isBinNotesValid
+        || !isQuicklinksOrderValid
+        || !isQuicklinksValid
+        || !isPinnedNoteIdsValid
+      ) {
+        const err = `${!isNotesValid ? 'notes, ' : ""}${!isBinNotesValid ? 'binNotes, ' : ""}${!isQuicklinksValid ? 'quicklinks, ' : ""}${!isQuicklinksOrderValid ? 'quicklinksorder, ' : ""}${!isPinnedNoteIdsValid ? 'pinnedNoteIds, ' : ''} not valid.`
         console.error(err)
         setIsJsonValid(false)
         return
