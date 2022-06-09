@@ -1,4 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { Text } from '@nextui-org/react';
 
 import { useEditor, EditorContent, Content } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
@@ -10,18 +11,17 @@ import CharacterCount from '@tiptap/extension-character-count';
 import TextAlign from '@tiptap/extension-text-align';
 import Link from '@tiptap/extension-link';
 import Typography from '@tiptap/extension-typography';
-
-import './Tiptap.scss'
-import Menubar from './Menubar'
-import { suggestions, Commands, SearchAndReplace, SmilieReplacer } from './extensions'
 import Table from '@tiptap/extension-table';
 import TableCell from '@tiptap/extension-table-cell';
 import TableHeader from '@tiptap/extension-table-header';
 import TableRow from '@tiptap/extension-table-row';
+
+import './Tiptap.scss'
+import Menubar from './Menubar'
+import { suggestions, Commands, SearchAndReplace, SmilieReplacer } from './extensions'
 import { CodeBlockLowLight } from './extensions/CodeBlockLowLight';
-import { Text } from '@nextui-org/react';
-import { useSetRecoilState } from 'recoil';
-import { currentLinkUrlState, linkModalState } from '../../Store';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { currentLinkUrlState, linkModalState, spellCheckState } from '../../Store';
 
 interface TiptapProps {
   onUpdate: Function
@@ -35,6 +35,8 @@ const Tiptap = ({ onUpdate, content, isNoteInBin }: TiptapProps) => {
   const setCurrentLinkUrl = useSetRecoilState(currentLinkUrlState)
 
   const [isLocalSearchVisible, setIsLocalSearchVisible] = useState<boolean>(false)
+
+  const spellcheckRecoilState = useRecoilValue(spellCheckState)
 
   const focusSearchInput = async (): Promise<void> => {
     await new Promise((r) => setTimeout(r, 300))
@@ -107,12 +109,22 @@ const Tiptap = ({ onUpdate, content, isNoteInBin }: TiptapProps) => {
     autofocus: false,
     editorProps: {
       attributes: {
-        spellcheck: 'true'
+        spellcheck: `${spellcheckRecoilState}`
       }
     },
   })
 
   useEffect(() => { editor?.setEditable(!isNoteInBin) }, [isNoteInBin])
+
+  useEffect(() => {
+    editor?.setOptions({
+      editorProps: {
+        attributes: {
+          spellcheck: `${spellcheckRecoilState}`
+        }
+      }
+    })
+  }, [spellcheckRecoilState])
 
   return (
     <>

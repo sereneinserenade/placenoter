@@ -37,3 +37,8 @@ export const currentLinkUrlState = atom<string>({
   key: 'currentLinkUrlState',
   default: ''
 })
+
+export const spellCheckState = atom<boolean>({
+  key: 'spellCheckState',
+  default: true
+})

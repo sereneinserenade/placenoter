@@ -32,13 +32,15 @@ const Sidebar = () => {
 
   const [pinnedNoteIdsFetchedFromStorage, setPinnedNoteIdsFetchedFromStorage] = useState(false)
 
-  const [isSidebarOpen, setIsSidebarOpen, remove] = useLocalStorage('sidebar-active', 'false');
+  const [isSidebarOpen, setIsSidebarOpen, remove] = useLocalStorage<boolean>('sidebar-active', false, {
+    raw: false,
+    serializer: (val) => `${val}`,
+    deserializer: (val) => val === 'true',
+  });
 
-  useEffect(() => {
-    setTimeout(() => isSidebarOpen && setSidebarActive(!!['false', 'true'].indexOf(isSidebarOpen)), 100)
-  }, [])
+  useEffect(() => { setTimeout(() => isSidebarOpen && setSidebarActive(isSidebarOpen), 100) }, [])
 
-  useEffect(() => { setIsSidebarOpen(`${Boolean(sidebarActive)}`) }, [sidebarActive])
+  useEffect(() => { setIsSidebarOpen(sidebarActive) }, [sidebarActive])
 
   const returnFormattedDateString = (timestamp: Date) => format(new Date(timestamp), 'PPpp')
 

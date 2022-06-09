@@ -121,6 +121,7 @@ const MainTop = () => {
           <Button
             color="gradient"
             auto
+            shadow
             size='sm'
             onClick={createNewNoteAndSetItAsActiveNote}
             className="sidebar-control-button flex"
@@ -151,9 +152,15 @@ const MainTop = () => {
           </>)
         }
 
-        <span className='theme-button flex' onClick={onThemeChange} title={isDark ? 'Light Theme' : 'Dark Theme'}>
-          {isDark ? <RiSunFill /> : <RiMoonFill />}
-        </span>
+        <Button
+          color="success"
+          size='sm'
+          auto
+          flat
+          onClick={onThemeChange}
+          rounded
+          icon={isDark ? <RiSunFill /> : <RiMoonFill />}
+        />
       </section>
     </section>
   )
