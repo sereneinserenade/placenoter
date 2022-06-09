@@ -19,18 +19,5 @@
   .right-controls {
     gap: 0.5em;
     align-items: center;
-
-    .theme-button {
-      transform: scale(1.2);
-      align-items: center;
-      cursor: pointer;
-      margin-right: 0.5rem;
-      padding: 4px;
-      border-radius: var(--nextui-radii-xs);
-
-      &:hover {
-        background-color: var(--nextui-colors-selection);
-      }
-    }
   }
 }

@@ -1,19 +1,20 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { Editor } from '@tiptap/core';
 import { BubbleMenu as TiptapBubbleMenu } from '@tiptap/react'
 import { Button, Input, Tooltip, Text } from '@nextui-org/react';
-import { useRecoilState, useRecoilValue } from 'recoil'
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
 import { debounce } from 'lodash';
 import { RiSearch2Line, RiArrowDownSLine } from 'react-icons/ri'
+import { MdSpellcheck } from 'react-icons/md'
+import { useLocalStorage } from 'react-use';
 
 import { stopPrevent } from '../../utils'
-import { activeNoteState, editorSearchState, linkModalState } from '../../Store';
+import { activeNoteState, editorSearchState, linkModalState, spellCheckState } from '../../Store';
 
 import LinkModal from './LinkModal'
 import LinkBubbleMenu from './LinkBubbleMenu';
 import MenubarTableButtons from './MenubarTableButtons';
-
 import { buttons, getButtonKeys } from './meta'
 
 import './Menubar.scss'
@@ -183,6 +184,16 @@ const Menubar = ({ editor, isLocalSearchVisible, onSearchTooltipClose }: Menubar
 
   const [globalLinkModalVisibleState, setGlobalLinkModalVisibleState] = useRecoilState(linkModalState)
 
+  const setSpellcheckRecoilState = useSetRecoilState(spellCheckState)
+
+  const [isSpellcheckActive, setIsSpellcheckActive] = useLocalStorage<boolean>('spellcheck-active', false, {
+    raw: false,
+    serializer: (val) => `${val}`,
+    deserializer: (val) => val === 'true',
+  });
+
+  useEffect(() => { setSpellcheckRecoilState(!!isSpellcheckActive) }, [isSpellcheckActive])
+
   useEffect(() => { if (globalLinkModalVisibleState) setLinkModalVisible(true) }, [globalLinkModalVisibleState])
 
   const setGridDimensions = ({ x, y }: { x: number, y: number }) => {
@@ -339,7 +350,19 @@ const Menubar = ({ editor, isLocalSearchVisible, onSearchTooltipClose }: Menubar
             </Tooltip>
           </Tooltip>
 
-          <LinkModal visible={linkModalVisible} onClose={closeLinkModalAndUpdateLink} />
+          <Tooltip
+            placement='top'
+            content={'Spellcheck - Turn off for better performance'}
+          >
+            <button
+              className={`menubar-button flex ${isSpellcheckActive ? 'active' : ''}`}
+              onClick={() => setIsSpellcheckActive(!isSpellcheckActive)}
+            >
+              <MdSpellcheck />
+            </button>
+          </Tooltip>
+
+          {LinkModal({ visible: linkModalVisible, onClose: closeLinkModalAndUpdateLink })}
 
           {BubbleMenu({ editor, debouncedCalculateIsActiveStates, isActiveStates, openLinkModal })}
 
