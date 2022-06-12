@@ -10,7 +10,6 @@ export default defineConfig(({ mode }) => {
       react(),
       crx({ manifest }),
     ],
-    base: mode === 'production' ? '/placenoter/' : '/'
   }
 })
 

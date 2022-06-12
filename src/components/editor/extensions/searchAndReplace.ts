@@ -45,7 +45,7 @@ interface TextNodesWithPosition {
   pos: number;
 }
 
-const updateView = (state: EditorState<any>, dispatch: any) => dispatch(state.tr)
+const updateView = (state: EditorState, dispatch: any) => dispatch(state.tr)
 
 const regex = (s: string, disableRegex: boolean, caseSensitive: boolean): RegExp => {
   return RegExp(disableRegex ? s.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&') : s, caseSensitive ? 'gu' : 'gui')
@@ -248,7 +248,7 @@ export const SearchAndReplace = Extension.create<SearchOptions>({
         },
         props: {
           decorations(state) {
-            return this.getState(state)
+            return (this as any).getState(state)
           },
         },
       }),

@@ -36,7 +36,8 @@ const domainRegex = /:\/\/(.[^/]+)/
 const { storage } = chrome
 
 interface SortableItemProps {
-  id: string
+  id: string,
+  children: JSX.Element
 }
 
 const SortableItem: React.FC<SortableItemProps> = ({ id, children }) => {
@@ -198,7 +199,7 @@ const QuickLinks: React.FC<QuickLinksProps> = () => {
 
   const handleDragStart = ({ active }: DragStartEvent) => {
     setIsItemBeingDragged(true)
-    setItemBeingDragged(active.id)
+    setItemBeingDragged(`${active.id}`)
   }
 
   const handleDragEnd = (event: any) => {

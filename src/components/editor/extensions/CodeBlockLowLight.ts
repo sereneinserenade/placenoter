@@ -146,7 +146,7 @@ export function LowlightPlugin({ name, defaultLanguage }: { name: string, defaul
 
     props: {
       decorations(state) {
-        return this.getState(state)
+        return (this as any).getState(state)
       },
     },
   })
