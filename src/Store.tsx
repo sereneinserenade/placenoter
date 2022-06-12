@@ -1,6 +1,6 @@
 import { atom } from 'recoil';
 
-import { Note } from './types'
+import { Note, QuickLink } from './types'
 
 export const notesState = atom<Note[]>({
   key: 'notesState',
@@ -9,6 +9,16 @@ export const notesState = atom<Note[]>({
 
 export const binNotesState = atom<Note[]>({
   key: 'binNotes',
+  default: []
+})
+
+export const quickLinks = atom<Record<string, QuickLink>>({
+  key: 'quickLinks',
+  default: {}
+})
+
+export const quickLinksOrder = atom<string[]>({
+  key: 'quickLinksOrder',
   default: []
 })
 
