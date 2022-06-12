@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "version": "1.1.8",
+  "version": "1.2.0",
   "name": "PlaceNoter",
   "description": "Turns browser's home page to a Note-Taking-App.",
   "offline_enabled": true,
