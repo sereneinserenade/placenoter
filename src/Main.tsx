@@ -1,14 +1,15 @@
 import { Input, Loading } from '@nextui-org/react';
-import React, { EffectCallback, useCallback, useEffect, useRef, useState } from 'react';
-import { v4 as uuidv4 } from 'uuid'
-import { useRecoilState, useRecoilValue } from 'recoil';
 import { debounce } from 'lodash';
+import { EffectCallback, useCallback, useEffect, useRef, useState } from 'react';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { v4 as uuidv4 } from 'uuid';
 
-import { EditorAreaContainer, Maintop, Sidebar, QuickLinks } from './components';
-import { notesState, activeNoteState, sidebarActiveState, binNotesState } from './Store';
+import PlaceNoterLogo from './assets/logo.svg';
+
+import { EditorAreaContainer, Maintop, QuickLinks, Sidebar } from './components';
+import './Main.scss';
+import { activeNoteState, binNotesState, notesState, sidebarActiveState } from './Store';
 import { Note } from './types';
-import PlaceNoterLogo from '../../assets/img/logo.svg';
-import './Main.scss'
 
 const { storage } = chrome
 
