@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="src/assets/img/logo-placenoter.svg" width="200"/>
+  <img src="public/logo-placenoter.svg" width="200"/>
   
   <h1 align="center">PlaceNoter</h1>
 </p>
