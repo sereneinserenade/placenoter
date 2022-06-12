@@ -1,33 +1,28 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
 import {
-  DndContext,
-  closestCenter,
-  KeyboardSensor,
+  closestCenter, DndContext, DragStartEvent, KeyboardSensor,
   PointerSensor,
   useSensor,
-  useSensors,
-  DragStartEvent,
+  useSensors
 } from '@dnd-kit/core';
 import {
-  arrayMove,
-  sortableKeyboardCoordinates,
-  rectSortingStrategy,
-  useSortable,
-  SortableContext
+  arrayMove, rectSortingStrategy, SortableContext, sortableKeyboardCoordinates, useSortable
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { v4 as uuidv4 } from 'uuid'
+import { v4 as uuidv4 } from 'uuid';
 
 
 import { Button, Input, Loading, Modal, Text, Tooltip } from '@nextui-org/react';
 
-import { FiPlusCircle, FiLink, FiTrash2, FiEdit } from 'react-icons/fi'
-import { test } from 'linkifyjs'
+import { test } from 'linkifyjs';
+import { FiEdit, FiLink, FiPlusCircle, FiTrash2 } from 'react-icons/fi';
 
-import './css/QuickLinks.scss'
+import { quickLinks, quickLinksOrder } from '../Store'
 import { QuickLink } from '../types';
 import { stopPrevent } from '../utils';
+import './css/QuickLinks.scss';
+import { useRecoilState } from 'recoil';
 
 const urlPatternValidation = (url: string): boolean => test(url);
 
@@ -67,9 +62,9 @@ interface QuickLinksProps {
 }
 
 const QuickLinks: React.FC<QuickLinksProps> = () => {
-  const [localQuickLinksOrder, setLocalQuickLinksOrder] = useState<string[]>([])
+  const [localQuickLinksOrder, setLocalQuickLinksOrder] = useRecoilState(quickLinksOrder)
 
-  const [localQuickLinks, setLocalQuickLinks] = useState<Record<string, QuickLink>>({})
+  const [localQuickLinks, setLocalQuickLinks] = useRecoilState(quickLinks)
 
   const [isAddQuickLinkModalOpen, setIsAddQuickLinkModalOpen] = useState<boolean>(false)
 
