@@ -1,10 +1,12 @@
 import { atom } from 'recoil';
 
-import { Note, QuickLink } from './types'
+import notes from './data/notes.json';
+import quickLinksData from './data/quickLinks.json';
+import { Note, QuickLink } from './types';
 
 export const notesState = atom<Note[]>({
   key: 'notesState',
-  default: []
+  default: notes
 })
 
 export const binNotesState = atom<Note[]>({
@@ -14,12 +16,12 @@ export const binNotesState = atom<Note[]>({
 
 export const quickLinks = atom<Record<string, QuickLink>>({
   key: 'quickLinks',
-  default: {}
+  default: quickLinksData.quickLinks
 })
 
 export const quickLinksOrder = atom<string[]>({
   key: 'quickLinksOrder',
-  default: []
+  default: quickLinksData.quickLinksOrder
 })
 
 export const sidebarActiveState = atom<boolean>({

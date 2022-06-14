@@ -11,8 +11,6 @@ import './Main.scss';
 import { activeNoteState, binNotesState, notesState, sidebarActiveState } from './Store';
 import { Note } from './types';
 
-const { storage } = chrome
-
 function Main() {
   const sidebarActive = useRecoilValue(sidebarActiveState)
 
@@ -88,18 +86,6 @@ function Main() {
     console.error(`This activeNote is not inside \`notes\` and \`binNotes\` \n ${JSON.stringify({ id, title })}`)
   }, [activeNote])
 
-  const setNotesInLocalStorage = () => storage.local.set({ dbnotes: notes })
-
-  const debouncedSetNotesInLocalStorage = debounce(setNotesInLocalStorage, 300)
-
-  useEffect(() => { notesFetchedFromDb && debouncedSetNotesInLocalStorage() }, [notes])
-
-  const setBinNotesInLocalStorage = () => storage.local.set({ binNotes })
-
-  const debouncedSetBinNotesInLocalStorage = debounce(setBinNotesInLocalStorage, 300)
-
-  useEffect(() => { binNotesFetchedFromDb && debouncedSetBinNotesInLocalStorage() }, [binNotes])
-
   const checkIfAnEmptyNoteExists = (): Note | undefined => {
     return notes.find((n) => n.title.trim() === "" && n.textContent.trim() === "")
   }
@@ -127,27 +113,6 @@ function Main() {
       setActiveNote(newNote)
     })
   }
-
-  const fetchNotesFromSyncStorage = () => {
-    // storage.local.set({ dbnotes: [] })
-
-    storage.local.get('dbnotes', ({ dbnotes }) => {
-      if (dbnotes) setNotes(dbnotes)
-      else storage.local.set({ dbnotes: [] })
-
-      setNotesFetchedFromDb(true)
-    })
-
-    storage.local.get('binNotes', ({ binNotes }) => {
-      if (binNotes) {
-        setBinNotes(binNotes)
-      } else storage.local.set({ binNotes: [] })
-
-      setBinNotesFetchedFromDb(true)
-    })
-  }
-
-  useMountEffect(fetchNotesFromSyncStorage)
 
   useMountEffect(() => { setTimeout(focusSearchInput, 500) })
 

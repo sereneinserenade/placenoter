@@ -28,8 +28,6 @@ const urlPatternValidation = (url: string): boolean => test(url);
 
 const domainRegex = /:\/\/(.[^/]+)/
 
-const { storage } = chrome
-
 interface SortableItemProps {
   id: string,
   children: JSX.Element
@@ -111,54 +109,6 @@ const QuickLinks: React.FC<QuickLinksProps> = () => {
     setLinkAlreadyExists(false)
   }, [link])
 
-  useEffect(() => {
-    storage.local.get('quicklinks', ({ quicklinks }) => {
-      if (quicklinks) setLocalQuickLinks(quicklinks)
-      else storage.local.set({ quicklinks: {} })
-
-      processQuickLinksOrder()
-    })
-  }, [])
-
-  const processQuickLinksOrder = useCallback(() => {
-    storage.local.get('quicklinksorder', ({ quicklinksorder }) => {
-      const keys = Object.keys(localQuickLinks)
-
-      if (quicklinksorder?.length) {
-        setLocalQuickLinksOrder(quicklinksorder)
-      } else {
-        if (keys.length) {
-          storage.local.set({ quicklinksorder: keys })
-          setLocalQuickLinksOrder(keys)
-
-          setGotQuickLinksFromDb(true)
-          return
-        }
-
-        storage.local.set({ quicklinksorder: [] })
-        setLocalQuickLinksOrder([])
-      }
-
-      setGotQuickLinksFromDb(true)
-    })
-  }, [setLocalQuickLinksOrder, localQuickLinks])
-
-  useEffect(() => {
-    if (!gotQuickLinksFromDb) return
-
-    const quicklinksorder = localQuickLinksOrder
-
-    if (quicklinksorder.length) storage.local.set({ quicklinksorder })
-  }, [localQuickLinksOrder])
-
-  useEffect(() => {
-    if (!gotQuickLinksFromDb) return
-
-    storage.local.set({ quicklinks: localQuickLinks })
-
-    processQuickLinksOrder()
-  }, [localQuickLinks])
-
   const openAddQuickLinkModal = useCallback(() => setIsAddQuickLinkModalOpen(true), [setIsAddQuickLinkModalOpen])
 
   const onAddQuickLinkModalClose = useCallback(() => {
@@ -181,6 +131,8 @@ const QuickLinks: React.FC<QuickLinksProps> = () => {
     if (domain) quickLink.iconUrl = `https://icon.horse/icon/${domain}`
 
     setLocalQuickLinks({ ...localQuickLinks, [id]: quickLink })
+
+    console.log(JSON.stringify({ localQuickLinks, localQuickLinksOrder }))
 
     if (!quickLinkBeingEdited) setLocalQuickLinksOrder([...localQuickLinksOrder, id])
 

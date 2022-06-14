@@ -22,8 +22,6 @@ interface Data {
   pinnedNoteIds: string[]
 }
 
-const { storage } = chrome
-
 export const ImportDataModal: React.FC<ImportDataModalProps> = ({ isImportDataModelOpen, onClose }) => {
   const [jsonDataString, setJsonDataString] = useState("")
 
@@ -83,13 +81,6 @@ export const ImportDataModal: React.FC<ImportDataModalProps> = ({ isImportDataMo
   const importData = () => {
     setLoading(true)
 
-    const jsonData: Data = JSON.parse(jsonDataString)
-
-    storage.local.set(jsonData, () => {
-      setLoading(false)
-
-      window.location.reload()
-    })
   }
 
   const readFile = (e: React.ChangeEvent<HTMLInputElement>) => {

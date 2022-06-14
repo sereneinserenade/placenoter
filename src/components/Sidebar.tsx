@@ -13,8 +13,6 @@ import './css/Sidebar.scss'
 import { NotePreview } from './note/NotePreview';
 import { stopPrevent } from '../utils';
 
-const { storage } = chrome
-
 const Sidebar = () => {
   const [sidebarActive, setSidebarActive] = useRecoilState(sidebarActiveState)
 
@@ -165,17 +163,6 @@ const Sidebar = () => {
         return title.toLowerCase().includes(searchTerm) || textContent.replaceAll('\n\n', ' ').toLowerCase().includes(searchTerm)
       })
   }, [])
-
-  useEffect(() => {
-    storage.local.get('pinnedNoteIds', ({ pinnedNoteIds }) => {
-      if (pinnedNoteIds) setPinnedNoteIds(pinnedNoteIds)
-      else setPinnedNoteIds([])
-
-      setPinnedNoteIdsFetchedFromStorage(true)
-    })
-  }, [])
-
-  useEffect(() => { pinnedNoteIdsFetchedFromStorage && storage.local.set({ pinnedNoteIds }) }, [pinnedNoteIds])
 
   const togglePin = (note: Note) => {
     const pinIndex = pinnedNoteIds.indexOf(note.id)

@@ -8,18 +8,20 @@ import { RiAddLine, RiMenuFoldFill, RiMenuUnfoldFill, RiMoonFill, RiPrinterLine,
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { v4 as uuidv4 } from 'uuid'
 
-import { activeNoteState, binNotesState, notesState, sidebarActiveState } from '../Store'
+import { activeNoteState, binNotesState, notesState, quickLinks, quickLinksOrder, sidebarActiveState } from '../Store'
 import { Note, QuickLink } from '../types'
 import { ImportDataModal } from './data'
 
 import './css/MainTop.scss'
 
-const { storage } = chrome
-
 const MainTop = () => {
   const [activeNote, setActiveNote] = useRecoilState(activeNoteState)
 
   const [sidebarActive, setSidebarActive] = useRecoilState(sidebarActiveState)
+
+  const links = useRecoilValue(quickLinks)
+
+  const linksOrder = useRecoilValue(quickLinksOrder)
 
   const [notes, setNotes] = useRecoilState(notesState)
 
@@ -89,7 +91,7 @@ const MainTop = () => {
     interface Data {
       dbnotes: Note[]
       binNotes: Note[]
-      quicklinks: QuickLink[]
+      quicklinks: Record<string, QuickLink>
       quicklinksorder: string[]
       pinnedNoteIds: string[]
     }
@@ -97,20 +99,16 @@ const MainTop = () => {
     const data: Data = {
       dbnotes: notes,
       binNotes,
-      quicklinks: [],
-      quicklinksorder: [],
+      quicklinks: links,
+      quicklinksorder: linksOrder,
       pinnedNoteIds: [],
     }
 
-    storage.local.get(['quicklinks', 'quicklinksorder', 'pinnedNoteIds'], ({ quicklinks, quicklinksorder, pinnedNoteIds }) => {
-      data.quicklinks = quicklinks || []
-      data.quicklinksorder = quicklinksorder || []
-      data.pinnedNoteIds = pinnedNoteIds
+    debugger
 
-      const fileToSave = new Blob([JSON.stringify(data)], { type: 'application/json' })
+    const fileToSave = new Blob([JSON.stringify(data)], { type: 'application/json' })
 
-      saveAs(fileToSave, `PlaceNoter - ${new Date().toLocaleString()}.json`);
-    })
+    saveAs(fileToSave, `PlaceNoter - ${new Date().toLocaleString()}.json`);
   }, [])
 
   return (

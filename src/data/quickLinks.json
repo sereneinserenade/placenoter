@@ -1,0 +1,34 @@
+{
+  "quickLinks": {
+    "f25d1e7b-f70d-43be-923d-4cdeb82ac122": {
+      "name": "Jeet Mandaliya",
+      "url": "https://github.com/sereneinserenade",
+      "iconUrl": "https://icon.horse/icon/github.com",
+      "id": "f25d1e7b-f70d-43be-923d-4cdeb82ac122"
+    },
+    "6fca7d13-0320-43ff-8f05-206606f23b50": {
+      "name": "PlaceNoter",
+      "url": "https://github.com/sereneinserenade/placenoter",
+      "iconUrl": "https://icon.horse/icon/github.com",
+      "id": "6fca7d13-0320-43ff-8f05-206606f23b50"
+    },
+    "0069f9ee-244a-43be-b528-788cd02c3671": {
+      "name": "Jeet-Twitter",
+      "url": "https://twitter.com/sereneInSerenad",
+      "iconUrl": "https://icon.horse/icon/twitter.com",
+      "id": "0069f9ee-244a-43be-b528-788cd02c3671"
+    },
+    "ecc3f623-edd8-4058-82d1-334e81456a87": {
+      "name": "Jeet-LinkedIn",
+      "url": "https://www.linkedin.com/in/sereneinserenade/",
+      "iconUrl": "https://icon.horse/icon/www.linkedin.com",
+      "id": "ecc3f623-edd8-4058-82d1-334e81456a87"
+    }
+  },
+  "quickLinksOrder": [
+    "f25d1e7b-f70d-43be-923d-4cdeb82ac122",
+    "6fca7d13-0320-43ff-8f05-206606f23b50",
+    "0069f9ee-244a-43be-b528-788cd02c3671",
+    "ecc3f623-edd8-4058-82d1-334e81456a87"
+  ]
+}
