@@ -3,7 +3,7 @@ name: Shipp it baby
 on:
   push:
     branches:
-      - main
+      - demo
 
 jobs:
   build-and-deploy:
