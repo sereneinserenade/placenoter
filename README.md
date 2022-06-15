@@ -8,6 +8,9 @@
 - This extension replaces your new tab with a note taking app so you never have to leave chrome. (that's it for now.)
 - Download it from [chrome webstore.](https://chrome.google.com/webstore/detail/pagenoter/jefjneinemilpncgcfdglggeheiaakfc?hl=en-GB&authuser=0)
 
+If you **👍 / ❤️ what I'm doing**, consider **🌟ing the repo**, **I** and the **Open-Source-Community** appreciate it very much ❤️.
+
+
 ## Demo
 
 - You can try it out without installing the extension at https://sereneinserenade.github.io/placenoter/ 
