@@ -48,6 +48,9 @@ Now when you open a new tab, it will open Placenoter from your local. Chrome doe
 
 It works well like this, as you make changes to the code, the page will be updated.
 
+## Contributors
+
+
 ## Stargazers
 
 [![Stargazers repo roster for @sereneinserenade/placenoter](https://reporoster.com/stars/dark/sereneinserenade/placenoter)](https://github.com/sereneinserenade/placenoter/stargazers)
