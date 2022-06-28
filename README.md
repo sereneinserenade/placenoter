@@ -25,7 +25,7 @@ npm run dev # Runs on http://localhost:3000/
 
 It you try and open the page http://localhost:3000/ you will get an error: `This localhost page can’t be found` - a kind of 404 error.
 
-In order to see it running, you need to install it as a local extension. To do that, navigate to chrome://extensions/ and click the `Load unpacked` button, it will ask you to "Select the extension directory", so navigate to the repo root, and click open.
+In order to see it running, you need to install it as a local extension. To do that, navigate to chrome://extensions/ and click the `Load unpacked` button, it will ask you to "Select the extension directory", so navigate to the repo root, select the `dist` folder, and click open.
 
 Now when you open a new tab, it will open Placenoter from your local. Chrome doesn't like it initially, and will offer to revert to the original. Once you tell it no, it will leave it in place.
 
