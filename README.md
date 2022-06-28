@@ -22,9 +22,6 @@ npm i
 npm run dev # Runs on http://localhost:3000/
 ```
 
-If you open the URL, you will get an error: `This localhost page can’t be found` - a kind of 404 error
-
-In order to see it running, you need to install it as a local extension. To do that, navigate to chrome://extensions/ and click the `Load unpacked` button, it will ask you to Select the extension directory":3000/
 
 It you try and open the page http://localhost:3000/ you will get an error: `This localhost page can’t be found` - a kind of 404 error.
 
