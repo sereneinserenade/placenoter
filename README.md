@@ -15,7 +15,7 @@ If you **👍 / ❤️ what I'm doing**, consider **🌟ing the repo**, **I** an
 
 https://user-images.githubusercontent.com/45892659/156848685-6a8043e6-de07-4c37-9c3d-be6e65060647.mp4
 
-## Development
+## Development (local setup)
 
 ```
 npm i
