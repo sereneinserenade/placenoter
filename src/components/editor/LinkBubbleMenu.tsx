@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Editor } from '@tiptap/core'
 import { Button, Input, Text, Tooltip } from '@nextui-org/react';
 import { BubbleMenu } from '@tiptap/react';
-import { RiExternalLinkFill } from 'react-icons/ri';
+import { RiExternalLinkFill, RiLinkUnlink } from 'react-icons/ri';
 import { test } from 'linkifyjs'
 
 import { openUrlInNewTab } from '../../utils';
@@ -23,13 +23,20 @@ const LinkBubbleMenu = ({ editor, closeLinkModalAndUpdateLink }: LinkBubbleMenuP
 
   const urlPatternValidation = (url: string): boolean => test(url);
 
-  useEffect(() => { setIsUrlValid(urlPatternValidation(url)) }, [url])
+  useEffect(() => { setIsUrlValid(url === '' || urlPatternValidation(url)) }, [url])
 
-  const onApply = () => isUrlValid && closeLinkModalAndUpdateLink(url)
+  const onApply = () => {
+    if (!isUrlValid) return
+
+    const urlToSet = !url.startsWith('https://') || !url.startsWith('http://') ? `https://${url}` : url
+    closeLinkModalAndUpdateLink(urlToSet)
+  }
+
+  const unsetLink = () => closeLinkModalAndUpdateLink('')
 
   return (
     <BubbleMenu
-      shouldShow={() => editor.isActive('link')}
+      shouldShow={({ editor }) => editor.isActive('link')}
       editor={editor}
       className="bubble-menu link-bubble-menu flex"
       tippyOptions={{ placement: 'bottom', duration: 250, animation: 'shift-toward-subtle' }}
@@ -42,6 +49,10 @@ const LinkBubbleMenu = ({ editor, closeLinkModalAndUpdateLink }: LinkBubbleMenuP
               <Button css={{ margin: '8px 0 8px 8px' }} size='sm' auto flat icon={<RiExternalLinkFill />} onClick={() => openUrlInNewTab(url)} />
             </Tooltip>
 
+            <Tooltip content="Unlink">
+              <Button css={{ margin: '8px 0 8px 0' }} size='sm' auto flat icon={<RiLinkUnlink />} onClick={unsetLink} />
+            </Tooltip>
+
             <Tooltip
               visible={!isUrlValid}
               content={isUrlValid ? '' : 'URL not valid.'}
@@ -51,7 +62,7 @@ const LinkBubbleMenu = ({ editor, closeLinkModalAndUpdateLink }: LinkBubbleMenuP
             >
               <Input
                 size="sm"
-                placeholder="https://xyz.abc"
+                placeholder="you.are.awesome.com"
                 value={url}
                 onInput={(e) => setUrl((e.target as HTMLInputElement).value.trim())}
                 onKeyPress={(e) => e.key === 'Enter' && onApply()}
