@@ -6,7 +6,7 @@
 
 This extension replaces your new tab with a **note taking app** so you never have to **leave chrome**.
 
-If you **👍 / ❤️ what I'm doing**, consider **🌟ing the repo**, **I** and the **Open-Source-Community** appreciate it very much ❤️.
+A ⭐️ to the repo if you 👍 / ❤️  what I'm doing would be much appreciated. If you're using this extension and making money from it, it'd be very kind of you to [:heart: Sponsor me](https://github.com/sponsors/laike9m). If you're looking for a **dev to work you on your project's Rich Text Editor** with or as **a frontend developer, [DM me on Discord/Twitter/LinkedIn](https://github.com/sereneinserenade)👨‍💻🤩**.
 
 ## Installation:
 
