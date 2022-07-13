@@ -71,7 +71,7 @@ export const CommandList: React.FC<CommandListProps> = ({ items, command, event 
 	}
 
 	return (
-		<div className='items hide-scrollbar'>
+		<div ref={commandListContainer} className='items hide-scrollbar'>
 			{items.length ? (
 				<>
 					{items.map((item, index) => {
