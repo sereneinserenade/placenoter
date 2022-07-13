@@ -1,87 +1,99 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef, useLayoutEffect } from 'react'
 import { stopPrevent } from '../../../../utils'
+import { updateScrollView } from '../../../../utils/updateScrollView'
 
 import './styles/CommandList.scss'
 
 interface CommandListProps {
-  items: any[],
-  command: Function,
-  event: any
+	items: any[]
+	command: Function
+	event: any
 }
 
 export const CommandList: React.FC<CommandListProps> = ({ items, command, event }) => {
-  const [selectedIndex, setSelectedIndex] = useState(0)
+	const [selectedIndex, setSelectedIndex] = useState(0)
 
-  useEffect(() => setSelectedIndex(0), [items])
+	const commandListContainer = useRef<HTMLDivElement>(null)
 
-  const onKeyDown = (event: KeyboardEvent) => {
-    if (event.key === 'ArrowUp') {
-      stopPrevent(event)
-      upHandler()
-      return true
-    }
+	useEffect(() => setSelectedIndex(0), [items])
 
-    if (event.key === 'ArrowDown') {
-      stopPrevent(event)
-      downHandler()
-      return true
-    }
+	useLayoutEffect(() => {
+		// Get Container
+		const container = commandListContainer?.current || null
+		// Get active/selected item from list
+		const item = (container!.children[selectedIndex] as HTMLElement) || null
+		// Update the scroll position
+		updateScrollView(container, item)
+	}, [selectedIndex])
 
-    if (event.key === 'Enter') {
-      stopPrevent(event)
-      enterHandler()
-      return true
-    }
+	const onKeyDown = (event: KeyboardEvent) => {
+		if (event.key === 'ArrowUp') {
+			stopPrevent(event)
+			upHandler()
+			return true
+		}
 
-    return false
-  }
+		if (event.key === 'ArrowDown') {
+			stopPrevent(event)
+			downHandler()
+			return true
+		}
 
-  useEffect(() => { onKeyDown(event) }, [event])
+		if (event.key === 'Enter') {
+			stopPrevent(event)
+			enterHandler()
+			return true
+		}
 
-  const upHandler = () => {
-    setSelectedIndex(((selectedIndex + items.length) - 1) % items.length)
-  }
+		return false
+	}
 
-  const downHandler = () => {
-    setSelectedIndex((selectedIndex + 1) % items.length)
-  }
+	useEffect(() => {
+		onKeyDown(event)
+	}, [event])
 
-  const enterHandler = () => {
-    selectItem(selectedIndex)
-  }
+	const upHandler = () => {
+		setSelectedIndex((selectedIndex + items.length - 1) % items.length)
+	}
 
-  const selectItem = (index: number) => {
-    const item = items[index]
+	const downHandler = () => {
+		setSelectedIndex((selectedIndex + 1) % items.length)
+	}
 
-    if (item) setTimeout(() => command(item))
-  }
+	const enterHandler = () => {
+		selectItem(selectedIndex)
+	}
 
-  return (
-    <div className="items hide-scrollbar">
-      {
-        items.length
-          ? (
-            <>
-              {
-                items.map((item, index) => {
-                  return (
-                    <article
-                      className={`item flex ${index === selectedIndex ? 'is-selected' : ''}`}
-                      key={index}
-                      onClick={() => selectItem(index)}
-                      onMouseEnter={() => setSelectedIndex(index)}
-                    >
-                      <span className='flex align-center gap-8px'>
-                        {item.icon()} <span dangerouslySetInnerHTML={{ __html: item.highlightedTitle || item.title }} />
-                      </span>
-                      {item.shortcut && <code>{item.shortcut}</code>}
-                    </article>
-                  )
-                })
-              }
-            </>
-          ) : <div className="item"> No result </div>
-      }
-    </div >
-  )
+	const selectItem = (index: number) => {
+		const item = items[index]
+
+		if (item) setTimeout(() => command(item))
+	}
+
+	return (
+		<div ref={commandListContainer} className='items hide-scrollbar'>
+			{items.length ? (
+				<>
+					{items.map((item, index) => {
+						return (
+							<article
+								className={`item flex ${index === selectedIndex ? 'is-selected' : ''}`}
+								key={index}
+								onClick={() => selectItem(index)}
+								onMouseEnter={() => setSelectedIndex(index)}
+							>
+								<span className='flex align-center gap-8px'>
+									{item.icon()}{' '}
+									<span dangerouslySetInnerHTML={{ __html: item.highlightedTitle || item.title }} />
+								</span>
+								{item.shortcut && <code>{item.shortcut}</code>}
+							</article>
+						)
+					})}
+				</>
+			) : (
+				<div className='item'> No result </div>
+			)}
+		</div>
+	)
 }
