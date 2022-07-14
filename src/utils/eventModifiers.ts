@@ -1,4 +1,4 @@
-export const stopPrevent = <T extends Event>(e: T): T => {
+export const stopPrevent = <T extends unknown>(e: T): T => {
   (e as Event).stopPropagation();
   (e as Event).preventDefault()
 
