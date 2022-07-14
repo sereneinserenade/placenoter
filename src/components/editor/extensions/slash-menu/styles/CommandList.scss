@@ -8,6 +8,7 @@
   box-sizing: border-box;
   max-height: 14em;
   overflow-y: auto;
+  scroll-behavior: smooth;
 
   .item {
     width: 100%;
