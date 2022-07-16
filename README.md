@@ -52,32 +52,8 @@ It works well like this, as you make changes to the code, the page will be updat
 
 ## Contributors
 
-<table>
-<tr>
-    <td align="center" style="word-wrap: break-word; width: 150.0; height: 150.0">
-        <a href=https://github.com/sereneinserenade>
-            <img src=https://avatars.githubusercontent.com/u/45892659?v=4 width="100;"  style="border-radius:50%;align-items:center;justify-content:center;overflow:hidden;padding-top:10px" alt=Jeet Mandaliya/>
-            <br />
-            <sub style="font-size:14px"><b>Jeet Mandaliya</b></sub>
-        </a>
-    </td>
-    <td align="center" style="word-wrap: break-word; width: 150.0; height: 150.0">
-        <a href=https://github.com/stavast>
-            <img src=https://avatars.githubusercontent.com/u/63933740?v=4 width="100;"  style="border-radius:50%;align-items:center;justify-content:center;overflow:hidden;padding-top:10px" alt=Derik Stavast/>
-            <br />
-            <sub style="font-size:14px"><b>Derik Stavast</b></sub>
-        </a>
-    </td>
-    <td align="center" style="word-wrap: break-word; width: 150.0; height: 150.0">
-        <a href=https://github.com/mikkelking>
-            <img src=https://avatars.githubusercontent.com/u/2467919?v=4 width="100;"  style="border-radius:50%;align-items:center;justify-content:center;overflow:hidden;padding-top:10px" alt=Mike King/>
-            <br />
-            <sub style="font-size:14px"><b>Mike King</b></sub>
-        </a>
-    </td>
-</tr>
-</table>
-
+<!-- readme: collaborators,contributors -start -->
+<!-- readme: collaborators,contributors -end -->
 
 ## Stargazers
 
