@@ -1,3 +1,6 @@
+export * from './dBlock'
+export * from './doc'
 export * from './searchAndReplace'
-export * from './smilieReplacer'
 export * from './slash-menu'
+export * from './smilieReplacer'
+export * from './nodeMover'
