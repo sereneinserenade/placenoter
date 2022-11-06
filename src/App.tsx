@@ -1,15 +1,22 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { createTheme, NextUIProvider, getDocumentTheme } from '@nextui-org/react';
-import { RecoilRoot } from 'recoil';
+import { useRecoilState } from 'recoil';
 
 import 'tippy.js/animations/shift-toward-subtle.css';
 
 import Main from './Main'
 
+import { themeState } from './Store'
+
 import './Newtab.scss';
+import { useThemeDetector } from './hooks';
 
 const Newtab = () => {
-  const [isDark, setIsDark] = useState(false);
+  const prefersDarkTheme = useThemeDetector()
+
+  const [theme, setTheme] = useRecoilState(themeState)
+
+  const isDark = useMemo(() => theme === 'dark-theme', [theme])
 
   const lightTheme = createTheme({ type: 'light' })
 
@@ -23,29 +30,23 @@ const Newtab = () => {
   })
 
   useEffect(() => {
-    // you can use any storage
     let theme = window.localStorage.getItem('data-theme');
-    setIsDark(theme === 'dark-theme');
-
-    const observer = new MutationObserver(() => {
-      let newTheme = getDocumentTheme(document?.documentElement);
-      setIsDark(newTheme === 'dark-theme');
-    });
-
-    // Observe the document theme changes
-    observer.observe(document?.documentElement, {
-      attributes: true,
-      attributeFilter: ['data-theme', 'style']
-    });
-
-    return () => observer.disconnect();
+    setTheme(theme!);
   }, []);
 
+  useEffect(() => {
+    window.localStorage.setItem('data-theme', theme);
+  }, [theme])
+
+  const calculatedTheme = useMemo(() => {
+    if (theme === 'system-theme') return prefersDarkTheme ? darkTheme : lightTheme
+
+    return isDark ? darkTheme : lightTheme
+  }, [isDark, prefersDarkTheme, darkTheme, lightTheme, theme])
+
   return (
-    <NextUIProvider theme={isDark ? darkTheme : lightTheme}>
-      <RecoilRoot>
-        <Main />
-      </RecoilRoot>
+    <NextUIProvider theme={calculatedTheme}>
+      <Main />
     </NextUIProvider>
   );
 };

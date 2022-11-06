@@ -1,14 +1,14 @@
-import React, { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
-import { Button, changeTheme, Tooltip, useTheme } from '@nextui-org/react'
+import { Button, Dropdown, Tooltip, useTheme } from '@nextui-org/react'
 import { saveAs } from 'file-saver'
 import { BiExport, BiImport } from 'react-icons/bi'
 import { FiHome } from 'react-icons/fi'
-import { RiAddLine, RiMenuFoldFill, RiMenuUnfoldFill, RiMoonFill, RiPrinterLine, RiSunFill } from 'react-icons/ri'
+import { RiAddLine, RiComputerLine, RiMenuFoldFill, RiMenuUnfoldFill, RiMoonFill, RiPrinterLine, RiSunFill } from 'react-icons/ri'
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { v4 as uuidv4 } from 'uuid'
 
-import { activeNoteState, binNotesState, notesState, sidebarActiveState } from '../Store'
+import { activeNoteState, binNotesState, notesState, sidebarActiveState, themeState } from '../Store'
 import { Note, QuickLink } from '../types'
 import { ImportDataModal } from './data'
 
@@ -64,14 +64,6 @@ const MainTop = () => {
     setActiveNote(undefined)
   }
 
-  const onThemeChange = () => {
-    const nextTheme = isDark ? 'light-theme' : 'dark-theme';
-
-    changeTheme(nextTheme);
-
-    window.localStorage.setItem('data-theme', nextTheme); // I think local storage is good enough for this
-  }
-
   const printEditorContent = () => {
     const printContents = document.querySelector(".editor-content")?.innerHTML;
 
@@ -113,6 +105,25 @@ const MainTop = () => {
     })
   }, [])
 
+  const [themeSelection, setThemeSelection] = useState<string>('system-theme')
+
+  const onThemeChange = (theme: string) => {
+    setTheme(theme)
+  }
+
+  const onDropdownThemeChange = (keys: any) => {
+    let theme = [...keys][0]
+
+    setThemeSelection(theme)
+    onThemeChange(theme)
+  }
+
+  const [theme, setTheme] = useRecoilState(themeState)
+
+  useEffect(() => {
+    setThemeSelection(theme)
+  }, [theme])
+
   return (
     <section className={`main-top flex`} aria-label="main-top-section">
       <section className='left-controls flex' aria-label='left-controls-section'>
@@ -120,7 +131,7 @@ const MainTop = () => {
           <Button color="primary" auto ghost size='sm' onClick={onSidebarControlButtonClicked} className={`sidebar-control-button flex`} icon={sidebarActive ? <RiMenuFoldFill /> : <RiMenuUnfoldFill />} />
         </Tooltip>
         <Tooltip placement='bottomStart' content={'Home'}>
-          <Button color="primary" auto ghost size='sm' onClick={() => goHome()} className="sidebar-control-button flex" icon={< FiHome />} />
+          <Button color="primary" auto ghost size='sm' onClick={goHome} className="sidebar-control-button flex" icon={< FiHome />} />
         </Tooltip>
         <Tooltip placement='bottomStart' content={'Create new note'}>
           <Button
@@ -157,15 +168,34 @@ const MainTop = () => {
           </>)
         }
 
-        <Button
-          color="success"
-          size='sm'
-          auto
-          flat
-          onClick={onThemeChange}
-          rounded
-          icon={isDark ? <RiSunFill /> : <RiMoonFill />}
-        />
+        <Dropdown>
+          <Dropdown.Button
+            size='sm'
+            auto
+            flat
+            rounded
+            icon={isDark ? <RiSunFill /> : <RiMoonFill />}
+          />
+
+          <Dropdown.Menu
+            aria-label='Theme Selection Dropdown'
+            color="primary"
+            disallowEmptySelection
+            selectionMode='single'
+            selectedKeys={[themeSelection]}
+            onSelectionChange={onDropdownThemeChange}
+          >
+            <Dropdown.Item key={'system-theme'} icon={<RiComputerLine />}>
+              System
+            </Dropdown.Item>
+            <Dropdown.Item key={'light-theme'} icon={<RiSunFill />}>
+              Light
+            </Dropdown.Item>
+            <Dropdown.Item key={'dark-theme'} icon={<RiMoonFill />}>
+              Dark
+            </Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown>
       </section>
     </section>
   )

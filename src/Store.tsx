@@ -2,6 +2,11 @@ import { atom } from 'recoil';
 
 import { Note, QuickLink } from './types'
 
+export const themeState = atom<string>({
+  key: 'themeState',
+  default: 'system-theme'
+})
+
 export const notesState = atom<Note[]>({
   key: 'notesState',
   default: []
