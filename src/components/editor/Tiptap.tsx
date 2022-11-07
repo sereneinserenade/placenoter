@@ -36,6 +36,8 @@ const Tiptap = ({ onUpdate, content, isNoteInBin }: TiptapProps) => {
 
   const [isLocalSearchVisible, setIsLocalSearchVisible] = useState<boolean>(false)
 
+  const [isPreview, setIsPreview] = useState<boolean>(false)
+
   const spellcheckRecoilState = useRecoilValue(spellCheckState)
 
   const focusSearchInput = async (): Promise<void> => {
@@ -60,6 +62,10 @@ const Tiptap = ({ onUpdate, content, isNoteInBin }: TiptapProps) => {
       StarterKit.configure({
         codeBlock: false,
         document: false,
+        dropcursor: {
+          color: 'skyblue',
+          width: 2
+        }
       }),
       DBlock,
       NodeMover,
@@ -132,6 +138,17 @@ const Tiptap = ({ onUpdate, content, isNoteInBin }: TiptapProps) => {
     })
   }, [spellcheckRecoilState])
 
+  useEffect(() => {
+    editor?.setEditable(!isPreview)
+  }, [isPreview])
+
+  const [editorContentKey, setEditorContentKey] = useState(`${Math.random()}`)
+
+  const toggleIsPreview = () => {
+    setIsPreview(!isPreview)
+    setEditorContentKey(`${Math.random()}`)
+  }
+
   return (
     <>
       {
@@ -140,11 +157,18 @@ const Tiptap = ({ onUpdate, content, isNoteInBin }: TiptapProps) => {
             editor={editor}
             isLocalSearchVisible={isLocalSearchVisible}
             onSearchTooltipClose={() => setIsLocalSearchVisible(false)}
+            isPreview={isPreview}
+            toggleIsPreview={toggleIsPreview}
           />
         )
       }
 
-      <EditorContent className='editor-content' editor={editor} suppressContentEditableWarning />
+      <EditorContent
+        key={editorContentKey}
+        className='editor-content'
+        editor={editor}
+        suppressContentEditableWarning
+      />
 
       <Text className='word-and-character-count-section flex'>
         <span>
