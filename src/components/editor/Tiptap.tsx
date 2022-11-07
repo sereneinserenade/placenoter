@@ -18,7 +18,7 @@ import TableRow from '@tiptap/extension-table-row';
 
 import './Tiptap.scss'
 import Menubar from './Menubar'
-import { suggestions, Commands, SearchAndReplace, SmilieReplacer } from './extensions'
+import { suggestions, Commands, SearchAndReplace, SmilieReplacer, Doc, DBlock, NodeMover } from './extensions'
 import { CodeBlockLowLight } from './extensions/CodeBlockLowLight';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { currentLinkUrlState, linkModalState, spellCheckState } from '../../Store';
@@ -35,6 +35,8 @@ const Tiptap = ({ onUpdate, content, isNoteInBin }: TiptapProps) => {
   const setCurrentLinkUrl = useSetRecoilState(currentLinkUrlState)
 
   const [isLocalSearchVisible, setIsLocalSearchVisible] = useState<boolean>(false)
+
+  const [isPreview, setIsPreview] = useState<boolean>(false)
 
   const spellcheckRecoilState = useRecoilValue(spellCheckState)
 
@@ -56,7 +58,17 @@ const Tiptap = ({ onUpdate, content, isNoteInBin }: TiptapProps) => {
 
   const editor = useEditor({
     extensions: [
-      StarterKit.configure({ codeBlock: false }),
+      Doc,
+      StarterKit.configure({
+        codeBlock: false,
+        document: false,
+        dropcursor: {
+          color: 'skyblue',
+          width: 2
+        }
+      }),
+      DBlock,
+      NodeMover,
       Placeholder.configure({
         placeholder: "Type '/' for commands…"
       }),
@@ -126,6 +138,17 @@ const Tiptap = ({ onUpdate, content, isNoteInBin }: TiptapProps) => {
     })
   }, [spellcheckRecoilState])
 
+  useEffect(() => {
+    editor?.setEditable(!isPreview)
+  }, [isPreview])
+
+  const [editorContentKey, setEditorContentKey] = useState(`${Math.random()}`)
+
+  const toggleIsPreview = () => {
+    setIsPreview(!isPreview)
+    setEditorContentKey(`${Math.random()}`)
+  }
+
   return (
     <>
       {
@@ -134,11 +157,18 @@ const Tiptap = ({ onUpdate, content, isNoteInBin }: TiptapProps) => {
             editor={editor}
             isLocalSearchVisible={isLocalSearchVisible}
             onSearchTooltipClose={() => setIsLocalSearchVisible(false)}
+            isPreview={isPreview}
+            toggleIsPreview={toggleIsPreview}
           />
         )
       }
 
-      <EditorContent className='editor-content' editor={editor} />
+      <EditorContent
+        key={editorContentKey}
+        className='editor-content'
+        editor={editor}
+        suppressContentEditableWarning
+      />
 
       <Text className='word-and-character-count-section flex'>
         <span>

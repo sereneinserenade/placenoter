@@ -6,7 +6,7 @@ import { Button, Input, Tooltip, Text } from '@nextui-org/react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
 import { debounce } from 'lodash';
 import { RiSearch2Line, RiArrowDownSLine } from 'react-icons/ri'
-import { MdSpellcheck } from 'react-icons/md'
+import { MdEdit, MdPreview, MdSpellcheck } from 'react-icons/md'
 import { useLocalStorage } from 'react-use';
 
 import { stopPrevent } from '../../utils'
@@ -159,9 +159,17 @@ type MenubarProps = {
   editor: Editor,
   isLocalSearchVisible: boolean,
   onSearchTooltipClose: () => any
+  isPreview: boolean,
+  toggleIsPreview: () => any
 }
 
-const Menubar = ({ editor, isLocalSearchVisible, onSearchTooltipClose }: MenubarProps) => {
+const Menubar = ({
+  editor,
+  isLocalSearchVisible,
+  onSearchTooltipClose,
+  isPreview,
+  toggleIsPreview,
+}: MenubarProps) => {
   if (!editor) return null
 
   const activeNote = useRecoilValue(activeNoteState)
@@ -359,6 +367,22 @@ const Menubar = ({ editor, isLocalSearchVisible, onSearchTooltipClose }: Menubar
               onClick={() => setIsSpellcheckActive(!isSpellcheckActive)}
             >
               <MdSpellcheck />
+            </button>
+          </Tooltip>
+
+          <Tooltip
+            placement='top'
+            content={isPreview ? 'Edit' : 'Preview'}
+          >
+            <button
+              className={`menubar-button flex ${isPreview ? 'active' : ''}`}
+              onClick={toggleIsPreview}
+            >
+              {
+                isPreview
+                  ? <MdEdit />
+                  : <MdPreview />
+              }
             </button>
           </Tooltip>
 

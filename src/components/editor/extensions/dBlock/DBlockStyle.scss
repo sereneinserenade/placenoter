@@ -1,0 +1,47 @@
+.dBlockWrapper {
+  gap: 8px;
+  width: 100%;
+  position: relative;
+
+  &:hover {
+    .d-block-button {
+      opacity: 1;
+      transition: none;
+    }
+  }
+
+  .d-block-button {
+    opacity: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: none;
+    border: none !important;
+    height: 28px;
+    padding: 2px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.25s ease-in-out;
+
+    &:hover {
+      background: var(--nextui-colors-selection);
+    }
+
+    &.drag-handle {
+      cursor: grab;
+
+      &:hover:active {
+        cursor: grabbing;
+      }
+    }
+  }
+
+  .content {
+    width: 100%;
+    min-width: 4px;
+
+    &.is-table {
+      margin-left: 2rem;
+    }
+  }
+}
