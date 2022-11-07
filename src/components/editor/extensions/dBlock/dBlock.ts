@@ -86,8 +86,6 @@ export const DBlock = Node.create<DBlockOptions>({
     return {
       "Mod-Alt-0": () => this.editor.commands.setDBlock(),
       Enter: ({ editor }) => {
-        debugger
-
         const { selection: { $head, from, to }, doc } = editor.state
 
         const parent = $head.node($head.depth - 1)

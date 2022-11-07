@@ -31,7 +31,7 @@ export const findParentNodeOfType = (nodeType: NodeType) => (selection: Selectio
   return findParentNode((node) => equalNodeType(nodeType, node))(selection)
 }
 
-function mapChildren (node: Node, callback: (...args: any[]) => any) {
+function mapChildren(node: Node, callback: (...args: any[]) => any) {
   const array = []
   for (let i = 0; i < node.childCount; i++) {
     array.push(callback(node.child(i), i, node instanceof Fragment ? node : node.content))
@@ -52,20 +52,20 @@ declare module '@tiptap/core' {
   }
 }
 
-function isListNode (node: Node): boolean {
-  return [ 'listItem', 'taskItem' ].includes(node.type.name)
+function isListNode(node: Node): boolean {
+  return ['listItem', 'taskItem'].includes(node.type.name)
 }
 
 export const NodeMover = Extension.create<MoveNodeOptions>({
   name: 'nodeMover',
 
-  addOptions () {
+  addOptions() {
     return {
-      types: [ 'dBlock' ],
+      types: ['dBlock'],
     }
   },
 
-  addCommands () {
+  addCommands() {
     return {
       moveNode: (direction: 'up' | 'down') =>
         ({ tr, state, dispatch }) => {
@@ -76,71 +76,60 @@ export const NodeMover = Extension.create<MoveNodeOptions>({
 
           doc.nodesBetween(from, to, (node) => {
             const nodeType = node.type
-            // console.log('NODE', nodeType.name, isListNode(node), state.selection.empty)
 
-            if (this.options.types.includes(nodeType.name)) {
-              const isDown = direction === 'down'
-              if (!state.selection.empty) {
-                return false
-              }
+            if (!this.options.types.includes(nodeType.name)) return false
 
-              const { $from } = state.selection
+            const isDown = direction === 'down'
 
-              const currentResolved = findParentNodeOfType(nodeType)(state.selection)
-              // console.log('currentResolved', currentResolved)
-              if (!currentResolved) {
-                return false
-              }
+            if (!state.selection.empty) return false
 
-              const { node: currentNode } = currentResolved
-              const parentDepth = currentResolved.depth - 1
-              const parent = $from.node(parentDepth)
+            const { $from } = state.selection
 
-              if (isListNode(parent)) {
-                return false
-              }
+            const currentResolved = findParentNodeOfType(nodeType)(state.selection)
 
-              const parentPos = $from.start(parentDepth)
+            if (!currentResolved) return false
 
-              // console.log('parD parent childC', parentDepth, parent, parent.childCount)
+            const { node: currentNode } = currentResolved
+            const parentDepth = currentResolved.depth - 1
+            const parent = $from.node(parentDepth)
 
-              if (currentNode.type !== nodeType) return false
+            if (isListNode(parent)) return false
 
-              const arr = mapChildren(parent, (node) => node)
+            const parentPos = $from.start(parentDepth)
 
-              const index = arr.indexOf(currentNode)
+            if (currentNode.type !== nodeType) return false
 
-              const swapWith = isDown ? index + 1 : index - 1
+            const arr = mapChildren(parent, (node) => node)
 
-              // console.log('arr index sW', arr, index, swapWith)
-              // If swap is out of bound
-              if (swapWith >= arr.length || swapWith < 0) return false
+            const index = arr.indexOf(currentNode)
 
-              const swapWithNodeSize = arr[swapWith]!.nodeSize
+            const swapWith = isDown ? index + 1 : index - 1
 
-              // [arr[index], arr[swapWith]] = [arr[swapWith], arr[index]];
-              const temp = arr[index]
-              arr[index] = arr[swapWith]
-              arr[swapWith] = temp
+            if (swapWith >= arr.length || swapWith < 0) return false
 
-              let tr = state.tr
-              const replaceStart = parentPos
-              const replaceEnd = $from.end(parentDepth)
+            const swapWithNodeSize = arr[swapWith]!.nodeSize
 
-              const slice = new Slice(Fragment.fromArray(arr), 0, 0)
+            const temp = arr[index]
+            arr[index] = arr[swapWith]
+            arr[swapWith] = temp
 
-              tr = tr.step(new ReplaceStep(replaceStart, replaceEnd, slice, false))
+            let tr = state.tr
+            const replaceStart = parentPos
+            const replaceEnd = $from.end(parentDepth)
 
-              const resolvedPos = tr.doc.resolve(
-                isDown ? $from.pos + swapWithNodeSize : $from.pos - swapWithNodeSize,
-              )
+            const slice = new Slice(Fragment.fromArray(arr), 0, 0)
 
-              tr = tr.setSelection(Selection.near(resolvedPos))
+            tr = tr.step(new ReplaceStep(replaceStart, replaceEnd, slice, false))
 
-              if (dispatch) dispatch(tr.scrollIntoView())
+            const resolvedPos = tr.doc.resolve(
+              isDown
+                ? $from.pos + swapWithNodeSize
+                : $from.pos - swapWithNodeSize
+            )
 
-              return true
-            }
+            tr = tr.setSelection(Selection.near(resolvedPos))
+
+            if (dispatch) dispatch(tr.scrollIntoView())
 
             return true
           })
@@ -150,7 +139,7 @@ export const NodeMover = Extension.create<MoveNodeOptions>({
     }
   },
 
-  addKeyboardShortcuts () {
+  addKeyboardShortcuts() {
     return {
       'Alt-ArrowUp': () => this.editor.commands.moveNode('up'),
       'Alt-ArrowDown': () => this.editor.commands.moveNode('down'),

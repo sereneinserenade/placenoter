@@ -133,6 +133,8 @@ const Sidebar = () => {
     // Adding note to `binNotes`
     // TODO: don't need so much vars/consts
     setBinNotes(JSON.parse(JSON.stringify([note, ...binNotes])))
+
+    if (id === activeNote?.id) setActiveNote(undefined)
   }
 
   const initiateMoveToBin = (e: any, note: Note) => {
